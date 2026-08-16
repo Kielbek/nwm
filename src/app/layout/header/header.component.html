@@ -108,6 +108,25 @@
     <button type="button" class="header__icon-btn header__icon-btn--dot">
       <app-icon name="bell" [size]="18" />
     </button>
-    <div class="header__avatar">M</div>
+
+    <app-dropdown #accountDropdown align="end">
+      <button type="button" class="header__avatar" dropdownTrigger [attr.aria-label]="translate.dict().header.profile">
+        {{ account.initials() }}
+      </button>
+      <div dropdownPanel class="header__menu">
+        <a
+          class="header__menu-item"
+          routerLink="/profile"
+          (click)="accountDropdown.close()"
+        >
+          <app-icon name="edit" [size]="15" />
+          <span class="header__menu-item-label">{{ translate.dict().header.profile }}</span>
+        </a>
+        <button type="button" class="header__menu-item" (click)="accountDropdown.close()">
+          <app-icon name="logout" [size]="15" />
+          <span class="header__menu-item-label">{{ translate.dict().header.signOut }}</span>
+        </button>
+      </div>
+    </app-dropdown>
   </div>
 </header>

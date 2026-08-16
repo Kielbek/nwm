@@ -4,6 +4,7 @@ import { IconComponent, IconName } from '../../shared/components/icon/icon.compo
 import { DropdownComponent } from '../../shared/components/dropdown/dropdown.component';
 import { ThemeMode, ThemeService } from '../../core/services/theme.service';
 import { Lang, TranslateService } from '../../core/services/translate.service';
+import { AccountService } from '../../core/services/account.service';
 
 @Component({
   selector: 'app-header',
@@ -24,7 +25,11 @@ export class HeaderComponent {
     system: 'monitor',
   };
 
-  constructor(readonly theme: ThemeService, readonly translate: TranslateService) {}
+  constructor(
+    readonly theme: ThemeService,
+    readonly translate: TranslateService,
+    readonly account: AccountService
+  ) {}
 
   selectTheme(mode: ThemeMode, dropdown: DropdownComponent): void {
     this.theme.setMode(mode);

@@ -20,6 +20,16 @@ export interface TestimonialCopy {
   date: string;
 }
 
+export interface PlanCopy {
+  name: string;
+  tagline: string;
+  features: string[];
+}
+
+export interface TopUpCopy {
+  label: string;
+}
+
 export interface Dictionary {
   header: {
     pageTitle: string;
@@ -33,6 +43,8 @@ export interface Dictionary {
     themeDark: string;
     themeSystem: string;
     language: string;
+    profile: string;
+    signOut: string;
   };
   sidebar: {
     nav: string;
@@ -112,9 +124,43 @@ export interface Dictionary {
     newRole: string;
     justNow: string;
   };
+  profilePage: {
+    title: string;
+    subtitle: string;
+    editProfile: string;
+    save: string;
+    cancel: string;
+    nameLabel: string;
+    emailLabel: string;
+    usageTitle: string;
+    usageCharacters: string;
+    renewsIn: string;
+    planTitle: string;
+    billingMonthly: string;
+    billingYearly: string;
+    yearlySavings: string;
+    currentPlanBadge: string;
+    choosePlan: string;
+    upgradeTo: string;
+    downgradeTo: string;
+    perMonth: string;
+    perYear: string;
+    free: string;
+    topUpTitle: string;
+    topUpSubtitle: string;
+    buyPack: string;
+    characters: string;
+    purchaseHistory: string;
+    noPurchases: string;
+    purchased: string;
+    accountTitle: string;
+    signOut: string;
+  };
   starters: StarterCopy[];
   voices: VoiceCopy[];
   models: ModelCopy[];
   formats: string[];
   testimonials: TestimonialCopy[];
+  plans: PlanCopy[];
+  topUps: TopUpCopy[];
 }

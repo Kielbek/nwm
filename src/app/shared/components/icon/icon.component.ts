@@ -8,7 +8,7 @@ export type IconName =
   | 'chevron-down' | 'chevron-right' | 'search' | 'bell' | 'folder'
   | 'sparkle' | 'close' | 'play' | 'download' | 'panel' | 'invite'
   | 'sun' | 'moon' | 'monitor' | 'globe' | 'check' | 'pause' | 'send' | 'trash'
-  | 'help' | 'link' | 'book';
+  | 'help' | 'link' | 'book' | 'logout' | 'edit';
 
 @Component({
   selector: 'app-icon',
@@ -135,6 +135,13 @@ export type IconName =
         <ng-container *ngSwitchCase="'book'">
           <path d="M4 4.5h5A2 2 0 0 1 11 6.5v9A1.5 1.5 0 0 0 9.5 14H4Z" />
           <path d="M16 4.5h-5A2 2 0 0 0 9 6.5v9A1.5 1.5 0 0 1 10.5 14H16Z" />
+        </ng-container>
+        <ng-container *ngSwitchCase="'logout'">
+          <path d="M8 4H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3" />
+          <path d="M13 6.5 16.5 10 13 13.5" /><path d="M7 10h9.3" />
+        </ng-container>
+        <ng-container *ngSwitchCase="'edit'">
+          <path d="M12.5 3.5 16.5 7.5 7 17H3v-4Z" /><path d="M11 5l4 4" />
         </ng-container>
       </ng-container>
     </svg>

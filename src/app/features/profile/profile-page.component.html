@@ -1,0 +1,184 @@
+<div class="profile">
+  <header class="profile__hero">
+    <h1 class="profile__title">{{ translate.dict().profilePage.title }}</h1>
+    <p class="profile__subtitle">{{ translate.dict().profilePage.subtitle }}</p>
+  </header>
+
+  <section class="profile__card profile__identity">
+    <span class="profile__avatar">{{ account.initials() }}</span>
+
+    <div class="profile__identity-info">
+      @if (!editingProfile()) {
+        <strong class="profile__name">{{ account.name() }}</strong>
+        <span class="profile__email">{{ account.email() }}</span>
+      } @else {
+        <div class="profile__edit-form">
+          <label class="profile__field">
+            <span>{{ translate.dict().profilePage.nameLabel }}</span>
+            <input type="text" [ngModel]="formName()" (ngModelChange)="formName.set($event)" />
+          </label>
+          <label class="profile__field">
+            <span>{{ translate.dict().profilePage.emailLabel }}</span>
+            <input type="email" [ngModel]="formEmail()" (ngModelChange)="formEmail.set($event)" />
+          </label>
+          <div class="profile__edit-actions">
+            <button type="button" class="profile__btn profile__btn--primary" (click)="saveProfile()">
+              {{ translate.dict().profilePage.save }}
+            </button>
+            <button type="button" class="profile__btn" (click)="cancelEditingProfile()">
+              {{ translate.dict().profilePage.cancel }}
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (!editingProfile()) {
+      <button type="button" class="profile__btn profile__edit-trigger" (click)="startEditingProfile()">
+        <app-icon name="edit" [size]="14" />
+        {{ translate.dict().profilePage.editProfile }}
+      </button>
+    }
+  </section>
+
+  <section class="profile__card">
+    <div class="profile__usage-head">
+      <h2>{{ translate.dict().profilePage.usageTitle }}</h2>
+      <span class="profile__renews">{{ renewsInLabel() }}</span>
+    </div>
+    <div class="profile__usage-stat">
+      <strong>{{ usageLabel() }}</strong>
+      <span>{{ translate.dict().profilePage.usageCharacters }}</span>
+    </div>
+    <div class="profile__usage-bar">
+      <div
+        class="profile__usage-fill"
+        [class.profile__usage-fill--warning]="account.usagePercent() > 85"
+        [style.width.%]="account.usagePercent()"
+      ></div>
+    </div>
+  </section>
+
+  <section class="profile__section">
+    <div class="profile__section-head">
+      <h2>{{ translate.dict().profilePage.planTitle }}</h2>
+      <div class="profile__cycle-toggle">
+        <button
+          type="button"
+          class="profile__cycle-btn"
+          [class.profile__cycle-btn--active]="account.billingCycle() === 'monthly'"
+          (click)="setBillingCycle('monthly')"
+        >
+          {{ translate.dict().profilePage.billingMonthly }}
+        </button>
+        <button
+          type="button"
+          class="profile__cycle-btn"
+          [class.profile__cycle-btn--active]="account.billingCycle() === 'yearly'"
+          (click)="setBillingCycle('yearly')"
+        >
+          {{ translate.dict().profilePage.billingYearly }}
+          <span class="profile__savings-badge">{{ translate.dict().profilePage.yearlySavings }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="profile__plans">
+      @for (plan of account.plans(); track plan.id) {
+        <div class="profile__plan" [class.profile__plan--current]="plan.id === account.planId()">
+          @if (plan.id === account.planId()) {
+            <span class="profile__plan-badge">{{ translate.dict().profilePage.currentPlanBadge }}</span>
+          }
+          <strong class="profile__plan-name">{{ plan.name }}</strong>
+          <span class="profile__plan-tagline">{{ plan.tagline }}</span>
+
+          <div class="profile__plan-price">
+            @if ((account.billingCycle() === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice) === 0) {
+              <strong>{{ translate.dict().profilePage.free }}</strong>
+            } @else {
+              <strong>
+                {{ formatPrice(account.billingCycle() === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice) }} zł
+              </strong>
+              <span>
+                {{
+                  account.billingCycle() === 'monthly'
+                    ? translate.dict().profilePage.perMonth
+                    : translate.dict().profilePage.perYear
+                }}
+              </span>
+            }
+          </div>
+
+          <ul class="profile__plan-features">
+            @for (feature of plan.features; track feature) {
+              <li>
+                <app-icon name="check" [size]="13" />
+                <span>{{ feature }}</span>
+              </li>
+            }
+          </ul>
+
+          <button
+            type="button"
+            class="profile__plan-btn"
+            [class.profile__plan-btn--current]="plan.id === account.planId()"
+            [disabled]="plan.id === account.planId()"
+            (click)="selectPlan(plan.id)"
+          >
+            {{ planButtonLabel(plan.id, plan.name) }}
+          </button>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="profile__section">
+    <div class="profile__section-head">
+      <h2>{{ translate.dict().profilePage.topUpTitle }}</h2>
+    </div>
+    <p class="profile__section-subtitle">{{ translate.dict().profilePage.topUpSubtitle }}</p>
+
+    @if (purchaseToast(); as chars) {
+      <div class="profile__toast">
+        <app-icon name="check" [size]="14" />
+        {{ translate.dict().profilePage.purchased.replace('{characters}', formatNumber(chars)) }}
+      </div>
+    }
+
+    <div class="profile__topups">
+      @for (pack of account.topUps(); track pack.id) {
+        <div class="profile__topup">
+          <strong class="profile__topup-characters">
+            {{ formatNumber(pack.characters) }} {{ translate.dict().profilePage.characters }}
+          </strong>
+          <span class="profile__topup-label">{{ pack.label }}</span>
+          <span class="profile__topup-price">{{ formatPrice(pack.price) }} zł</span>
+          <button type="button" class="profile__btn profile__btn--primary" (click)="buyPack(pack)">
+            {{ translate.dict().profilePage.buyPack }}
+          </button>
+        </div>
+      }
+    </div>
+
+    <div class="profile__history">
+      <h3>{{ translate.dict().profilePage.purchaseHistory }}</h3>
+      @if (account.purchases().length) {
+        <ul class="profile__history-list">
+          @for (purchase of account.purchases(); track purchase.id) {
+            <li>
+              <span>+{{ formatNumber(purchase.characters) }} {{ translate.dict().profilePage.characters }}</span>
+              <span class="profile__history-meta">{{ formatPrice(purchase.price) }} zł · {{ purchase.date }}</span>
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="profile__history-empty">{{ translate.dict().profilePage.noPurchases }}</p>
+      }
+    </div>
+  </section>
+
+  <button type="button" class="profile__signout">
+    <app-icon name="logout" [size]="14" />
+    {{ translate.dict().profilePage.signOut }}
+  </button>
+</div>
