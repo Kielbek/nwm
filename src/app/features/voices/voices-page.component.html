@@ -1,0 +1,43 @@
+<div class="voices">
+  <div class="voices__header">
+    <a class="voices__back" routerLink="/">
+      <app-icon name="chevron-right" [size]="14" class="voices__back-icon" />
+      {{ translate.dict().voicesPage.backToEditor }}
+    </a>
+    <h1 class="voices__title">{{ translate.dict().voicesPage.title }}</h1>
+    <p class="voices__subtitle">{{ translate.dict().voicesPage.subtitle }}</p>
+
+    <div class="voices__search">
+      <app-icon name="search" [size]="16" />
+      <input
+        type="text"
+        [placeholder]="translate.dict().voicesPage.searchPlaceholder"
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+      />
+    </div>
+  </div>
+
+  @if (filteredVoices().length) {
+    <div class="voices__grid">
+      @for (voice of filteredVoices(); track voice.id) {
+        <div
+          class="voices__card"
+          [class.voices__card--active]="voice.id === voiceLibrary.selectedVoiceId()"
+        >
+          @if (voice.id === voiceLibrary.selectedVoiceId()) {
+            <span class="voices__card-badge">{{ translate.dict().voicesPage.current }}</span>
+          }
+          <span class="voices__card-avatar" [style.background]="voice.avatarColor"></span>
+          <strong class="voices__card-name">{{ voice.name }}</strong>
+          <span class="voices__card-desc">{{ voice.description }}</span>
+          <button type="button" class="voices__card-btn" (click)="selectVoice(voice.id)">
+            {{ translate.dict().voicesPage.select }}
+          </button>
+        </div>
+      }
+    </div>
+  } @else {
+    <p class="voices__empty">{{ translate.dict().voicesPage.empty }}</p>
+  }
+</div>

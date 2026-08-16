@@ -16,6 +16,7 @@ export const pl: Dictionary = {
   },
   sidebar: {
     nav: 'Tekst na mowę',
+    voices: 'Głosy',
     closeMenu: 'Zamknij menu',
   },
   editor: {
@@ -25,6 +26,20 @@ export const pl: Dictionary = {
     generate: 'Generuj mowę',
     generating: 'Generowanie…',
     errorNoSpeechEngine: 'Silnik mowy jest niedostępny w tej przeglądarce.',
+  },
+  voiceDropdown: {
+    searchPlaceholder: 'Szukaj głosu...',
+    seeAll: 'Zobacz wszystkie głosy',
+    noResults: 'Brak głosów pasujących do wyszukiwania.',
+  },
+  voicesPage: {
+    title: 'Głosy',
+    subtitle: 'Przeglądaj i wybierz głos, który będzie czytał Twój tekst.',
+    searchPlaceholder: 'Szukaj po imieniu lub charakterze głosu...',
+    select: 'Wybierz',
+    current: 'Aktualny',
+    empty: 'Nie znaleziono głosów pasujących do wyszukiwania.',
+    backToEditor: 'Wróć do edytora',
   },
   tip: {
     title: 'Skrót klawiszowy',

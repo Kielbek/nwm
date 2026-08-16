@@ -61,23 +61,47 @@
       <span class="tts__field-label">{{ translate.dict().settings.voice }}</span>
       <app-dropdown #voiceDropdown>
         <button type="button" class="tts__select" dropdownTrigger>
-          <span class="tts__voice-avatar" [style.background]="selectedVoice().avatarColor"></span>
+          <span
+            class="tts__voice-avatar"
+            [style.background]="voiceLibrary.selectedVoice().avatarColor"
+          ></span>
           <span class="tts__select-copy">
-            <strong>{{ selectedVoice().name }}</strong>
-            <small>{{ selectedVoice().description }}</small>
+            <strong>{{ voiceLibrary.selectedVoice().name }}</strong>
+            <small>{{ voiceLibrary.selectedVoice().description }}</small>
           </span>
           <app-icon name="chevron-down" [size]="16" />
         </button>
-        <div dropdownPanel>
-          @for (voice of voices(); track voice.id) {
-            <button type="button" class="tts__option" (click)="selectVoice(voice, voiceDropdown)">
-              <span class="tts__voice-avatar" [style.background]="voice.avatarColor"></span>
-              <span class="tts__select-copy">
-                <strong>{{ voice.name }}</strong>
-                <small>{{ voice.description }}</small>
-              </span>
-            </button>
-          }
+        <div dropdownPanel class="tts__voice-panel">
+          <div class="tts__voice-search">
+            <app-icon name="search" [size]="14" />
+            <input
+              type="text"
+              [placeholder]="translate.dict().voiceDropdown.searchPlaceholder"
+              [ngModel]="voiceSearch()"
+              (ngModelChange)="voiceSearch.set($event)"
+              (click)="$event.stopPropagation()"
+            />
+          </div>
+          <div class="tts__voice-list">
+            @for (voice of filteredVoices(); track voice.id) {
+              <button type="button" class="tts__option" (click)="selectVoice(voice, voiceDropdown)">
+                <span class="tts__voice-avatar" [style.background]="voice.avatarColor"></span>
+                <span class="tts__select-copy">
+                  <strong>{{ voice.name }}</strong>
+                  <small>{{ voice.description }}</small>
+                </span>
+                @if (voice.id === voiceLibrary.selectedVoiceId()) {
+                  <app-icon name="check" [size]="15" class="tts__option-check" />
+                }
+              </button>
+            } @empty {
+              <p class="tts__voice-empty">{{ translate.dict().voiceDropdown.noResults }}</p>
+            }
+          </div>
+          <button type="button" class="tts__voice-see-all" (click)="browseAllVoices(voiceDropdown)">
+            <app-icon name="voices" [size]="15" />
+            {{ translate.dict().voiceDropdown.seeAll }}
+          </button>
         </div>
       </app-dropdown>
     </div>

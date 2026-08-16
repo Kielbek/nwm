@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { TranslateService } from '../../core/services/translate.service';
 
@@ -6,7 +7,7 @@ import { TranslateService } from '../../core/services/translate.service';
   selector: 'app-sidebar',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IconComponent],
+  imports: [IconComponent, RouterLink, RouterLinkActive],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',
 })

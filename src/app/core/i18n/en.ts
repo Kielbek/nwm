@@ -16,6 +16,7 @@ export const en: Dictionary = {
   },
   sidebar: {
     nav: 'Text to Speech',
+    voices: 'Voices',
     closeMenu: 'Close menu',
   },
   editor: {
@@ -24,6 +25,20 @@ export const en: Dictionary = {
     generate: 'Generate speech',
     generating: 'Generating…',
     errorNoSpeechEngine: 'The speech engine is unavailable in this browser.',
+  },
+  voiceDropdown: {
+    searchPlaceholder: 'Search voices...',
+    seeAll: 'See all voices',
+    noResults: 'No voices match your search.',
+  },
+  voicesPage: {
+    title: 'Voices',
+    subtitle: 'Browse and pick the voice that will read your text.',
+    searchPlaceholder: 'Search by name or voice character...',
+    select: 'Select',
+    current: 'Current',
+    empty: 'No voices match your search.',
+    backToEditor: 'Back to editor',
   },
   tip: {
     title: 'Keyboard shortcut',

@@ -29,6 +29,7 @@ export interface Dictionary {
   };
   sidebar: {
     nav: string;
+    voices: string;
     closeMenu: string;
   };
   editor: {
@@ -37,6 +38,20 @@ export interface Dictionary {
     generate: string;
     generating: string;
     errorNoSpeechEngine: string;
+  };
+  voiceDropdown: {
+    searchPlaceholder: string;
+    seeAll: string;
+    noResults: string;
+  };
+  voicesPage: {
+    title: string;
+    subtitle: string;
+    searchPlaceholder: string;
+    select: string;
+    current: string;
+    empty: string;
+    backToEditor: string;
   };
   tip: {
     title: string;

@@ -1,21 +1,15 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { IconComponent, IconName } from '../../shared/components/icon/icon.component';
 import { SliderComponent } from '../../shared/components/slider/slider.component';
 import { DropdownComponent } from '../../shared/components/dropdown/dropdown.component';
 import { TtsService } from '../../core/services/tts.service';
 import { TranslateService } from '../../core/services/translate.service';
+import { VoiceLibraryService } from '../../core/services/voice-library.service';
 import { OutputFormat } from '../../core/models/tts.models';
 
 const MAX_CHARACTERS = 5000;
-
-const VOICE_META = [
-  { id: 'marek', avatarColor: '#c7d2fe' },
-  { id: 'ania', avatarColor: '#fde68a' },
-  { id: 'kuba', avatarColor: '#bfdbfe' },
-  { id: 'zosia', avatarColor: '#fbcfe8' },
-  { id: 'tomasz', avatarColor: '#e7e5e4' },
-];
 
 const MODEL_META = [
   { id: 'expressive', badge: 'E' },
@@ -46,10 +40,6 @@ const STARTER_ICONS: IconName[] = [
   styleUrl: './text-to-speech.component.scss',
 })
 export class TextToSpeechComponent {
-  readonly voices = computed(() =>
-    VOICE_META.map((meta, i) => ({ ...meta, ...this.translate.dict().voices[i] }))
-  );
-
   readonly models = computed(() =>
     MODEL_META.map((meta, i) => ({ ...meta, ...this.translate.dict().models[i] }))
   );
@@ -64,7 +54,7 @@ export class TextToSpeechComponent {
 
   readonly text = signal('');
   readonly tipDismissed = signal(false);
-  readonly selectedVoiceId = signal(VOICE_META[0].id);
+  readonly voiceSearch = signal('');
   readonly selectedModelId = signal(MODEL_META[1].id);
   readonly outputFormat = signal<OutputFormat>('mp3-128');
   readonly speed = signal(1);
@@ -76,9 +66,17 @@ export class TextToSpeechComponent {
   readonly characterCount = computed(() => this.text().length);
   readonly maxCharacters = MAX_CHARACTERS;
 
-  readonly selectedVoice = computed(
-    () => this.voices().find((v) => v.id === this.selectedVoiceId()) ?? this.voices()[0]
-  );
+  readonly filteredVoices = computed(() => {
+    const query = this.voiceSearch().trim().toLowerCase();
+    const voices = this.voiceLibrary.voices();
+    if (!query) {
+      return voices;
+    }
+    return voices.filter(
+      (v) => v.name.toLowerCase().includes(query) || v.description.toLowerCase().includes(query)
+    );
+  });
+
   readonly selectedModel = computed(
     () => this.models().find((m) => m.id === this.selectedModelId()) ?? this.models()[0]
   );
@@ -87,15 +85,25 @@ export class TextToSpeechComponent {
       this.outputFormats().find((f) => f.id === this.outputFormat()) ?? this.outputFormats()[0]
   );
 
-  constructor(readonly ttsService: TtsService, readonly translate: TranslateService) {}
+  constructor(
+    readonly ttsService: TtsService,
+    readonly translate: TranslateService,
+    readonly voiceLibrary: VoiceLibraryService,
+    private readonly router: Router
+  ) {}
 
   applyStarterPrompt(prompt: { text: string }): void {
     this.text.set(prompt.text);
   }
 
   selectVoice(voice: { id: string }, dropdown: DropdownComponent): void {
-    this.selectedVoiceId.set(voice.id);
+    this.voiceLibrary.selectVoice(voice.id);
     dropdown.close();
+  }
+
+  browseAllVoices(dropdown: DropdownComponent): void {
+    dropdown.close();
+    this.router.navigateByUrl('/voices');
   }
 
   selectModel(model: { id: string }, dropdown: DropdownComponent): void {
@@ -123,7 +131,7 @@ export class TextToSpeechComponent {
       .synthesize({
         text: this.text(),
         settings: {
-          voiceId: this.selectedVoiceId(),
+          voiceId: this.voiceLibrary.selectedVoiceId(),
           modelId: this.selectedModelId(),
           speed: this.speed(),
           stability: this.stability(),
