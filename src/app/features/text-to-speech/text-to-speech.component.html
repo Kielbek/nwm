@@ -1,0 +1,184 @@
+<div class="tts">
+  <section class="tts__editor">
+    <textarea
+      class="tts__textarea"
+      placeholder="Zacznij pisać tutaj lub wklej dowolny tekst, który chcesz zamienić na realistyczną mowę..."
+      [maxlength]="maxCharacters"
+      [ngModel]="text()"
+      (ngModelChange)="text.set($event)"
+    ></textarea>
+
+    @if (!text()) {
+      <div class="tts__starters">
+        <span class="tts__starters-label">Zacznij od</span>
+        <div class="tts__starters-grid">
+          @for (prompt of starterPrompts; track prompt.label) {
+            <button type="button" class="tts__starter-chip" (click)="applyStarterPrompt(prompt)">
+              <app-icon [name]="prompt.icon" [size]="16" />
+              {{ prompt.label }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    <div class="tts__footer">
+      <span class="tts__char-count">{{ characterCount() }} / {{ maxCharacters }}</span>
+      <button
+        type="button"
+        class="tts__generate-btn"
+        [disabled]="!text().trim() || ttsService.isSynthesizing()"
+        (click)="generate()"
+      >
+        <app-icon name="play" [size]="15" />
+        {{ ttsService.isSynthesizing() ? 'Generowanie…' : 'Generuj mowę' }}
+      </button>
+    </div>
+
+    @if (ttsService.lastError()) {
+      <p class="tts__error">{{ ttsService.lastError() }}</p>
+    }
+  </section>
+
+  <aside class="tts__settings">
+    <div class="tts__promo">
+      <div class="tts__promo-icon">
+        <span class="tts__promo-badge">V3</span>
+      </div>
+      <div class="tts__promo-copy">
+        <strong>Wypróbuj Voice Design dla v3</strong>
+        <span>Twórz ekspresyjne głosy dla modelu Eleven v3 Text to Speech</span>
+      </div>
+      <button type="button" class="tts__promo-close" aria-label="Zamknij">
+        <app-icon name="close" [size]="14" />
+      </button>
+    </div>
+
+    <div class="tts__field">
+      <span class="tts__field-label">Głos</span>
+      <app-dropdown #voiceDropdown>
+        <button type="button" class="tts__select" dropdownTrigger>
+          <span class="tts__voice-avatar" [style.background]="selectedVoice().avatarColor"></span>
+          <span class="tts__select-copy">
+            <strong>{{ selectedVoice().name }}</strong>
+            <small>{{ selectedVoice().description }}</small>
+          </span>
+          <app-icon name="chevron-down" [size]="16" />
+        </button>
+        <div dropdownPanel>
+          @for (voice of voices; track voice.id) {
+            <button type="button" class="tts__option" (click)="selectVoice(voice, voiceDropdown)">
+              <span class="tts__voice-avatar" [style.background]="voice.avatarColor"></span>
+              <span class="tts__select-copy">
+                <strong>{{ voice.name }}</strong>
+                <small>{{ voice.description }}</small>
+              </span>
+            </button>
+          }
+        </div>
+      </app-dropdown>
+    </div>
+
+    <div class="tts__field">
+      <span class="tts__field-label">Model</span>
+      <app-dropdown #modelDropdown>
+        <button type="button" class="tts__select" dropdownTrigger>
+          <span class="tts__model-badge">{{ selectedModel().badge }}</span>
+          <span class="tts__select-copy">
+            <strong>{{ selectedModel().name }}</strong>
+          </span>
+          <app-icon name="chevron-down" [size]="16" />
+        </button>
+        <div dropdownPanel>
+          @for (model of models; track model.id) {
+            <button type="button" class="tts__option" (click)="selectModel(model, modelDropdown)">
+              <span class="tts__model-badge">{{ model.badge }}</span>
+              <span class="tts__select-copy">
+                <strong>{{ model.name }}</strong>
+              </span>
+            </button>
+          }
+        </div>
+      </app-dropdown>
+    </div>
+
+    <app-slider
+      label="Prędkość"
+      minLabel="Wolniej"
+      maxLabel="Szybciej"
+      [min]="0.5"
+      [max]="2"
+      [step]="0.05"
+      [value]="speed()"
+      (valueChange)="speed.set($event)"
+    />
+
+    <app-slider
+      label="Stabilność"
+      minLabel="Bardziej zmienne"
+      maxLabel="Bardziej stabilne"
+      [min]="0"
+      [max]="1"
+      [step]="0.01"
+      [value]="stability()"
+      (valueChange)="stability.set($event)"
+    />
+
+    <app-slider
+      label="Podobieństwo"
+      minLabel="Niski"
+      maxLabel="Wysoki"
+      [min]="0"
+      [max]="1"
+      [step]="0.01"
+      [value]="similarity()"
+      (valueChange)="similarity.set($event)"
+    />
+
+    <app-slider
+      label="Przesada w stylu"
+      minLabel="Brak"
+      maxLabel="Przesadzone"
+      [min]="0"
+      [max]="1"
+      [step]="0.01"
+      [value]="styleExaggeration()"
+      (valueChange)="styleExaggeration.set($event)"
+    />
+
+    <div class="tts__toggle-row">
+      <span class="tts__field-label">Nadpisanie języka</span>
+      <button
+        type="button"
+        class="tts__toggle"
+        [class.tts__toggle--on]="languageOverride()"
+        (click)="languageOverride.set(!languageOverride())"
+        role="switch"
+        [attr.aria-checked]="languageOverride()"
+      >
+        <span class="tts__toggle-knob"></span>
+      </button>
+    </div>
+
+    <div class="tts__field">
+      <span class="tts__field-label">Format wyjściowy</span>
+      <app-dropdown #formatDropdown>
+        <button type="button" class="tts__select tts__select--simple" dropdownTrigger>
+          <span class="tts__select-copy">
+            <strong>{{ selectedFormat().label }}</strong>
+          </span>
+          <app-icon name="chevron-down" [size]="16" />
+        </button>
+        <div dropdownPanel>
+          @for (format of outputFormats; track format.id) {
+            <button type="button" class="tts__option" (click)="selectFormat(format.id, formatDropdown)">
+              <span class="tts__select-copy">
+                <strong>{{ format.label }}</strong>
+              </span>
+            </button>
+          }
+        </div>
+      </app-dropdown>
+    </div>
+  </aside>
+</div>

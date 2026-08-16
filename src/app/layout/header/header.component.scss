@@ -1,0 +1,132 @@
+.header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 56px;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+  flex-shrink: 0;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 200px;
+  }
+
+  &__title {
+    font-size: 14.5px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  &__search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    max-width: 480px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg-hover);
+    color: var(--text-muted);
+    font-size: 13px;
+    cursor: text;
+
+    span {
+      flex: 1;
+    }
+
+    kbd {
+      font-family: inherit;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+  }
+
+  &__link {
+    border: none;
+    background: transparent;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 6px 4px;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--text-primary);
+    }
+
+    &--primary {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 7px;
+      background: var(--text-primary);
+      color: var(--bg-surface);
+
+      &:hover {
+        opacity: 0.85;
+      }
+    }
+  }
+
+  &__icon-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    &--dot::after {
+      content: '';
+      position: absolute;
+      top: 7px;
+      right: 7px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #3b82f6;
+      border: 1.5px solid var(--bg-surface);
+    }
+  }
+
+  &__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #a855f7);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+  }
+}

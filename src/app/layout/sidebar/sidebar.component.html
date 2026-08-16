@@ -1,0 +1,55 @@
+<aside class="sidebar">
+  <div class="sidebar__brand">
+    <span class="sidebar__brand-mark">II</span>
+    <span class="sidebar__brand-name">NWM</span>
+  </div>
+
+  <nav class="sidebar__nav">
+    @for (item of mainNav; track item.label) {
+      <button type="button" class="sidebar__item" [class.sidebar__item--active]="item.active">
+        <app-icon [name]="item.icon" [size]="18" />
+        <span>{{ item.label }}</span>
+      </button>
+    }
+  </nav>
+
+  <div class="sidebar__section">
+    <span class="sidebar__section-title">Przypięte</span>
+    <nav class="sidebar__nav">
+      @for (item of pinnedNav; track item.label) {
+        <button type="button" class="sidebar__item" [class.sidebar__item--active]="item.active">
+          <app-icon [name]="item.icon" [size]="18" />
+          <span>{{ item.label }}</span>
+        </button>
+      }
+    </nav>
+  </div>
+
+  <nav class="sidebar__nav">
+    @for (item of toolsNav; track item.label) {
+      <button type="button" class="sidebar__item" [class.sidebar__item--active]="item.active">
+        <app-icon [name]="item.icon" [size]="18" />
+        <span>{{ item.label }}</span>
+      </button>
+    }
+    <button type="button" class="sidebar__item">
+      <app-icon name="more" [size]="18" />
+      <span>Więcej narzędzi</span>
+    </button>
+  </nav>
+
+  <div class="sidebar__spacer"></div>
+
+  <div class="sidebar__invite">
+    <app-icon name="invite" [size]="18" />
+    <div class="sidebar__invite-copy">
+      <strong>Zaproś członków zespołu</strong>
+      <span>Zapraszaj swój zespół do współpracy i dziel się swoimi projektami.</span>
+    </div>
+  </div>
+
+  <button type="button" class="sidebar__upgrade">
+    <app-icon name="sparkle" [size]="16" />
+    Ulepsz
+  </button>
+</aside>

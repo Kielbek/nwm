@@ -1,0 +1,22 @@
+.dropdown {
+  position: relative;
+
+  &__trigger {
+    cursor: pointer;
+  }
+
+  &__panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: 0 12px 24px -8px rgb(0 0 0 / 0.18);
+    padding: 6px;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+}
