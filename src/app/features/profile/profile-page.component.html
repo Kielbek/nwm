@@ -83,9 +83,16 @@
       </div>
     </div>
 
-    <div class="profile__plans">
+    <app-carousel
+      [prevLabel]="translate.dict().profilePage.previousPlans"
+      [nextLabel]="translate.dict().profilePage.nextPlans"
+    >
       @for (plan of account.plans(); track plan.id) {
-        <div class="profile__plan" [class.profile__plan--current]="plan.id === account.planId()">
+        <div
+          class="profile__plan"
+          #carouselItem
+          [class.profile__plan--current]="plan.id === account.planId()"
+        >
           @if (plan.id === account.planId()) {
             <span class="profile__plan-badge">{{ translate.dict().profilePage.currentPlanBadge }}</span>
           }
@@ -129,7 +136,7 @@
           </button>
         </div>
       }
-    </div>
+    </app-carousel>
   </section>
 
   <section class="profile__section">

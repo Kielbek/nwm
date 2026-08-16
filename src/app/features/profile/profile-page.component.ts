@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../../shared/components/icon/icon.component';
+import { CarouselComponent } from '../../shared/components/carousel/carousel.component';
 import { AccountService, BillingCycle, PlanId } from '../../core/services/account.service';
 import { TranslateService } from '../../core/services/translate.service';
 
@@ -8,7 +9,7 @@ import { TranslateService } from '../../core/services/translate.service';
   selector: 'app-profile-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, IconComponent],
+  imports: [FormsModule, IconComponent, CarouselComponent],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.scss',
 })

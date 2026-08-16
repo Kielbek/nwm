@@ -276,10 +276,8 @@
     font-weight: 700;
   }
 
-  &__plans {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 16px;
+  app-carousel {
+    display: block;
     margin-top: 18px;
   }
 
@@ -287,6 +285,9 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    flex: 0 0 250px;
+    width: 250px;
+    scroll-snap-align: start;
     padding: 20px;
     border: 1px solid var(--border);
     border-radius: 16px;

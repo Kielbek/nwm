@@ -136,6 +136,8 @@ export interface Dictionary {
     usageCharacters: string;
     renewsIn: string;
     planTitle: string;
+    previousPlans: string;
+    nextPlans: string;
     billingMonthly: string;
     billingYearly: string;
     yearlySavings: string;

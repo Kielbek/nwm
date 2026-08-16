@@ -1,7 +1,7 @@
 import { Injectable, computed, signal } from '@angular/core';
 import { TranslateService } from './translate.service';
 
-export type PlanId = 'free' | 'pro' | 'premium';
+export type PlanId = 'free' | 'starter' | 'pro' | 'creator' | 'premium' | 'business';
 export type BillingCycle = 'monthly' | 'yearly';
 
 interface PlanMeta {
@@ -26,8 +26,11 @@ export interface Purchase {
 
 const PLAN_META: PlanMeta[] = [
   { id: 'free', monthlyPrice: 0, yearlyPrice: 0, characterLimit: 10_000 },
-  { id: 'pro', monthlyPrice: 49, yearlyPrice: 470, characterLimit: 300_000 },
-  { id: 'premium', monthlyPrice: 149, yearlyPrice: 1430, characterLimit: 1_500_000 },
+  { id: 'starter', monthlyPrice: 15, yearlyPrice: 144, characterLimit: 60_000 },
+  { id: 'pro', monthlyPrice: 39, yearlyPrice: 374, characterLimit: 300_000 },
+  { id: 'creator', monthlyPrice: 79, yearlyPrice: 758, characterLimit: 700_000 },
+  { id: 'premium', monthlyPrice: 129, yearlyPrice: 1238, characterLimit: 1_500_000 },
+  { id: 'business', monthlyPrice: 299, yearlyPrice: 2870, characterLimit: 5_000_000 },
 ];
 
 const TOP_UP_META: TopUpMeta[] = [
@@ -36,7 +39,7 @@ const TOP_UP_META: TopUpMeta[] = [
   { id: 'large', characters: 500_000, price: 129 },
 ];
 
-const PLAN_ORDER: PlanId[] = ['free', 'pro', 'premium'];
+const PLAN_ORDER: PlanId[] = ['free', 'starter', 'pro', 'creator', 'premium', 'business'];
 
 const STORAGE_KEYS = {
   name: 'nwm-account-name',

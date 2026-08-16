@@ -211,6 +211,8 @@ export const pl: Dictionary = {
     usageCharacters: 'znaków',
     renewsIn: 'Odnawia się za {days} dni',
     planTitle: 'Twój plan',
+    previousPlans: 'Poprzednie plany',
+    nextPlans: 'Następne plany',
     billingMonthly: 'Miesięcznie',
     billingYearly: 'Rocznie',
     yearlySavings: 'Oszczędź 20%',
@@ -243,6 +245,16 @@ export const pl: Dictionary = {
       ],
     },
     {
+      name: 'Starter',
+      tagline: 'Dla pierwszych projektów',
+      features: [
+        '60 000 znaków miesięcznie',
+        '5 głosów',
+        'Formaty MP3 i WAV',
+        'Modele Standard i Szybki',
+      ],
+    },
+    {
       name: 'Pro',
       tagline: 'Dla twórców i freelancerów',
       features: [
@@ -254,14 +266,35 @@ export const pl: Dictionary = {
       ],
     },
     {
+      name: 'Kreator',
+      tagline: 'Dla aktywnych twórców treści',
+      features: [
+        '700 000 znaków miesięcznie',
+        'Wszystko z planu Pro',
+        'Wyższy limit wiadomości w panelu Zapytaj',
+        'Wczesny dostęp do nowych głosów',
+      ],
+    },
+    {
       name: 'Premium',
       tagline: 'Dla zespołów i firm',
       features: [
         '1 500 000 znaków miesięcznie',
-        'Wszystko z planu Pro',
+        'Wszystko z planu Kreator',
         'Panel Zapytaj bez limitu wiadomości',
         'Dedykowane wsparcie',
         'Priorytetowy dostęp do nowości',
+      ],
+    },
+    {
+      name: 'Business',
+      tagline: 'Dla większych organizacji',
+      features: [
+        '5 000 000 znaków miesięcznie',
+        'Wszystko z planu Premium',
+        'Gwarancja dostępności (SLA)',
+        'Dedykowany opiekun konta',
+        'Płatność przelewem i faktura VAT',
       ],
     },
   ],

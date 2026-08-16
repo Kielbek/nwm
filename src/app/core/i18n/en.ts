@@ -208,6 +208,8 @@ export const en: Dictionary = {
     usageCharacters: 'characters',
     renewsIn: 'Renews in {days} days',
     planTitle: 'Your plan',
+    previousPlans: 'Previous plans',
+    nextPlans: 'Next plans',
     billingMonthly: 'Monthly',
     billingYearly: 'Yearly',
     yearlySavings: 'Save 20%',
@@ -240,6 +242,16 @@ export const en: Dictionary = {
       ],
     },
     {
+      name: 'Starter',
+      tagline: 'For your first projects',
+      features: [
+        '60,000 characters per month',
+        '5 voices',
+        'MP3 and WAV formats',
+        'Standard and Fast models',
+      ],
+    },
+    {
       name: 'Pro',
       tagline: 'For creators and freelancers',
       features: [
@@ -251,14 +263,35 @@ export const en: Dictionary = {
       ],
     },
     {
+      name: 'Creator',
+      tagline: 'For active content creators',
+      features: [
+        '700,000 characters per month',
+        'Everything in Pro',
+        'Higher Ask panel message limit',
+        'Early access to new voices',
+      ],
+    },
+    {
       name: 'Premium',
       tagline: 'For teams and businesses',
       features: [
         '1,500,000 characters per month',
-        'Everything in Pro',
+        'Everything in Creator',
         'Unlimited Ask panel messages',
         'Dedicated support',
         'Priority access to new features',
+      ],
+    },
+    {
+      name: 'Business',
+      tagline: 'For larger organizations',
+      features: [
+        '5,000,000 characters per month',
+        'Everything in Premium',
+        'Uptime SLA',
+        'Dedicated account manager',
+        'Invoice billing and bank transfer',
       ],
     },
   ],
