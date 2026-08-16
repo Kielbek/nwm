@@ -1,3 +1,5 @@
+import { IconName } from '../../shared/components/icon/icon.component';
+
 export interface StarterCopy {
   label: string;
   text: string;
@@ -28,6 +30,22 @@ export interface PlanCopy {
 
 export interface TopUpCopy {
   label: string;
+}
+
+export interface StatCopy {
+  value: string;
+  label: string;
+}
+
+export interface FeatureCopy {
+  icon: IconName;
+  title: string;
+  description: string;
+}
+
+export interface StepCopy {
+  title: string;
+  description: string;
 }
 
 export interface Dictionary {
@@ -304,6 +322,47 @@ export interface Dictionary {
     copiedLabel: string;
     close: string;
   };
+  landing: {
+    navFeatures: string;
+    navHowItWorks: string;
+    navVoices: string;
+    navPricing: string;
+    navReviews: string;
+    navOpenApp: string;
+    navTryFree: string;
+    heroBadge: string;
+    heroTitleLine1: string;
+    heroTitleLine2: string;
+    heroSubtitle: string;
+    heroCtaPrimary: string;
+    heroCtaSecondary: string;
+    heroTrust: string;
+    statsTitle: string;
+    featuresTitle: string;
+    featuresSubtitle: string;
+    howItWorksTitle: string;
+    howItWorksSubtitle: string;
+    voicesTitle: string;
+    voicesSubtitle: string;
+    voicesCta: string;
+    testimonialsTitle: string;
+    testimonialsSubtitle: string;
+    pricingTitle: string;
+    pricingSubtitle: string;
+    pricingCta: string;
+    pricingMostPopular: string;
+    finalCtaTitle: string;
+    finalCtaSubtitle: string;
+    finalCtaButton: string;
+    footerTagline: string;
+    footerProductTitle: string;
+    footerCompanyTitle: string;
+    footerLegalTitle: string;
+    footerCopyright: string;
+  };
+  landingStats: StatCopy[];
+  landingFeatures: FeatureCopy[];
+  landingSteps: StepCopy[];
   starters: StarterCopy[];
   voices: VoiceCopy[];
   models: ModelCopy[];

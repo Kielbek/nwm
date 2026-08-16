@@ -38,7 +38,7 @@ export class VoicesPageComponent implements OnDestroy {
   selectVoice(id: string): void {
     this.voicePreview.stop();
     this.voiceLibrary.selectVoice(id);
-    this.router.navigateByUrl('/');
+    this.router.navigateByUrl('/app');
   }
 
   togglePreview(voice: PreviewableVoice, event: Event): void {

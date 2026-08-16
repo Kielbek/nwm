@@ -38,7 +38,7 @@ export class HistoryPageComponent {
 
   reuse(entry: GenerationEntry): void {
     this.history.reuse(entry);
-    this.router.navigateByUrl('/');
+    this.router.navigateByUrl('/app');
   }
 
   remove(id: string): void {

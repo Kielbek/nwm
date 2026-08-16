@@ -120,7 +120,7 @@ export class TextToSpeechComponent {
   browseAllVoices(dropdown: DropdownComponent): void {
     this.voicePreview.stop();
     dropdown.close();
-    this.router.navigateByUrl('/voices');
+    this.router.navigateByUrl('/app/voices');
   }
 
   selectModel(model: { id: string }, dropdown: DropdownComponent): void {

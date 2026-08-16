@@ -46,13 +46,13 @@ export class CommandPaletteComponent {
     const dict = this.translate.dict();
 
     const allPages: PaletteItem[] = [
-      { icon: 'text-to-speech', label: dict.sidebar.nav, action: () => this.goTo('/') },
-      { icon: 'voices', label: dict.sidebar.voices, action: () => this.goTo('/voices') },
-      { icon: 'folder', label: dict.sidebar.history, action: () => this.goTo('/history') },
-      { icon: 'star', label: dict.header.feedback, action: () => this.goTo('/feedback') },
-      { icon: 'book', label: dict.header.docs, action: () => this.goTo('/docs') },
-      { icon: 'edit', label: dict.header.profile, action: () => this.goTo('/profile') },
-      { icon: 'settings', label: dict.sidebar.settings, action: () => this.goTo('/settings') },
+      { icon: 'text-to-speech', label: dict.sidebar.nav, action: () => this.goTo('/app') },
+      { icon: 'voices', label: dict.sidebar.voices, action: () => this.goTo('/app/voices') },
+      { icon: 'folder', label: dict.sidebar.history, action: () => this.goTo('/app/history') },
+      { icon: 'star', label: dict.header.feedback, action: () => this.goTo('/app/feedback') },
+      { icon: 'book', label: dict.header.docs, action: () => this.goTo('/app/docs') },
+      { icon: 'edit', label: dict.header.profile, action: () => this.goTo('/app/profile') },
+      { icon: 'settings', label: dict.sidebar.settings, action: () => this.goTo('/app/settings') },
     ];
     const pages = allPages.filter((item) => !q || item.label.toLowerCase().includes(q));
 
@@ -188,13 +188,13 @@ export class CommandPaletteComponent {
   }
 
   private goToDoc(articleId: string): void {
-    this.router.navigate(['/docs'], { fragment: articleId });
+    this.router.navigate(['/app/docs'], { fragment: articleId });
     this.palette.close();
   }
 
   private selectVoice(voiceId: string): void {
     this.voiceLibrary.selectVoice(voiceId);
-    this.router.navigateByUrl('/');
+    this.router.navigateByUrl('/app');
     this.palette.close();
   }
 }

@@ -1,23 +1,7 @@
-<div class="app-shell">
-  <div
-    class="app-shell__progress"
-    [class.app-shell__progress--loading]="progressState() === 'loading'"
-    [class.app-shell__progress--finishing]="progressState() === 'finishing'"
-  ></div>
-  @if (isMobile() && (sidebarOpen() || askOpen())) {
-    <div class="app-shell__backdrop" (click)="closeSidebar(); closeAsk()"></div>
-  }
-  <app-sidebar [open]="sidebarOpen()" [overlay]="isMobile()" (closeRequested)="closeSidebar()" />
-  <div class="app-shell__main">
-    <app-header
-      [askOpen]="askOpen()"
-      (toggleSidebar)="toggleSidebar()"
-      (toggleAsk)="toggleAsk()"
-    />
-    <router-outlet></router-outlet>
-  </div>
-  <app-ask-panel [open]="askOpen()" [overlay]="isMobile()" (closeRequested)="closeAsk()" />
-  <app-cookie-banner />
-  <app-command-palette />
-  <app-invite-modal />
-</div>
+<div
+  class="app-progress"
+  [class.app-progress--loading]="progressState() === 'loading'"
+  [class.app-progress--finishing]="progressState() === 'finishing'"
+></div>
+<router-outlet></router-outlet>
+<app-cookie-banner />

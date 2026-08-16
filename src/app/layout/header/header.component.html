@@ -20,14 +20,14 @@
   <div class="header__right">
     <a
       class="header__link header__link--secondary"
-      routerLink="/feedback"
+      routerLink="/app/feedback"
       routerLinkActive="header__link--active-route"
     >
       {{ translate.dict().header.feedback }}
     </a>
     <a
       class="header__link header__link--secondary"
-      routerLink="/docs"
+      routerLink="/app/docs"
       routerLinkActive="header__link--active-route"
     >
       {{ translate.dict().header.docs }}
@@ -113,7 +113,7 @@
 
     <a
       class="header__icon-btn header__icon-btn--secondary"
-      routerLink="/history"
+      routerLink="/app/history"
       routerLinkActive="header__icon-btn--active"
       [attr.aria-label]="translate.dict().sidebar.history"
     >
@@ -178,16 +178,16 @@
       <div dropdownPanel class="header__menu">
         <a
           class="header__menu-item"
-          routerLink="/profile"
+          routerLink="/app/profile"
           (click)="accountDropdown.close()"
         >
           <app-icon name="edit" [size]="15" />
           <span class="header__menu-item-label">{{ translate.dict().header.profile }}</span>
         </a>
-        <button type="button" class="header__menu-item" (click)="accountDropdown.close()">
+        <a class="header__menu-item" routerLink="/" (click)="accountDropdown.close()">
           <app-icon name="logout" [size]="15" />
           <span class="header__menu-item-label">{{ translate.dict().header.signOut }}</span>
-        </button>
+        </a>
       </div>
     </app-dropdown>
   </div>

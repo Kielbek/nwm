@@ -83,7 +83,7 @@ export class NotificationsService {
           .replace('{percent}', String(usagePercent))
           .replace('{plan}', this.account.currentPlan().name),
         time: dict.justNow,
-        link: '/profile',
+        link: '/app/profile',
       });
     }
 
@@ -97,7 +97,7 @@ export class NotificationsService {
           .replace('{plan}', this.account.currentPlan().name)
           .replace('{days}', String(renewalDays)),
         time: dict.justNow,
-        link: '/profile',
+        link: '/app/profile',
       });
     }
 
@@ -115,7 +115,7 @@ export class NotificationsService {
         title: dict.newVoiceTitle,
         body: dict.newVoiceBody,
         time: dict.newVoiceTime,
-        link: '/voices',
+        link: '/app/voices',
       },
       {
         id: 'tip',

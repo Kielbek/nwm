@@ -19,25 +19,25 @@
   <nav class="sidebar__nav">
     <a
       class="sidebar__item"
-      routerLink="/"
+      routerLink="/app"
       routerLinkActive="sidebar__item--active"
       [routerLinkActiveOptions]="{ exact: true }"
     >
       <app-icon name="text-to-speech" [size]="18" />
       <span>{{ translate.dict().sidebar.nav }}</span>
     </a>
-    <a class="sidebar__item" routerLink="/voices" routerLinkActive="sidebar__item--active">
+    <a class="sidebar__item" routerLink="/app/voices" routerLinkActive="sidebar__item--active">
       <app-icon name="voices" [size]="18" />
       <span>{{ translate.dict().sidebar.voices }}</span>
     </a>
-    <a class="sidebar__item" routerLink="/history" routerLinkActive="sidebar__item--active">
+    <a class="sidebar__item" routerLink="/app/history" routerLinkActive="sidebar__item--active">
       <app-icon name="folder" [size]="18" />
       <span>{{ translate.dict().sidebar.history }}</span>
     </a>
   </nav>
 
   <nav class="sidebar__nav sidebar__nav--bottom">
-    <a class="sidebar__item" routerLink="/settings" routerLinkActive="sidebar__item--active">
+    <a class="sidebar__item" routerLink="/app/settings" routerLinkActive="sidebar__item--active">
       <app-icon name="settings" [size]="18" />
       <span>{{ translate.dict().sidebar.settings }}</span>
     </a>

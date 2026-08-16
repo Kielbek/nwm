@@ -1,0 +1,276 @@
+<div class="landing">
+  <nav class="landing__nav">
+    <a class="landing__logo" routerLink="/">
+      <span class="landing__logo-mark">
+        <app-icon name="text-to-speech" [size]="14" />
+      </span>
+      NWM
+    </a>
+
+    <div class="landing__nav-links">
+      <a href="#features" (click)="scrollToId('features', $event)">{{ translate.dict().landing.navFeatures }}</a>
+      <a href="#how-it-works" (click)="scrollToId('how-it-works', $event)">{{ translate.dict().landing.navHowItWorks }}</a>
+      <a href="#voices" (click)="scrollToId('voices', $event)">{{ translate.dict().landing.navVoices }}</a>
+      <a href="#pricing" (click)="scrollToId('pricing', $event)">{{ translate.dict().landing.navPricing }}</a>
+      <a href="#reviews" (click)="scrollToId('reviews', $event)">{{ translate.dict().landing.navReviews }}</a>
+    </div>
+
+    <div class="landing__nav-actions">
+      <div class="landing__lang-toggle">
+        <button type="button" [class.landing__lang-btn--active]="translate.lang() === 'pl'" class="landing__lang-btn" (click)="setLang('pl')">PL</button>
+        <button type="button" [class.landing__lang-btn--active]="translate.lang() === 'en'" class="landing__lang-btn" (click)="setLang('en')">EN</button>
+      </div>
+      <button
+        type="button"
+        class="landing__icon-btn"
+        [attr.aria-label]="translate.dict().header.theme"
+        (click)="setTheme(theme.mode() === 'dark' ? 'light' : 'dark')"
+      >
+        <app-icon [name]="theme.mode() === 'dark' ? 'moon' : 'sun'" [size]="17" />
+      </button>
+      <a class="landing__nav-link" routerLink="/app">{{ translate.dict().landing.navOpenApp }}</a>
+      <a class="landing__nav-cta" routerLink="/app">{{ translate.dict().landing.navTryFree }}</a>
+    </div>
+  </nav>
+
+  <section class="landing__hero">
+    <div class="landing__hero-content">
+      <span class="landing__badge">
+        <app-icon name="sparkle" [size]="12" />
+        {{ translate.dict().landing.heroBadge }}
+      </span>
+      <h1 class="landing__hero-title">
+        {{ translate.dict().landing.heroTitleLine1 }}
+        <span class="landing__hero-title-accent">{{ translate.dict().landing.heroTitleLine2 }}</span>
+      </h1>
+      <p class="landing__hero-subtitle">{{ translate.dict().landing.heroSubtitle }}</p>
+      <div class="landing__hero-cta">
+        <a class="landing__btn landing__btn--primary" routerLink="/app">
+          <app-icon name="play" [size]="14" />
+          {{ translate.dict().landing.heroCtaPrimary }}
+        </a>
+        <a class="landing__btn" href="#how-it-works" (click)="scrollToId('how-it-works', $event)">
+          {{ translate.dict().landing.heroCtaSecondary }}
+        </a>
+      </div>
+      <span class="landing__hero-trust">{{ translate.dict().landing.heroTrust }}</span>
+    </div>
+
+    <div class="landing__hero-visual">
+      <div class="landing__mock">
+        <div class="landing__mock-head">
+          <span class="landing__mock-dot"></span>
+          <span class="landing__mock-dot"></span>
+          <span class="landing__mock-dot"></span>
+          <span class="landing__mock-title">{{ translate.dict().header.pageTitle }}</span>
+        </div>
+        <div class="landing__mock-voice">
+          <span class="landing__mock-avatar"></span>
+          <div class="landing__mock-voice-info">
+            <span class="landing__mock-voice-name">{{ voiceLibrary.voices()[0].name }}</span>
+            <span class="landing__mock-voice-desc">{{ voiceLibrary.voices()[0].description }}</span>
+          </div>
+        </div>
+        <div class="landing__mock-lines">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="landing__mock-wave">
+          @for (bar of waveformBars; track bar) {
+            <span class="landing__mock-wave-bar" [style.--i]="bar"></span>
+          }
+        </div>
+        <div class="landing__mock-btn">
+          <app-icon name="play" [size]="12" />
+          {{ translate.dict().editor.generate }}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing__stats" #reveal>
+    <span class="landing__stats-title">{{ translate.dict().landing.statsTitle }}</span>
+    <div class="landing__stats-grid">
+      @for (stat of translate.dict().landingStats; track stat.label) {
+        <div class="landing__stat">
+          <strong #statValue>{{ stat.value }}</strong>
+          <span>{{ stat.label }}</span>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="landing__features" id="features">
+    <header class="landing__section-head" #reveal>
+      <h2>{{ translate.dict().landing.featuresTitle }}</h2>
+      <p>{{ translate.dict().landing.featuresSubtitle }}</p>
+    </header>
+    <div class="landing__features-grid">
+      @for (feature of translate.dict().landingFeatures; track feature.title) {
+        <div class="landing__feature-card" #reveal>
+          <span class="landing__feature-icon">
+            <app-icon [name]="feature.icon" [size]="18" />
+          </span>
+          <strong>{{ feature.title }}</strong>
+          <p>{{ feature.description }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="landing__how" id="how-it-works">
+    <header class="landing__section-head" #reveal>
+      <h2>{{ translate.dict().landing.howItWorksTitle }}</h2>
+      <p>{{ translate.dict().landing.howItWorksSubtitle }}</p>
+    </header>
+    <div class="landing__steps">
+      @for (step of translate.dict().landingSteps; track step.title; let i = $index) {
+        <div class="landing__step" #reveal>
+          <span class="landing__step-number">{{ i + 1 }}</span>
+          <strong>{{ step.title }}</strong>
+          <p>{{ step.description }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="landing__voices" id="voices">
+    <header class="landing__section-head" #reveal>
+      <h2>{{ translate.dict().landing.voicesTitle }}</h2>
+      <p>{{ translate.dict().landing.voicesSubtitle }}</p>
+    </header>
+
+    <app-carousel class="landing__carousel" #reveal>
+      @for (voice of voiceLibrary.voices(); track voice.id) {
+        <div class="landing__voice-card" #carouselItem>
+          <span class="landing__voice-avatar" [style.background]="voice.avatarColor"></span>
+          <strong>{{ voice.name }}</strong>
+          <p>{{ voice.description }}</p>
+          <button type="button" class="landing__voice-play" (click)="togglePreview(voice, $event)">
+            <app-icon [name]="voicePreview.playingVoiceId() === voice.id ? 'pause' : 'play'" [size]="13" />
+            {{
+              voicePreview.playingVoiceId() === voice.id
+                ? translate.dict().voiceDropdown.stopPreview
+                : translate.dict().voiceDropdown.preview
+            }}
+          </button>
+        </div>
+      }
+    </app-carousel>
+
+    <a class="landing__link-cta" routerLink="/app/voices">
+      {{ translate.dict().landing.voicesCta }}
+      <app-icon name="chevron-right" [size]="14" />
+    </a>
+  </section>
+
+  <section class="landing__testimonials" id="reviews">
+    <header class="landing__section-head" #reveal>
+      <h2>{{ translate.dict().landing.testimonialsTitle }}</h2>
+      <p>{{ translate.dict().landing.testimonialsSubtitle }}</p>
+    </header>
+
+    <app-carousel class="landing__carousel" #reveal>
+      @for (t of feedback.testimonials(); track t.id) {
+        <div class="landing__testimonial-card" #carouselItem>
+          <app-star-rating [value]="t.rating" [size]="14" />
+          <p class="landing__testimonial-quote">{{ t.quote }}</p>
+          <div class="landing__testimonial-author">
+            <span class="landing__testimonial-avatar" [style.background]="t.avatarColor"></span>
+            <div>
+              <strong>{{ t.name }}</strong>
+              <span>{{ t.role }}</span>
+            </div>
+          </div>
+        </div>
+      }
+    </app-carousel>
+  </section>
+
+  <section class="landing__pricing" id="pricing">
+    <header class="landing__section-head" #reveal>
+      <h2>{{ translate.dict().landing.pricingTitle }}</h2>
+      <p>{{ translate.dict().landing.pricingSubtitle }}</p>
+    </header>
+
+    <div class="landing__pricing-grid">
+      @for (plan of featuredPlans; track plan.id; let i = $index) {
+        <div class="landing__plan-card" [class.landing__plan-card--featured]="i === 1" #reveal>
+          @if (i === 1) {
+            <span class="landing__plan-badge">{{ translate.dict().landing.pricingMostPopular }}</span>
+          }
+          <strong class="landing__plan-name">{{ plan.name }}</strong>
+          <span class="landing__plan-tagline">{{ plan.tagline }}</span>
+          <div class="landing__plan-price">
+            @if (plan.monthlyPrice === 0) {
+              <strong>{{ translate.dict().profilePage.free }}</strong>
+            } @else {
+              <strong>{{ plan.monthlyPrice }} zł</strong>
+              <span>{{ translate.dict().profilePage.perMonth }}</span>
+            }
+          </div>
+          <ul class="landing__plan-features">
+            @for (feature of plan.features.slice(0, 4); track feature) {
+              <li>
+                <app-icon name="check" [size]="13" />
+                {{ feature }}
+              </li>
+            }
+          </ul>
+          <a class="landing__btn landing__btn--primary" routerLink="/app/profile">
+            {{ translate.dict().profilePage.choosePlan }}
+          </a>
+        </div>
+      }
+    </div>
+
+    <a class="landing__link-cta" routerLink="/app/profile">
+      {{ translate.dict().landing.pricingCta }}
+      <app-icon name="chevron-right" [size]="14" />
+    </a>
+  </section>
+
+  <section class="landing__final-cta" #reveal>
+    <h2>{{ translate.dict().landing.finalCtaTitle }}</h2>
+    <p>{{ translate.dict().landing.finalCtaSubtitle }}</p>
+    <a class="landing__btn landing__btn--primary landing__btn--large" routerLink="/app">
+      {{ translate.dict().landing.finalCtaButton }}
+    </a>
+  </section>
+
+  <footer class="landing__footer">
+    <div class="landing__footer-top">
+      <div class="landing__footer-brand">
+        <a class="landing__logo" routerLink="/">
+          <span class="landing__logo-mark">
+            <app-icon name="text-to-speech" [size]="14" />
+          </span>
+          NWM
+        </a>
+        <p>{{ translate.dict().landing.footerTagline }}</p>
+      </div>
+
+      <div class="landing__footer-col">
+        <strong>{{ translate.dict().landing.footerProductTitle }}</strong>
+        <a href="#features" (click)="scrollToId('features', $event)">{{ translate.dict().landing.navFeatures }}</a>
+        <a href="#pricing" (click)="scrollToId('pricing', $event)">{{ translate.dict().landing.navPricing }}</a>
+        <a routerLink="/app/voices">{{ translate.dict().landing.navVoices }}</a>
+        <a routerLink="/app/docs">{{ translate.dict().header.docs }}</a>
+      </div>
+
+      <div class="landing__footer-col">
+        <strong>{{ translate.dict().landing.footerCompanyTitle }}</strong>
+        <a routerLink="/app/feedback">{{ translate.dict().header.feedback }}</a>
+        <a routerLink="/app/settings">{{ translate.dict().sidebar.settings }}</a>
+      </div>
+
+      <div class="landing__footer-col">
+        <strong>{{ translate.dict().landing.footerLegalTitle }}</strong>
+        <a routerLink="/app/docs">{{ translate.dict().cookieBanner.policyLink }}</a>
+      </div>
+    </div>
+
+    <div class="landing__footer-bottom">
+      <span>{{ translate.dict().landing.footerCopyright.replace('{year}', currentYear.toString()) }}</span>
+    </div>
+  </footer>
+</div>
