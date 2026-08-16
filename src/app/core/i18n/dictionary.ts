@@ -114,6 +114,17 @@ export interface Dictionary {
     current: string;
     empty: string;
     backToEditor: string;
+    genderLabel: string;
+    genderAll: string;
+    genderMale: string;
+    genderFemale: string;
+    toneLabel: string;
+    toneAll: string;
+    toneConfident: string;
+    toneCalm: string;
+    toneEnergetic: string;
+    toneWarm: string;
+    toneNeutral: string;
   };
   tip: {
     title: string;

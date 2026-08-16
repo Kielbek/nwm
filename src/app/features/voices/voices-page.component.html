@@ -1,20 +1,83 @@
 <div class="voices">
-  <div class="voices__header">
-    <a class="voices__back" routerLink="/app">
-      <app-icon name="chevron-right" [size]="14" class="voices__back-icon" />
-      {{ translate.dict().voicesPage.backToEditor }}
-    </a>
-    <h1 class="voices__title">{{ translate.dict().voicesPage.title }}</h1>
-    <p class="voices__subtitle">{{ translate.dict().voicesPage.subtitle }}</p>
+  <div class="voices__hero">
+    <div class="voices__hero-decor" aria-hidden="true">
+      <span class="voices__orb voices__orb--a"></span>
+      <span class="voices__orb voices__orb--b"></span>
+    </div>
 
-    <div class="voices__search">
-      <app-icon name="search" [size]="16" />
-      <input
-        type="text"
-        [placeholder]="translate.dict().voicesPage.searchPlaceholder"
-        [ngModel]="search()"
-        (ngModelChange)="search.set($event)"
-      />
+    <div class="voices__hero-content">
+      <a class="voices__back" routerLink="/app">
+        <app-icon name="chevron-right" [size]="14" class="voices__back-icon" />
+        {{ translate.dict().voicesPage.backToEditor }}
+      </a>
+      <h1 class="voices__title">{{ translate.dict().voicesPage.title }}</h1>
+      <p class="voices__subtitle">{{ translate.dict().voicesPage.subtitle }}</p>
+
+      <div class="voices__search">
+        <app-icon name="search" [size]="16" />
+        <input
+          type="text"
+          [placeholder]="translate.dict().voicesPage.searchPlaceholder"
+          [ngModel]="search()"
+          (ngModelChange)="search.set($event)"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div class="voices__filters">
+    <div class="voices__filter-group">
+      <span class="voices__filter-label">{{ translate.dict().voicesPage.genderLabel }}</span>
+      <div class="voices__chips">
+        <button
+          type="button"
+          class="voices__chip"
+          [class.voices__chip--active]="genderFilter() === 'all'"
+          (click)="setGenderFilter('all')"
+        >
+          {{ translate.dict().voicesPage.genderAll }}
+        </button>
+        <button
+          type="button"
+          class="voices__chip"
+          [class.voices__chip--active]="genderFilter() === 'male'"
+          (click)="setGenderFilter('male')"
+        >
+          {{ translate.dict().voicesPage.genderMale }}
+        </button>
+        <button
+          type="button"
+          class="voices__chip"
+          [class.voices__chip--active]="genderFilter() === 'female'"
+          (click)="setGenderFilter('female')"
+        >
+          {{ translate.dict().voicesPage.genderFemale }}
+        </button>
+      </div>
+    </div>
+
+    <div class="voices__filter-group">
+      <span class="voices__filter-label">{{ translate.dict().voicesPage.toneLabel }}</span>
+      <div class="voices__chips">
+        <button
+          type="button"
+          class="voices__chip"
+          [class.voices__chip--active]="toneFilter() === 'all'"
+          (click)="setToneFilter('all')"
+        >
+          {{ translate.dict().voicesPage.toneAll }}
+        </button>
+        @for (tone of toneOptions; track tone) {
+          <button
+            type="button"
+            class="voices__chip"
+            [class.voices__chip--active]="toneFilter() === tone"
+            (click)="setToneFilter(tone)"
+          >
+            {{ toneLabel(tone) }}
+          </button>
+        }
+      </div>
     </div>
   </div>
 
@@ -26,7 +89,9 @@
           [class.voices__card--active]="voice.id === voiceLibrary.selectedVoiceId()"
         >
           <div class="voices__card-top">
-            <span class="voices__card-avatar" [style.background]="voice.avatarColor"></span>
+            <span class="voices__card-avatar" [style.background]="voice.avatarColor">
+              {{ initials(voice.name) }}
+            </span>
             <div class="voices__card-top-right">
               @if (voice.id === voiceLibrary.selectedVoiceId()) {
                 <span class="voices__card-badge">{{ translate.dict().voicesPage.current }}</span>
@@ -49,8 +114,26 @@
               </button>
             </div>
           </div>
+
           <strong class="voices__card-name">{{ voice.name }}</strong>
           <span class="voices__card-desc">{{ voice.description }}</span>
+
+          <div class="voices__card-tags">
+            <span class="voices__tag">
+              {{ voice.gender === 'female' ? translate.dict().voicesPage.genderFemale : translate.dict().voicesPage.genderMale }}
+            </span>
+            <span class="voices__tag voices__tag--tone">{{ toneLabel(voice.tone) }}</span>
+          </div>
+
+          <div
+            class="voices__waveform"
+            [class.voices__waveform--playing]="voicePreview.playingVoiceId() === voice.id"
+          >
+            @for (bar of waveformBars; track bar) {
+              <span class="voices__wave-bar" [style.--i]="bar"></span>
+            }
+          </div>
+
           <button type="button" class="voices__card-btn" (click)="selectVoice(voice.id)">
             {{ translate.dict().voicesPage.select }}
           </button>
