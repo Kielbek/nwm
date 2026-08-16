@@ -49,17 +49,19 @@
         dropdownTrigger
         [attr.aria-label]="translate.dict().header.language"
       >
-        <app-icon name="globe" [size]="17" />
+        <span class="header__icon-btn-flag">{{ translate.lang() === 'pl' ? '🇵🇱' : '🇬🇧' }}</span>
         <span class="header__icon-btn-label">{{ translate.lang().toUpperCase() }}</span>
       </button>
       <div dropdownPanel class="header__menu">
         <button type="button" class="header__menu-item" (click)="selectLang('pl', langDropdown)">
+          <span class="header__menu-item-flag">🇵🇱</span>
           <span class="header__menu-item-label">Polski</span>
           @if (translate.lang() === 'pl') {
             <app-icon name="check" [size]="15" class="header__menu-check" />
           }
         </button>
         <button type="button" class="header__menu-item" (click)="selectLang('en', langDropdown)">
+          <span class="header__menu-item-flag">🇬🇧</span>
           <span class="header__menu-item-label">English</span>
           @if (translate.lang() === 'en') {
             <app-icon name="check" [size]="15" class="header__menu-check" />

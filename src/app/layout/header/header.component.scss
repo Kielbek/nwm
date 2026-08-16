@@ -158,6 +158,11 @@
     font-weight: 600;
   }
 
+  &__icon-btn-flag {
+    font-size: 14px;
+    line-height: 1;
+  }
+
   &__menu {
     display: flex;
     flex-direction: column;
@@ -322,6 +327,11 @@
 
   &__menu-item-label {
     flex: 1;
+  }
+
+  &__menu-item-flag {
+    font-size: 14px;
+    line-height: 1;
   }
 
   &__menu-check {

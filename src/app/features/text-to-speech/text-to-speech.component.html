@@ -1,5 +1,23 @@
 <div class="tts">
   <section class="tts__editor">
+    <div class="tts__toolbar">
+      <input
+        #fileInput
+        type="file"
+        accept=".txt,text/plain"
+        class="tts__file-input"
+        (change)="onFileSelected($event)"
+      />
+      <button type="button" class="tts__import-btn" (click)="triggerFileImport(fileInput)">
+        <app-icon name="upload" [size]="14" />
+        {{ translate.dict().editor.importFile }}
+      </button>
+    </div>
+
+    @if (fileImportError()) {
+      <p class="tts__file-error">{{ fileImportError() }}</p>
+    }
+
     <textarea
       class="tts__textarea"
       [placeholder]="translate.dict().editor.placeholder"
@@ -24,7 +42,26 @@
     }
 
     <div class="tts__footer">
-      <span class="tts__char-count">{{ characterCount() }} / {{ maxCharacters }}</span>
+      <div
+        class="tts__footer-left"
+        [attr.title]="translate.dict().editor.charactersRemaining.replace('{n}', formatNumber(charactersRemaining()))"
+      >
+        <svg class="tts__quota-ring" viewBox="0 0 24 24">
+          <circle class="tts__quota-ring-track" cx="12" cy="12" r="9" />
+          <circle
+            class="tts__quota-ring-fill"
+            cx="12"
+            cy="12"
+            r="9"
+            [style.stroke-dasharray]="ringCircumference"
+            [style.stroke-dashoffset]="ringOffset()"
+          />
+        </svg>
+        <span class="tts__quota-label">{{ formatNumber(charactersRemaining()) }}</span>
+
+        <span class="tts__char-count">{{ characterCount() }} / {{ maxCharacters }}</span>
+      </div>
+
       <button
         type="button"
         class="tts__generate-btn"
@@ -32,12 +69,22 @@
         (click)="generate()"
       >
         <app-icon name="play" [size]="15" />
-        {{ ttsService.isSynthesizing() ? translate.dict().editor.generating : translate.dict().editor.generate }}
+        {{
+          ttsService.isSynthesizing()
+            ? translate.dict().editor.generating
+            : lastEntry()
+              ? translate.dict().editor.regenerate
+              : translate.dict().editor.generate
+        }}
       </button>
     </div>
 
     @if (ttsService.lastError()) {
       <p class="tts__error">{{ ttsService.lastError() }}</p>
+    }
+
+    @if (lastEntry(); as entry) {
+      <app-generation-player [entry]="entry" />
     }
   </section>
 

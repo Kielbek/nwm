@@ -1,16 +1,20 @@
 import { Injectable, signal } from '@angular/core';
 import { OutputFormat, TtsSettings } from '../models/tts.models';
 
+export type GenerationFeedback = 'up' | 'down' | null;
+
 export interface GenerationEntry {
   id: string;
   text: string;
   voiceId: string;
   voiceName: string;
+  voiceDescription: string;
   modelId: string;
   modelName: string;
   outputFormat: OutputFormat;
   settings: TtsSettings;
   createdAt: string;
+  feedback: GenerationFeedback;
 }
 
 export interface PendingReuse {
@@ -32,13 +36,23 @@ export class GenerationHistoryService {
   readonly entries = signal<GenerationEntry[]>(this.readStored());
   readonly pendingReuse = signal<PendingReuse | null>(null);
 
-  add(entry: Omit<GenerationEntry, 'id' | 'createdAt'>): void {
+  add(entry: Omit<GenerationEntry, 'id' | 'createdAt' | 'feedback'>): GenerationEntry {
     const record: GenerationEntry = {
       ...entry,
       id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       createdAt: new Date().toISOString(),
+      feedback: null,
     };
     const next = [record, ...this.entries()].slice(0, MAX_ENTRIES);
+    this.entries.set(next);
+    this.persist(next);
+    return record;
+  }
+
+  setFeedback(id: string, feedback: GenerationFeedback): void {
+    const next = this.entries().map((entry) =>
+      entry.id === id ? { ...entry, feedback } : entry
+    );
     this.entries.set(next);
     this.persist(next);
   }
@@ -79,7 +93,12 @@ export class GenerationHistoryService {
     }
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? (JSON.parse(raw) as GenerationEntry[]) : [];
+      const parsed = raw ? (JSON.parse(raw) as Partial<GenerationEntry>[]) : [];
+      return parsed.map((entry) => ({
+        ...entry,
+        voiceDescription: entry.voiceDescription ?? '',
+        feedback: entry.feedback ?? null,
+      })) as GenerationEntry[];
     } catch {
       return [];
     }

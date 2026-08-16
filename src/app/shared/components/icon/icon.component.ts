@@ -8,7 +8,8 @@ export type IconName =
   | 'chevron-down' | 'chevron-right' | 'search' | 'bell' | 'folder'
   | 'sparkle' | 'close' | 'play' | 'download' | 'panel' | 'invite'
   | 'sun' | 'moon' | 'monitor' | 'globe' | 'check' | 'pause' | 'send' | 'trash'
-  | 'help' | 'link' | 'book' | 'logout' | 'edit' | 'settings' | 'cookie' | 'calendar' | 'star';
+  | 'help' | 'link' | 'book' | 'logout' | 'edit' | 'settings' | 'cookie' | 'calendar' | 'star'
+  | 'upload' | 'thumb-up' | 'thumb-down' | 'share' | 'skip-back' | 'skip-forward';
 
 @Component({
   selector: 'app-icon',
@@ -163,6 +164,31 @@ export type IconName =
         </ng-container>
         <ng-container *ngSwitchCase="'star'">
           <path d="M10 3.2l1.8 3.7 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6L10 3.2Z" />
+        </ng-container>
+        <ng-container *ngSwitchCase="'upload'">
+          <path d="M10 13V4" /><path d="M6 7.5 10 3.5 14 7.5" /><path d="M4 16h12" />
+        </ng-container>
+        <ng-container *ngSwitchCase="'thumb-up'">
+          <path d="M4 9.5h3V17H4Z" />
+          <path
+            d="M7 9.5l2.8-5.2a1.4 1.4 0 0 1 2.5 1.2l-1 4h3.9a1.4 1.4 0 0 1 1.3 2l-1.9 4.3a1.4 1.4 0 0 1-1.3.9H7"
+          />
+        </ng-container>
+        <ng-container *ngSwitchCase="'thumb-down'">
+          <path d="M4 10.5h3V3H4Z" />
+          <path
+            d="M7 10.5l2.8 5.2a1.4 1.4 0 0 0 2.5-1.2l-1-4h3.9a1.4 1.4 0 0 0 1.3-2l-1.9-4.3a1.4 1.4 0 0 0-1.3-.9H7"
+          />
+        </ng-container>
+        <ng-container *ngSwitchCase="'share'">
+          <circle cx="15" cy="5" r="2" /><circle cx="5" cy="10" r="2" /><circle cx="15" cy="15" r="2" />
+          <path d="M6.8 8.8l6.4-2.6" /><path d="M6.8 11.2l6.4 2.6" />
+        </ng-container>
+        <ng-container *ngSwitchCase="'skip-back'">
+          <path d="M10.5 4a6 6 0 1 1-4.2 10.2" /><path d="M3.5 3.5v3.3h3.3" />
+        </ng-container>
+        <ng-container *ngSwitchCase="'skip-forward'">
+          <path d="M9.5 4a6 6 0 1 0 4.2 10.2" /><path d="M16.5 3.5v3.3h-3.3" />
         </ng-container>
       </ng-container>
     </svg>

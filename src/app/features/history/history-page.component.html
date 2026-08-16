@@ -48,6 +48,24 @@
           <div class="history__item-foot">
             <span class="history__chars">{{ entry.text.length }} {{ translate.dict().historyPage.characters }}</span>
             <div class="history__actions">
+              <button
+                type="button"
+                class="history__btn history__btn--icon"
+                [class.history__btn--active]="entry.feedback === 'up'"
+                [attr.aria-label]="translate.dict().player.thumbUp"
+                (click)="setFeedback(entry, 'up')"
+              >
+                <app-icon name="thumb-up" [size]="13" />
+              </button>
+              <button
+                type="button"
+                class="history__btn history__btn--icon"
+                [class.history__btn--active]="entry.feedback === 'down'"
+                [attr.aria-label]="translate.dict().player.thumbDown"
+                (click)="setFeedback(entry, 'down')"
+              >
+                <app-icon name="thumb-down" [size]="13" />
+              </button>
               <button type="button" class="history__btn" (click)="replay(entry)">
                 <app-icon name="play" [size]="13" />
                 {{ translate.dict().historyPage.replay }}

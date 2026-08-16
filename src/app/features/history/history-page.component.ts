@@ -8,6 +8,7 @@ import {
 import { TtsService } from '../../core/services/tts.service';
 import { TranslateService } from '../../core/services/translate.service';
 import { SeoService } from '../../core/services/seo.service';
+import { formatRelativeTime } from '../../core/utils/relative-time';
 
 const SNIPPET_LENGTH = 220;
 
@@ -63,20 +64,10 @@ export class HistoryPageComponent {
   }
 
   relativeTime(iso: string): string {
-    const dict = this.translate.dict().historyPage;
-    const diffMs = Date.now() - new Date(iso).getTime();
-    const minutes = Math.floor(diffMs / 60_000);
-    if (minutes < 1) {
-      return dict.justNow;
-    }
-    if (minutes < 60) {
-      return dict.minutesAgo.replace('{n}', String(minutes));
-    }
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) {
-      return dict.hoursAgo.replace('{n}', String(hours));
-    }
-    const days = Math.floor(hours / 24);
-    return dict.daysAgo.replace('{n}', String(days));
+    return formatRelativeTime(iso, this.translate.dict().historyPage);
+  }
+
+  setFeedback(entry: GenerationEntry, feedback: 'up' | 'down'): void {
+    this.history.setFeedback(entry.id, entry.feedback === feedback ? null : feedback);
   }
 }

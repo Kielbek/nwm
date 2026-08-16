@@ -4,15 +4,22 @@ import { Router } from '@angular/router';
 import { IconComponent, IconName } from '../../shared/components/icon/icon.component';
 import { SliderComponent } from '../../shared/components/slider/slider.component';
 import { DropdownComponent } from '../../shared/components/dropdown/dropdown.component';
+import { GenerationPlayerComponent } from './generation-player/generation-player.component';
 import { TtsService } from '../../core/services/tts.service';
 import { TranslateService } from '../../core/services/translate.service';
 import { VoiceLibraryService } from '../../core/services/voice-library.service';
 import { VoicePreviewService, PreviewableVoice } from '../../core/services/voice-preview.service';
-import { GenerationHistoryService } from '../../core/services/generation-history.service';
+import {
+  GenerationEntry,
+  GenerationHistoryService,
+} from '../../core/services/generation-history.service';
+import { AccountService } from '../../core/services/account.service';
 import { SeoService } from '../../core/services/seo.service';
 import { OutputFormat } from '../../core/models/tts.models';
 
 const MAX_CHARACTERS = 5000;
+const RING_RADIUS = 9;
+const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 
 const MODEL_META = [
   { id: 'expressive', badge: 'E' },
@@ -38,7 +45,7 @@ const STARTER_ICONS: IconName[] = [
   selector: 'app-text-to-speech',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, IconComponent, SliderComponent, DropdownComponent],
+  imports: [FormsModule, IconComponent, SliderComponent, DropdownComponent, GenerationPlayerComponent],
   templateUrl: './text-to-speech.component.html',
   styleUrl: './text-to-speech.component.scss',
 })
@@ -69,6 +76,21 @@ export class TextToSpeechComponent {
   readonly characterCount = computed(() => this.text().length);
   readonly maxCharacters = MAX_CHARACTERS;
 
+  readonly lastEntryId = signal<string | null>(null);
+  readonly lastEntry = computed<GenerationEntry | null>(
+    () => this.history.entries().find((entry) => entry.id === this.lastEntryId()) ?? null
+  );
+  readonly fileImportError = signal<string | null>(null);
+
+  readonly ringCircumference = RING_CIRCUMFERENCE;
+  readonly planUsagePercent = computed(() => Math.min(100, this.account.usagePercent()));
+  readonly ringOffset = computed(
+    () => RING_CIRCUMFERENCE * (1 - this.planUsagePercent() / 100)
+  );
+  readonly charactersRemaining = computed(() =>
+    Math.max(0, this.account.characterLimit() - this.account.charactersUsed())
+  );
+
   readonly filteredVoices = computed(() => {
     const query = this.voiceSearch().trim().toLowerCase();
     const voices = this.voiceLibrary.voices();
@@ -94,6 +116,7 @@ export class TextToSpeechComponent {
     readonly voiceLibrary: VoiceLibraryService,
     readonly voicePreview: VoicePreviewService,
     readonly history: GenerationHistoryService,
+    readonly account: AccountService,
     private readonly router: Router,
     seo: SeoService
   ) {
@@ -160,14 +183,51 @@ export class TextToSpeechComponent {
 
     this.ttsService.synthesize({ text: this.text(), settings }).subscribe();
 
-    this.history.add({
+    const entry = this.history.add({
       text: this.text(),
       voiceId: this.voiceLibrary.selectedVoice().id,
       voiceName: this.voiceLibrary.selectedVoice().name,
+      voiceDescription: this.voiceLibrary.selectedVoice().description,
       modelId: this.selectedModel().id,
       modelName: this.selectedModel().name,
       outputFormat: this.outputFormat(),
       settings,
     });
+    this.lastEntryId.set(entry.id);
+  }
+
+  triggerFileImport(input: HTMLInputElement): void {
+    input.click();
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) {
+      return;
+    }
+    this.fileImportError.set(null);
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const content = String(reader.result ?? '').trim();
+      if (!content) {
+        this.fileImportError.set(this.translate.dict().editor.fileImportError);
+        return;
+      }
+      if (content.length > this.maxCharacters) {
+        this.text.set(content.slice(0, this.maxCharacters));
+        this.fileImportError.set(this.translate.dict().editor.fileTruncated);
+      } else {
+        this.text.set(content);
+      }
+    };
+    reader.onerror = () => this.fileImportError.set(this.translate.dict().editor.fileImportError);
+    reader.readAsText(file);
+  }
+
+  formatNumber(value: number): string {
+    return value.toLocaleString(this.translate.lang() === 'pl' ? 'pl-PL' : 'en-US');
   }
 }

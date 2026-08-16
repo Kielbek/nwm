@@ -81,7 +81,23 @@ export interface Dictionary {
     startFrom: string;
     generate: string;
     generating: string;
+    regenerate: string;
     errorNoSpeechEngine: string;
+    importFile: string;
+    fileImportError: string;
+    fileTruncated: string;
+    charactersRemaining: string;
+  };
+  player: {
+    thumbUp: string;
+    thumbDown: string;
+    share: string;
+    shareCopied: string;
+    download: string;
+    skipBack: string;
+    skipForward: string;
+    play: string;
+    pause: string;
   };
   voiceDropdown: {
     searchPlaceholder: string;
