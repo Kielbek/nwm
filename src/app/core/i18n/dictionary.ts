@@ -13,6 +13,13 @@ export interface ModelCopy {
   description: string;
 }
 
+export interface TestimonialCopy {
+  name: string;
+  role: string;
+  quote: string;
+  date: string;
+}
+
 export interface Dictionary {
   header: {
     pageTitle: string;
@@ -88,8 +95,26 @@ export interface Dictionary {
     clear: string;
     suggestions: string[];
   };
+  feedbackPage: {
+    title: string;
+    subtitle: string;
+    reviewsSuffix: string;
+    filterClear: string;
+    empty: string;
+    writeTitle: string;
+    namePlaceholder: string;
+    ratingLabel: string;
+    commentPlaceholder: string;
+    submit: string;
+    submitting: string;
+    submitted: string;
+    verifiedBadge: string;
+    newRole: string;
+    justNow: string;
+  };
   starters: StarterCopy[];
   voices: VoiceCopy[];
   models: ModelCopy[];
   formats: string[];
+  testimonials: TestimonialCopy[];
 }

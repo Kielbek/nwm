@@ -13,5 +13,12 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/voices/voices-page.component').then((m) => m.VoicesPageComponent),
   },
+  {
+    path: 'feedback',
+    loadComponent: () =>
+      import('./features/feedback/feedback-page.component').then(
+        (m) => m.FeedbackPageComponent
+      ),
+  },
   { path: '**', redirectTo: '' },
 ];

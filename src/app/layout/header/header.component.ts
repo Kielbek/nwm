@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { IconComponent, IconName } from '../../shared/components/icon/icon.component';
 import { DropdownComponent } from '../../shared/components/dropdown/dropdown.component';
 import { ThemeMode, ThemeService } from '../../core/services/theme.service';
@@ -8,7 +9,7 @@ import { Lang, TranslateService } from '../../core/services/translate.service';
   selector: 'app-header',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IconComponent, DropdownComponent],
+  imports: [IconComponent, DropdownComponent, RouterLink, RouterLinkActive],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })

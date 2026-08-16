@@ -136,4 +136,65 @@ export const pl: Dictionary = {
     'WAV 44,1 kHz (bezstratny)',
     'OGG 44,1 kHz',
   ],
+  feedbackPage: {
+    title: 'Opinie',
+    subtitle: 'Zobacz, co inni mówią o NWM, i podziel się własną opinią.',
+    reviewsSuffix: 'opinii',
+    filterClear: 'Wyczyść filtr',
+    empty: 'Brak opinii z tą oceną.',
+    writeTitle: 'Podziel się opinią',
+    namePlaceholder: 'Twoje imię',
+    ratingLabel: 'Twoja ocena',
+    commentPlaceholder: 'Co sądzisz o NWM?',
+    submit: 'Wyślij opinię',
+    submitting: 'Wysyłanie…',
+    submitted: 'Dziękujemy za opinię!',
+    verifiedBadge: 'Zweryfikowany użytkownik',
+    newRole: 'Nowy użytkownik',
+    justNow: 'Przed chwilą',
+  },
+  testimonials: [
+    {
+      name: 'Kasia Wróbel',
+      role: 'Specjalistka ds. marketingu',
+      quote:
+        'Skróciłam czas nagrywania wersji roboczych reklam z dwóch dni do dwudziestu minut. Głosy brzmią naturalnie, a ustawienia prędkości i stylu naprawdę robią różnicę.',
+      date: 'Marzec 2026',
+    },
+    {
+      name: 'Tomek Nowicki',
+      role: 'Twórca na YouTube',
+      quote:
+        'Używam tego do lektorów w filmach edukacyjnych. Podobieństwo i stabilność głosu są na tyle dobre, że widzowie nie zgadują, że to synteza.',
+      date: 'Luty 2026',
+    },
+    {
+      name: 'Ola Dąbrowska',
+      role: 'Prowadząca podcast',
+      quote:
+        'Generuję nią intro i outro do odcinków. Szablon "Przedstaw swój podcast" oszczędza mi czas przy każdym nagraniu.',
+      date: 'Luty 2026',
+    },
+    {
+      name: 'Michał Zieliński',
+      role: 'Trener e-learningowy',
+      quote:
+        'Klarowność głosu przy dłuższych materiałach szkoleniowych jest bardzo dobra. Przydałaby się jeszcze możliwość eksportu w formacie WAV bez kompresji — na szczęście już jest.',
+      date: 'Styczeń 2026',
+    },
+    {
+      name: 'Bartek Sokołowski',
+      role: 'Twórca gier niezależnych',
+      quote:
+        'Dobre do prototypowania dialogów postaci. Do finalnej wersji gry i tak wolę prawdziwych aktorów głosowych, ale na etapie testów działa świetnie.',
+      date: 'Styczeń 2026',
+    },
+    {
+      name: 'Ewa Kaczmarek',
+      role: 'Właścicielka małej firmy',
+      quote:
+        'Nie mam budżetu na studio nagraniowe, a potrzebowałam profesjonalnie brzmiącej zapowiedzi na infolinię. Zrobione w kwadrans.',
+      date: 'Grudzień 2025',
+    },
+  ],
 };

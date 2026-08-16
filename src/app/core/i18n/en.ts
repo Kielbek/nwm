@@ -133,4 +133,65 @@ export const en: Dictionary = {
     'WAV 44.1 kHz (lossless)',
     'OGG 44.1 kHz',
   ],
+  feedbackPage: {
+    title: 'Reviews',
+    subtitle: 'See what others say about NWM, and share your own opinion.',
+    reviewsSuffix: 'reviews',
+    filterClear: 'Clear filter',
+    empty: 'No reviews with that rating.',
+    writeTitle: 'Share your feedback',
+    namePlaceholder: 'Your name',
+    ratingLabel: 'Your rating',
+    commentPlaceholder: 'What do you think of NWM?',
+    submit: 'Submit review',
+    submitting: 'Submitting…',
+    submitted: 'Thanks for your feedback!',
+    verifiedBadge: 'Verified user',
+    newRole: 'New user',
+    justNow: 'Just now',
+  },
+  testimonials: [
+    {
+      name: 'Kasia Wróbel',
+      role: 'Marketing specialist',
+      quote:
+        "I cut ad draft turnaround from two days to twenty minutes. The voices sound natural, and the speed/style controls actually make a difference.",
+      date: 'March 2026',
+    },
+    {
+      name: 'Tomek Nowicki',
+      role: 'YouTube creator',
+      quote:
+        'I use it for narration in educational videos. Similarity and stability are good enough that viewers don\'t guess it\'s synthesized.',
+      date: 'February 2026',
+    },
+    {
+      name: 'Ola Dąbrowska',
+      role: 'Podcast host',
+      quote:
+        'I generate my intros and outros with it. The "Introduce your podcast" starter saves me time on every episode.',
+      date: 'February 2026',
+    },
+    {
+      name: 'Michał Zieliński',
+      role: 'E-learning trainer',
+      quote:
+        "Clarity is really good for longer training material. Could use lossless WAV export — turns out it's already there.",
+      date: 'January 2026',
+    },
+    {
+      name: 'Bartek Sokołowski',
+      role: 'Indie game developer',
+      quote:
+        "Good for prototyping character dialogue. I'd still use real voice actors for the final release, but it's great for testing.",
+      date: 'January 2026',
+    },
+    {
+      name: 'Ewa Kaczmarek',
+      role: 'Small business owner',
+      quote:
+        "No budget for a recording studio, but I needed a professional-sounding phone greeting. Done in fifteen minutes.",
+      date: 'December 2025',
+    },
+  ],
 };

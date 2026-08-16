@@ -1,0 +1,117 @@
+<div class="feedback">
+  <header class="feedback__hero">
+    <h1 class="feedback__title">{{ translate.dict().feedbackPage.title }}</h1>
+    <p class="feedback__subtitle">{{ translate.dict().feedbackPage.subtitle }}</p>
+  </header>
+
+  <div class="feedback__summary">
+    <div class="feedback__score">
+      <span class="feedback__score-number">{{ averageLabel() }}</span>
+      <app-star-rating [value]="feedback.averageRating()" [size]="20" />
+      <span class="feedback__score-count">
+        {{ feedback.testimonials().length }} {{ translate.dict().feedbackPage.reviewsSuffix }}
+      </span>
+    </div>
+
+    <div class="feedback__breakdown">
+      @for (row of feedback.ratingBreakdown(); track row.stars) {
+        <button
+          type="button"
+          class="feedback__breakdown-row"
+          [class.feedback__breakdown-row--active]="filterRating() === row.stars"
+          (click)="toggleFilter(row.stars)"
+        >
+          <span class="feedback__breakdown-label">{{ row.stars }}★</span>
+          <span class="feedback__breakdown-bar">
+            <span class="feedback__breakdown-fill" [style.width.%]="row.percent"></span>
+          </span>
+          <span class="feedback__breakdown-count">{{ row.count }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="feedback__layout">
+    <section class="feedback__list">
+      @if (filterRating()) {
+        <button type="button" class="feedback__filter-tag" (click)="filterRating.set(null)">
+          {{ filterRating() }}★
+          <app-icon name="close" [size]="12" />
+        </button>
+      }
+
+      @if (filteredTestimonials().length) {
+        <div class="feedback__grid">
+          @for (t of filteredTestimonials(); track t.id) {
+            <article class="feedback__card">
+              <div class="feedback__card-top">
+                <span class="feedback__avatar" [style.background]="t.avatarColor">
+                  {{ initials(t.name) }}
+                </span>
+                <div class="feedback__card-identity">
+                  <strong class="feedback__card-name">{{ t.name }}</strong>
+                  <span class="feedback__card-role">{{ t.role }}</span>
+                </div>
+              </div>
+              <app-star-rating [value]="t.rating" [size]="13" />
+              <p class="feedback__quote">&ldquo;{{ t.quote }}&rdquo;</p>
+              <div class="feedback__card-footer">
+                <span class="feedback__date">{{ t.date }}</span>
+                @if (t.verified) {
+                  <span class="feedback__verified">
+                    <app-icon name="check" [size]="11" />
+                    {{ translate.dict().feedbackPage.verifiedBadge }}
+                  </span>
+                }
+              </div>
+            </article>
+          }
+        </div>
+      } @else {
+        <p class="feedback__empty">{{ translate.dict().feedbackPage.empty }}</p>
+      }
+    </section>
+
+    <aside class="feedback__form-panel">
+      <h2 class="feedback__form-title">{{ translate.dict().feedbackPage.writeTitle }}</h2>
+
+      @if (feedback.justSubmitted()) {
+        <div class="feedback__thanks">{{ translate.dict().feedbackPage.submitted }}</div>
+      }
+
+      <form class="feedback__form" (ngSubmit)="submit()">
+        <input
+          type="text"
+          class="feedback__input"
+          [placeholder]="translate.dict().feedbackPage.namePlaceholder"
+          [ngModel]="formName()"
+          name="name"
+          (ngModelChange)="formName.set($event)"
+        />
+
+        <div class="feedback__form-rating">
+          <span class="feedback__form-rating-label">{{ translate.dict().feedbackPage.ratingLabel }}</span>
+          <app-star-rating
+            [value]="formRating()"
+            [size]="22"
+            [interactive]="true"
+            (valueChange)="formRating.set($event)"
+          />
+        </div>
+
+        <textarea
+          class="feedback__textarea"
+          rows="4"
+          [placeholder]="translate.dict().feedbackPage.commentPlaceholder"
+          [ngModel]="formComment()"
+          name="comment"
+          (ngModelChange)="formComment.set($event)"
+        ></textarea>
+
+        <button type="submit" class="feedback__submit" [disabled]="!canSubmit() || feedback.submitting()">
+          {{ feedback.submitting() ? translate.dict().feedbackPage.submitting : translate.dict().feedbackPage.submit }}
+        </button>
+      </form>
+    </aside>
+  </div>
+</div>

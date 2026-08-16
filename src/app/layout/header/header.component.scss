@@ -66,9 +66,16 @@
     cursor: pointer;
     padding: 6px 4px;
     white-space: nowrap;
+    text-decoration: none;
+    display: inline-block;
 
     &:hover {
       color: var(--text-primary);
+    }
+
+    &--active-route {
+      color: var(--text-primary);
+      font-weight: 600;
     }
 
     &--primary {
