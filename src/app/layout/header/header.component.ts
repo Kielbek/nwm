@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { IconComponent, IconName } from '../../shared/components/icon/icon.component';
 import { DropdownComponent } from '../../shared/components/dropdown/dropdown.component';
 import { ThemeMode, ThemeService } from '../../core/services/theme.service';
 import { Lang, TranslateService } from '../../core/services/translate.service';
 import { AccountService } from '../../core/services/account.service';
+import { NotificationItem, NotificationsService } from '../../core/services/notifications.service';
 
 @Component({
   selector: 'app-header',
@@ -28,7 +29,9 @@ export class HeaderComponent {
   constructor(
     readonly theme: ThemeService,
     readonly translate: TranslateService,
-    readonly account: AccountService
+    readonly account: AccountService,
+    readonly notifications: NotificationsService,
+    private readonly router: Router
   ) {}
 
   selectTheme(mode: ThemeMode, dropdown: DropdownComponent): void {
@@ -39,5 +42,13 @@ export class HeaderComponent {
   selectLang(lang: Lang, dropdown: DropdownComponent): void {
     this.translate.setLang(lang);
     dropdown.close();
+  }
+
+  openNotification(item: NotificationItem, dropdown: DropdownComponent): void {
+    this.notifications.markRead(item.id);
+    dropdown.close();
+    if (item.link) {
+      this.router.navigateByUrl(item.link);
+    }
   }
 }

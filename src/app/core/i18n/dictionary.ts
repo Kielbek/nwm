@@ -215,6 +215,25 @@ export interface Dictionary {
     marketingDesc: string;
     policyLink: string;
   };
+  notifications: {
+    title: string;
+    markAllRead: string;
+    empty: string;
+    justNow: string;
+    usageTitle: string;
+    usageBody: string;
+    renewalTitle: string;
+    renewalBody: string;
+    welcomeTitle: string;
+    welcomeBody: string;
+    welcomeTime: string;
+    newVoiceTitle: string;
+    newVoiceBody: string;
+    newVoiceTime: string;
+    tipTitle: string;
+    tipBody: string;
+    tipTime: string;
+  };
   starters: StarterCopy[];
   voices: VoiceCopy[];
   models: ModelCopy[];

@@ -8,7 +8,7 @@ export type IconName =
   | 'chevron-down' | 'chevron-right' | 'search' | 'bell' | 'folder'
   | 'sparkle' | 'close' | 'play' | 'download' | 'panel' | 'invite'
   | 'sun' | 'moon' | 'monitor' | 'globe' | 'check' | 'pause' | 'send' | 'trash'
-  | 'help' | 'link' | 'book' | 'logout' | 'edit' | 'settings' | 'cookie';
+  | 'help' | 'link' | 'book' | 'logout' | 'edit' | 'settings' | 'cookie' | 'calendar';
 
 @Component({
   selector: 'app-icon',
@@ -156,6 +156,10 @@ export type IconName =
           <circle cx="8" cy="10" r=".8" fill="currentColor" stroke="none" />
           <circle cx="11.5" cy="12.5" r=".8" fill="currentColor" stroke="none" />
           <circle cx="8.5" cy="14" r=".8" fill="currentColor" stroke="none" />
+        </ng-container>
+        <ng-container *ngSwitchCase="'calendar'">
+          <rect x="3" y="4.5" width="14" height="12.5" rx="2" />
+          <path d="M3 8.5h14" /><path d="M7 2.7v3.2" /><path d="M13 2.7v3.2" />
         </ng-container>
       </ng-container>
     </svg>
