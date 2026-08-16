@@ -4,60 +4,103 @@
     <p class="profile__subtitle">{{ translate.dict().profilePage.subtitle }}</p>
   </header>
 
-  <section class="profile__card profile__identity">
-    <span class="profile__avatar">{{ account.initials() }}</span>
+  <div class="profile__top-grid">
+    <section class="profile__card profile__identity">
+      <div class="profile__identity-top">
+        <span class="profile__avatar">{{ account.initials() }}</span>
 
-    <div class="profile__identity-info">
+        <div class="profile__identity-info">
+          @if (!editingProfile()) {
+            <div class="profile__name-row">
+              <strong class="profile__name">{{ account.name() }}</strong>
+              <span class="profile__plan-chip">{{ account.currentPlan().name }}</span>
+            </div>
+            <span class="profile__email">{{ account.email() }}</span>
+            <span class="profile__meta">
+              <app-icon name="check" [size]="11" />
+              {{ translate.dict().profilePage.verifiedEmail }}
+              <span class="profile__meta-dot">·</span>
+              {{ memberSinceLabel() }}
+            </span>
+          } @else {
+            <div class="profile__edit-form">
+              <label class="profile__field">
+                <span>{{ translate.dict().profilePage.nameLabel }}</span>
+                <input type="text" [ngModel]="formName()" (ngModelChange)="formName.set($event)" />
+              </label>
+              <label class="profile__field">
+                <span>{{ translate.dict().profilePage.emailLabel }}</span>
+                <input type="email" [ngModel]="formEmail()" (ngModelChange)="formEmail.set($event)" />
+              </label>
+              <div class="profile__edit-actions">
+                <button type="button" class="profile__btn profile__btn--primary" (click)="saveProfile()">
+                  {{ translate.dict().profilePage.save }}
+                </button>
+                <button type="button" class="profile__btn" (click)="cancelEditingProfile()">
+                  {{ translate.dict().profilePage.cancel }}
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
       @if (!editingProfile()) {
-        <strong class="profile__name">{{ account.name() }}</strong>
-        <span class="profile__email">{{ account.email() }}</span>
-      } @else {
-        <div class="profile__edit-form">
-          <label class="profile__field">
-            <span>{{ translate.dict().profilePage.nameLabel }}</span>
-            <input type="text" [ngModel]="formName()" (ngModelChange)="formName.set($event)" />
-          </label>
-          <label class="profile__field">
-            <span>{{ translate.dict().profilePage.emailLabel }}</span>
-            <input type="email" [ngModel]="formEmail()" (ngModelChange)="formEmail.set($event)" />
-          </label>
-          <div class="profile__edit-actions">
-            <button type="button" class="profile__btn profile__btn--primary" (click)="saveProfile()">
-              {{ translate.dict().profilePage.save }}
-            </button>
-            <button type="button" class="profile__btn" (click)="cancelEditingProfile()">
-              {{ translate.dict().profilePage.cancel }}
-            </button>
+        <button type="button" class="profile__btn profile__edit-trigger" (click)="startEditingProfile()">
+          <app-icon name="edit" [size]="14" />
+          {{ translate.dict().profilePage.editProfile }}
+        </button>
+      }
+    </section>
+
+    <section class="profile__card profile__usage-card">
+      <div class="profile__usage-head">
+        <h2>{{ translate.dict().profilePage.usageTitle }}</h2>
+        <span class="profile__renews">
+          <app-icon name="calendar" [size]="12" />
+          {{ renewsInLabel() }}
+        </span>
+      </div>
+
+      <div class="profile__usage-main">
+        <div class="profile__ring-wrap">
+          <svg class="profile__ring" viewBox="0 0 120 120">
+            <circle class="profile__ring-track" cx="60" cy="60" r="52" />
+            <circle
+              class="profile__ring-fill"
+              [class.profile__ring-fill--warning]="account.usagePercent() > 85"
+              cx="60"
+              cy="60"
+              r="52"
+              [style.stroke-dasharray]="ringCircumference"
+              [style.stroke-dashoffset]="ringOffset()"
+            />
+          </svg>
+          <div class="profile__ring-label">
+            <strong>{{ usagePercentRounded() }}%</strong>
+            <span>{{ translate.dict().profilePage.usagePercentLabel }}</span>
           </div>
         </div>
-      }
-    </div>
 
-    @if (!editingProfile()) {
-      <button type="button" class="profile__btn profile__edit-trigger" (click)="startEditingProfile()">
-        <app-icon name="edit" [size]="14" />
-        {{ translate.dict().profilePage.editProfile }}
-      </button>
-    }
-  </section>
-
-  <section class="profile__card">
-    <div class="profile__usage-head">
-      <h2>{{ translate.dict().profilePage.usageTitle }}</h2>
-      <span class="profile__renews">{{ renewsInLabel() }}</span>
-    </div>
-    <div class="profile__usage-stat">
-      <strong>{{ usageLabel() }}</strong>
-      <span>{{ translate.dict().profilePage.usageCharacters }}</span>
-    </div>
-    <div class="profile__usage-bar">
-      <div
-        class="profile__usage-fill"
-        [class.profile__usage-fill--warning]="account.usagePercent() > 85"
-        [style.width.%]="account.usagePercent()"
-      ></div>
-    </div>
-  </section>
+        <div class="profile__usage-stats">
+          <div class="profile__usage-stat-row">
+            <span>{{ translate.dict().profilePage.usedLabel }}</span>
+            <strong>{{ formatNumber(account.charactersUsed()) }}</strong>
+          </div>
+          <div class="profile__usage-stat-row">
+            <span>{{ translate.dict().profilePage.limitLabel }}</span>
+            <strong>{{ formatNumber(account.currentPlan().characterLimit) }}</strong>
+          </div>
+          @if (account.bonusCharacters() > 0) {
+            <div class="profile__usage-stat-row">
+              <span>{{ translate.dict().profilePage.bonusLabel }}</span>
+              <strong>+{{ formatNumber(account.bonusCharacters()) }}</strong>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+  </div>
 
   <section class="profile__section">
     <div class="profile__section-head">
@@ -179,7 +222,10 @@
           }
         </ul>
       } @else {
-        <p class="profile__history-empty">{{ translate.dict().profilePage.noPurchases }}</p>
+        <div class="profile__history-empty">
+          <app-icon name="download" [size]="16" />
+          <span>{{ translate.dict().profilePage.noPurchases }}</span>
+        </div>
       }
     </div>
   </section>

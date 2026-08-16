@@ -5,6 +5,9 @@ import { CarouselComponent } from '../../shared/components/carousel/carousel.com
 import { AccountService, BillingCycle, PlanId } from '../../core/services/account.service';
 import { TranslateService } from '../../core/services/translate.service';
 
+const RING_RADIUS = 52;
+const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
+
 @Component({
   selector: 'app-profile-page',
   standalone: true,
@@ -21,6 +24,8 @@ export class ProfilePageComponent {
   readonly purchaseToast = signal<number | null>(null);
   private purchaseToastTimeout?: ReturnType<typeof setTimeout>;
 
+  readonly ringCircumference = RING_CIRCUMFERENCE;
+
   readonly renewsInLabel = computed(() =>
     this.translate
       .dict()
@@ -30,6 +35,18 @@ export class ProfilePageComponent {
   readonly usageLabel = computed(
     () =>
       `${this.formatNumber(this.account.charactersUsed())} / ${this.formatNumber(this.account.characterLimit())}`
+  );
+
+  readonly usagePercentRounded = computed(() => Math.round(this.account.usagePercent()));
+
+  readonly ringOffset = computed(
+    () => RING_CIRCUMFERENCE * (1 - Math.min(100, this.account.usagePercent()) / 100)
+  );
+
+  readonly memberSinceLabel = computed(() =>
+    this.translate
+      .dict()
+      .profilePage.memberSince.replace('{date}', this.formatMemberSince(this.account.memberSince))
   );
 
   constructor(readonly account: AccountService, readonly translate: TranslateService) {}
@@ -85,5 +102,12 @@ export class ProfilePageComponent {
 
   formatPrice(value: number): string {
     return value.toLocaleString(this.translate.lang() === 'pl' ? 'pl-PL' : 'en-US');
+  }
+
+  private formatMemberSince(date: Date): string {
+    return date.toLocaleDateString(this.translate.lang() === 'pl' ? 'pl-PL' : 'en-US', {
+      month: 'long',
+      year: 'numeric',
+    });
   }
 }

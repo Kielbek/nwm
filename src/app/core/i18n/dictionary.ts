@@ -135,7 +135,13 @@ export interface Dictionary {
     emailLabel: string;
     usageTitle: string;
     usageCharacters: string;
+    usagePercentLabel: string;
+    usedLabel: string;
+    limitLabel: string;
+    bonusLabel: string;
     renewsIn: string;
+    memberSince: string;
+    verifiedEmail: string;
     planTitle: string;
     previousPlans: string;
     nextPlans: string;

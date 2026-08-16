@@ -61,6 +61,7 @@ export class AccountService {
   readonly bonusCharacters = signal(0);
   readonly purchases = signal<Purchase[]>([]);
   readonly renewalDaysLeft = signal(14);
+  readonly memberSince = new Date('2025-01-14T00:00:00Z');
 
   readonly plans = computed(() =>
     PLAN_META.map((meta, i) => ({ ...meta, ...this.translate.dict().plans[i] }))
