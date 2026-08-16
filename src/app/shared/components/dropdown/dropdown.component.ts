@@ -77,7 +77,15 @@ export class DropdownComponent implements OnDestroy {
   readonly position = signal<PanelPosition>({ top: 0, left: 0, right: null, width: 0 });
 
   private dragStartY = 0;
-  private readonly onScrollCapture = (): void => this.close();
+  private readonly onScrollCapture = (event: Event): void => {
+    const target = event.target as Node | null;
+    if (target && this.host.nativeElement.contains(target)) {
+      // Scrolling inside the panel's own content (e.g. a long notification
+      // list) shouldn't dismiss it — only scrolling the page behind it should.
+      return;
+    }
+    this.close();
+  };
 
   constructor(private readonly host: ElementRef<HTMLElement>) {}
 
