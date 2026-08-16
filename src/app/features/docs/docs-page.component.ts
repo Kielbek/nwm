@@ -15,6 +15,7 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
 import { DocsService } from '../../core/services/docs.service';
 import { TranslateService } from '../../core/services/translate.service';
 import { DocCategory } from '../../core/content/docs.types';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'app-docs-page',
@@ -52,7 +53,9 @@ export class DocsPageComponent implements AfterViewInit, OnDestroy {
   private copiedTimeout?: ReturnType<typeof setTimeout>;
   private suppressObserverUntil = 0;
 
-  constructor(readonly docs: DocsService, readonly translate: TranslateService) {}
+  constructor(readonly docs: DocsService, readonly translate: TranslateService, seo: SeoService) {
+    seo.setPrivateTitle('Dokumentacja');
+  }
 
   ngAfterViewInit(): void {
     this.setupObserver();

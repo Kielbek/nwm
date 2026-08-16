@@ -18,6 +18,7 @@ import { AccountService } from '../../core/services/account.service';
 import { VoiceLibraryService } from '../../core/services/voice-library.service';
 import { VoicePreviewService, PreviewableVoice } from '../../core/services/voice-preview.service';
 import { FeedbackService } from '../../core/services/feedback.service';
+import { SeoService } from '../../core/services/seo.service';
 
 const FEATURED_PLAN_INDICES = [0, 2, 5];
 
@@ -53,8 +54,24 @@ export class LandingPageComponent implements AfterViewInit, OnDestroy {
     readonly account: AccountService,
     readonly voiceLibrary: VoiceLibraryService,
     readonly voicePreview: VoicePreviewService,
-    readonly feedback: FeedbackService
-  ) {}
+    readonly feedback: FeedbackService,
+    private readonly seo: SeoService
+  ) {
+    this.seo.update({
+      title: 'NWM — Zamień tekst w naturalnie brzmiącą mowę | Synteza mowy online',
+      description:
+        'NWM to profesjonalna aplikacja do syntezy mowy (text-to-speech) z realistycznymi głosami, wieloma językami i formatami eksportu. Zamień tekst w naturalnie brzmiącą mowę za darmo.',
+      path: '/',
+    });
+    this.seo.removeJsonLd('ld-faq');
+    this.seo.setJsonLd('ld-organization', {
+      '@context': 'https://schema.org',
+      '@type': 'Organization',
+      name: 'NWM',
+      url: 'https://nwm.app/',
+      logo: 'https://nwm.app/og-image.png',
+    });
+  }
 
   get featuredPlans() {
     const plans = this.account.plans();

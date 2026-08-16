@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { AccountService, BillingCycle } from '../../core/services/account.service';
 import { TranslateService } from '../../core/services/translate.service';
+import { SeoService } from '../../core/services/seo.service';
 
 type CheckoutType = 'plan' | 'topup';
 
@@ -62,8 +63,10 @@ export class CheckoutPageComponent {
   constructor(
     route: ActivatedRoute,
     readonly account: AccountService,
-    readonly translate: TranslateService
+    readonly translate: TranslateService,
+    seo: SeoService
   ) {
+    seo.setPrivateTitle('Finalizacja płatności');
     route.queryParamMap.subscribe((params) => {
       this.type.set(params.get('type') === 'topup' ? 'topup' : 'plan');
       this.itemId.set(params.get('id') ?? '');

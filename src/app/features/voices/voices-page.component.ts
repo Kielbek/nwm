@@ -5,6 +5,7 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
 import { TranslateService } from '../../core/services/translate.service';
 import { VoiceLibraryService } from '../../core/services/voice-library.service';
 import { VoicePreviewService, PreviewableVoice } from '../../core/services/voice-preview.service';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'app-voices-page',
@@ -32,8 +33,11 @@ export class VoicesPageComponent implements OnDestroy {
     readonly voiceLibrary: VoiceLibraryService,
     readonly voicePreview: VoicePreviewService,
     readonly translate: TranslateService,
-    private readonly router: Router
-  ) {}
+    private readonly router: Router,
+    seo: SeoService
+  ) {
+    seo.setPrivateTitle('Głosy');
+  }
 
   selectVoice(id: string): void {
     this.voicePreview.stop();

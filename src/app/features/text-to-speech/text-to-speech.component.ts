@@ -9,6 +9,7 @@ import { TranslateService } from '../../core/services/translate.service';
 import { VoiceLibraryService } from '../../core/services/voice-library.service';
 import { VoicePreviewService, PreviewableVoice } from '../../core/services/voice-preview.service';
 import { GenerationHistoryService } from '../../core/services/generation-history.service';
+import { SeoService } from '../../core/services/seo.service';
 import { OutputFormat } from '../../core/models/tts.models';
 
 const MAX_CHARACTERS = 5000;
@@ -93,8 +94,10 @@ export class TextToSpeechComponent {
     readonly voiceLibrary: VoiceLibraryService,
     readonly voicePreview: VoicePreviewService,
     readonly history: GenerationHistoryService,
-    private readonly router: Router
+    private readonly router: Router,
+    seo: SeoService
   ) {
+    seo.setPrivateTitle('Generator mowy');
     const pending = this.history.consumePendingReuse();
     if (pending) {
       this.text.set(pending.text);

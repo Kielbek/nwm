@@ -4,6 +4,7 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
 import { StarRatingComponent } from '../../shared/components/star-rating/star-rating.component';
 import { FeedbackService } from '../../core/services/feedback.service';
 import { TranslateService } from '../../core/services/translate.service';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'app-feedback-page',
@@ -32,7 +33,13 @@ export class FeedbackPageComponent {
     () => !!this.formName().trim() && !!this.formComment().trim() && this.formRating() >= 1
   );
 
-  constructor(readonly feedback: FeedbackService, readonly translate: TranslateService) {}
+  constructor(
+    readonly feedback: FeedbackService,
+    readonly translate: TranslateService,
+    seo: SeoService
+  ) {
+    seo.setPrivateTitle('Opinie');
+  }
 
   toggleFilter(stars: number): void {
     this.filterRating.set(this.filterRating() === stars ? null : stars);

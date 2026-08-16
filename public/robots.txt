@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Allow: /pricing
+Disallow: /app/
+
+Sitemap: https://nwm.app/sitemap.xml

@@ -7,6 +7,7 @@ import {
 } from '../../core/services/generation-history.service';
 import { TtsService } from '../../core/services/tts.service';
 import { TranslateService } from '../../core/services/translate.service';
+import { SeoService } from '../../core/services/seo.service';
 
 const SNIPPET_LENGTH = 220;
 
@@ -25,8 +26,11 @@ export class HistoryPageComponent {
     readonly history: GenerationHistoryService,
     readonly ttsService: TtsService,
     readonly translate: TranslateService,
-    private readonly router: Router
-  ) {}
+    private readonly router: Router,
+    seo: SeoService
+  ) {
+    seo.setPrivateTitle('Historia generowania');
+  }
 
   snippet(text: string): string {
     return text.length > SNIPPET_LENGTH ? `${text.slice(0, SNIPPET_LENGTH)}…` : text;

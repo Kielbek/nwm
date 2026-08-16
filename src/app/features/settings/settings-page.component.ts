@@ -5,6 +5,7 @@ import { ThemeService, ThemeMode } from '../../core/services/theme.service';
 import { TranslateService, Lang } from '../../core/services/translate.service';
 import { AccountService } from '../../core/services/account.service';
 import { CookieConsentService } from '../../core/services/cookie-consent.service';
+import { SeoService } from '../../core/services/seo.service';
 
 const NOTIFY_KEYS = {
   updates: 'nwm-notify-updates',
@@ -42,8 +43,11 @@ export class SettingsPageComponent {
     readonly theme: ThemeService,
     readonly translate: TranslateService,
     readonly account: AccountService,
-    readonly cookieConsent: CookieConsentService
-  ) {}
+    readonly cookieConsent: CookieConsentService,
+    seo: SeoService
+  ) {
+    seo.setPrivateTitle('Ustawienia');
+  }
 
   setTheme(mode: ThemeMode): void {
     this.theme.setMode(mode);

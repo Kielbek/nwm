@@ -5,6 +5,7 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
 import { CarouselComponent } from '../../shared/components/carousel/carousel.component';
 import { AccountService, BillingCycle, PlanId } from '../../core/services/account.service';
 import { TranslateService } from '../../core/services/translate.service';
+import { SeoService } from '../../core/services/seo.service';
 
 const RING_RADIUS = 52;
 const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
@@ -50,8 +51,11 @@ export class ProfilePageComponent {
   constructor(
     readonly account: AccountService,
     readonly translate: TranslateService,
-    private readonly router: Router
-  ) {}
+    private readonly router: Router,
+    seo: SeoService
+  ) {
+    seo.setPrivateTitle('Profil');
+  }
 
   startEditingProfile(): void {
     this.formName.set(this.account.name());
