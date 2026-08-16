@@ -1,0 +1,12 @@
+<div class="not-found">
+  <span class="not-found__icon">
+    <app-icon name="search" [size]="26" />
+  </span>
+  <span class="not-found__code">404</span>
+  <h1 class="not-found__title">{{ translate.dict().notFoundPage.title }}</h1>
+  <p class="not-found__message">{{ translate.dict().notFoundPage.message }}</p>
+  <a class="not-found__btn" routerLink="/">
+    <app-icon name="home" [size]="15" />
+    {{ translate.dict().notFoundPage.backHome }}
+  </a>
+</div>

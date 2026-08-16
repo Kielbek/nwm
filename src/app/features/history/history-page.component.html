@@ -1,0 +1,79 @@
+<div class="history">
+  <header class="history__hero">
+    <h1 class="history__title">{{ translate.dict().historyPage.title }}</h1>
+    <p class="history__subtitle">{{ translate.dict().historyPage.subtitle }}</p>
+  </header>
+
+  @if (history.entries().length) {
+    <div class="history__toolbar">
+      <span class="history__count">{{ history.entries().length }}</span>
+
+      @if (!clearConfirmOpen()) {
+        <button type="button" class="history__btn history__btn--danger" (click)="startClear()">
+          <app-icon name="trash" [size]="13" />
+          {{ translate.dict().historyPage.clearAll }}
+        </button>
+      } @else {
+        <div class="history__clear-confirm">
+          <div class="history__clear-confirm-text">
+            <strong>{{ translate.dict().historyPage.confirmClearTitle }}</strong>
+            <span>{{ translate.dict().historyPage.confirmClearBody }}</span>
+          </div>
+          <div class="history__clear-confirm-actions">
+            <button type="button" class="history__btn" (click)="cancelClear()">
+              {{ translate.dict().historyPage.confirmCancelAction }}
+            </button>
+            <button type="button" class="history__btn history__btn--danger-solid" (click)="confirmClear()">
+              {{ translate.dict().historyPage.confirmClearAction }}
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+
+    <ul class="history__list">
+      @for (entry of history.entries(); track entry.id) {
+        <li class="history__item">
+          <div class="history__item-head">
+            <span class="history__tag">
+              <app-icon name="voices" [size]="12" />
+              {{ entry.voiceName }}
+            </span>
+            <span class="history__tag">{{ entry.modelName }}</span>
+            <span class="history__time">{{ relativeTime(entry.createdAt) }}</span>
+          </div>
+
+          <p class="history__text">{{ snippet(entry.text) }}</p>
+
+          <div class="history__item-foot">
+            <span class="history__chars">{{ entry.text.length }} {{ translate.dict().historyPage.characters }}</span>
+            <div class="history__actions">
+              <button type="button" class="history__btn" (click)="replay(entry)">
+                <app-icon name="play" [size]="13" />
+                {{ translate.dict().historyPage.replay }}
+              </button>
+              <button type="button" class="history__btn" (click)="reuse(entry)">
+                <app-icon name="edit" [size]="13" />
+                {{ translate.dict().historyPage.reuse }}
+              </button>
+              <button
+                type="button"
+                class="history__btn history__btn--icon"
+                [attr.aria-label]="translate.dict().historyPage.delete"
+                (click)="remove(entry.id)"
+              >
+                <app-icon name="trash" [size]="13" />
+              </button>
+            </div>
+          </div>
+        </li>
+      }
+    </ul>
+  } @else {
+    <div class="history__empty">
+      <app-icon name="folder" [size]="22" />
+      <strong>{{ translate.dict().historyPage.empty }}</strong>
+      <span>{{ translate.dict().historyPage.emptyHint }}</span>
+    </div>
+  }
+</div>

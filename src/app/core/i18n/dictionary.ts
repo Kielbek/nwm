@@ -49,6 +49,7 @@ export interface Dictionary {
   sidebar: {
     nav: string;
     voices: string;
+    history: string;
     settings: string;
     closeMenu: string;
   };
@@ -203,6 +204,20 @@ export interface Dictionary {
     resetCancelAction: string;
     resetDone: string;
     saved: string;
+    securityTitle: string;
+    securitySubtitle: string;
+    securityDemoNote: string;
+    currentPasswordLabel: string;
+    newPasswordLabel: string;
+    confirmPasswordLabel: string;
+    changePasswordButton: string;
+    passwordMismatch: string;
+    passwordTooShort: string;
+    passwordChanged: string;
+    twoFactorLabel: string;
+    twoFactorDesc: string;
+    twoFactorOn: string;
+    twoFactorOff: string;
   };
   cookieBanner: {
     title: string;
@@ -239,6 +254,55 @@ export interface Dictionary {
     tipTitle: string;
     tipBody: string;
     tipTime: string;
+  };
+  notFoundPage: {
+    title: string;
+    message: string;
+    backHome: string;
+  };
+  commandPalette: {
+    placeholder: string;
+    pagesGroup: string;
+    voicesGroup: string;
+    docsGroup: string;
+    noResults: string;
+    hintNavigate: string;
+    hintSelect: string;
+    hintClose: string;
+  };
+  historyPage: {
+    title: string;
+    subtitle: string;
+    empty: string;
+    emptyHint: string;
+    replay: string;
+    reuse: string;
+    delete: string;
+    clearAll: string;
+    confirmClearTitle: string;
+    confirmClearBody: string;
+    confirmClearAction: string;
+    confirmCancelAction: string;
+    voiceLabel: string;
+    modelLabel: string;
+    justNow: string;
+    minutesAgo: string;
+    hoursAgo: string;
+    daysAgo: string;
+    characters: string;
+  };
+  referral: {
+    title: string;
+    subtitle: string;
+    rewardBadge: string;
+    howItWorksTitle: string;
+    step1: string;
+    step2: string;
+    step3: string;
+    linkLabel: string;
+    copyButton: string;
+    copiedLabel: string;
+    close: string;
   };
   starters: StarterCopy[];
   voices: VoiceCopy[];

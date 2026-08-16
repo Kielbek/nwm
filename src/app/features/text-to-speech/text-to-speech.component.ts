@@ -8,6 +8,7 @@ import { TtsService } from '../../core/services/tts.service';
 import { TranslateService } from '../../core/services/translate.service';
 import { VoiceLibraryService } from '../../core/services/voice-library.service';
 import { VoicePreviewService, PreviewableVoice } from '../../core/services/voice-preview.service';
+import { GenerationHistoryService } from '../../core/services/generation-history.service';
 import { OutputFormat } from '../../core/models/tts.models';
 
 const MAX_CHARACTERS = 5000;
@@ -91,8 +92,15 @@ export class TextToSpeechComponent {
     readonly translate: TranslateService,
     readonly voiceLibrary: VoiceLibraryService,
     readonly voicePreview: VoicePreviewService,
+    readonly history: GenerationHistoryService,
     private readonly router: Router
-  ) {}
+  ) {
+    const pending = this.history.consumePendingReuse();
+    if (pending) {
+      this.text.set(pending.text);
+      this.voiceLibrary.selectVoice(pending.voiceId);
+    }
+  }
 
   applyStarterPrompt(prompt: { text: string }): void {
     this.text.set(prompt.text);
@@ -136,20 +144,27 @@ export class TextToSpeechComponent {
     if (!this.text().trim() || this.ttsService.isSynthesizing()) {
       return;
     }
-    this.ttsService
-      .synthesize({
-        text: this.text(),
-        settings: {
-          voiceId: this.voiceLibrary.selectedVoiceId(),
-          modelId: this.selectedModelId(),
-          speed: this.speed(),
-          stability: this.stability(),
-          similarity: this.similarity(),
-          styleExaggeration: this.styleExaggeration(),
-          languageOverride: this.languageOverride(),
-          outputFormat: this.outputFormat(),
-        },
-      })
-      .subscribe();
+    const settings = {
+      voiceId: this.voiceLibrary.selectedVoiceId(),
+      modelId: this.selectedModelId(),
+      speed: this.speed(),
+      stability: this.stability(),
+      similarity: this.similarity(),
+      styleExaggeration: this.styleExaggeration(),
+      languageOverride: this.languageOverride(),
+      outputFormat: this.outputFormat(),
+    };
+
+    this.ttsService.synthesize({ text: this.text(), settings }).subscribe();
+
+    this.history.add({
+      text: this.text(),
+      voiceId: this.voiceLibrary.selectedVoice().id,
+      voiceName: this.voiceLibrary.selectedVoice().name,
+      modelId: this.selectedModel().id,
+      modelName: this.selectedModel().name,
+      outputFormat: this.outputFormat(),
+      settings,
+    });
   }
 }

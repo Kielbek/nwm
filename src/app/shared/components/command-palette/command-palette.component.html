@@ -1,0 +1,60 @@
+@if (palette.isOpen()) {
+  <div class="cmdk">
+    <div class="cmdk__backdrop" (click)="onBackdropClick()"></div>
+    <div class="cmdk__panel" role="dialog" aria-modal="true">
+      <div class="cmdk__search">
+        <app-icon name="search" [size]="16" />
+        <input
+          #queryInput
+          type="text"
+          class="cmdk__input"
+          [value]="query()"
+          (input)="onQueryChange($any($event.target).value)"
+          [placeholder]="translate.dict().commandPalette.placeholder"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button type="button" class="cmdk__close" (click)="palette.close()">
+          <app-icon name="close" [size]="14" />
+        </button>
+      </div>
+
+      <div class="cmdk__results">
+        @if (groups().length) {
+          @for (group of groups(); track group.title; let gi = $index) {
+            <div class="cmdk__group">
+              <span class="cmdk__group-title">{{ group.title }}</span>
+              @for (item of group.items; track item.label + item.sublabel; let ii = $index) {
+                <button
+                  type="button"
+                  class="cmdk__item"
+                  [class.cmdk__item--active]="globalIndex(gi, ii) === activeIndex()"
+                  (mouseenter)="activeIndex.set(globalIndex(gi, ii))"
+                  (click)="selectItem(item)"
+                >
+                  <span class="cmdk__item-icon">
+                    <app-icon [name]="item.icon" [size]="15" />
+                  </span>
+                  <span class="cmdk__item-text">
+                    <span class="cmdk__item-label">{{ item.label }}</span>
+                    @if (item.sublabel) {
+                      <span class="cmdk__item-sublabel">{{ item.sublabel }}</span>
+                    }
+                  </span>
+                </button>
+              }
+            </div>
+          }
+        } @else {
+          <p class="cmdk__empty">{{ translate.dict().commandPalette.noResults }}</p>
+        }
+      </div>
+
+      <div class="cmdk__hints">
+        <span><kbd>↑</kbd><kbd>↓</kbd> {{ translate.dict().commandPalette.hintNavigate }}</span>
+        <span><kbd>↵</kbd> {{ translate.dict().commandPalette.hintSelect }}</span>
+        <span><kbd>Esc</kbd> {{ translate.dict().commandPalette.hintClose }}</span>
+      </div>
+    </div>
+  </div>
+}

@@ -33,7 +33,13 @@
     background: var(--bg-hover);
     color: var(--text-muted);
     font-size: 13px;
-    cursor: text;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: left;
+
+    &:hover {
+      border-color: var(--border-strong);
+    }
 
     span {
       flex: 1;
@@ -122,6 +128,10 @@
       padding: 0 8px;
     }
 
+    &--active {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
   }
 
   &__badge {
@@ -342,7 +352,7 @@
   }
 }
 
-@media (max-width: 780px) {
+@media (max-width: 1200px) {
   .header {
     padding: 0 12px;
     gap: 10px;
@@ -355,11 +365,15 @@
       display: none;
     }
 
-    &__link--primary span {
+    &__icon-btn--secondary {
       display: none;
     }
+  }
+}
 
-    &__icon-btn--secondary {
+@media (max-width: 860px) {
+  .header {
+    &__link--primary span {
       display: none;
     }
   }

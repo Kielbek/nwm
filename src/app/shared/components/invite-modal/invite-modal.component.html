@@ -1,0 +1,38 @@
+@if (referral.isOpen()) {
+  <div class="invite-modal">
+    <div class="invite-modal__backdrop" (click)="referral.close()"></div>
+    <div class="invite-modal__panel" role="dialog" aria-modal="true">
+      <button type="button" class="invite-modal__close" [attr.aria-label]="translate.dict().referral.close" (click)="referral.close()">
+        <app-icon name="close" [size]="16" />
+      </button>
+
+      <span class="invite-modal__icon">
+        <app-icon name="invite" [size]="22" />
+      </span>
+
+      <h2 class="invite-modal__title">{{ translate.dict().referral.title }}</h2>
+      <p class="invite-modal__subtitle">{{ translate.dict().referral.subtitle }}</p>
+      <span class="invite-modal__reward">{{ translate.dict().referral.rewardBadge }}</span>
+
+      <div class="invite-modal__link-field">
+        <span class="invite-modal__link-label">{{ translate.dict().referral.linkLabel }}</span>
+        <div class="invite-modal__link-row">
+          <input type="text" readonly [value]="referral.referralLink()" (click)="$any($event.target).select()" />
+          <button type="button" class="invite-modal__copy-btn" (click)="copyLink()">
+            <app-icon [name]="copied() ? 'check' : 'link'" [size]="14" />
+            {{ copied() ? translate.dict().referral.copiedLabel : translate.dict().referral.copyButton }}
+          </button>
+        </div>
+      </div>
+
+      <div class="invite-modal__steps">
+        <strong>{{ translate.dict().referral.howItWorksTitle }}</strong>
+        <ol>
+          <li>{{ translate.dict().referral.step1 }}</li>
+          <li>{{ translate.dict().referral.step2 }}</li>
+          <li>{{ translate.dict().referral.step3 }}</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+}

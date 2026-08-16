@@ -6,6 +6,8 @@ import { ThemeMode, ThemeService } from '../../core/services/theme.service';
 import { Lang, TranslateService } from '../../core/services/translate.service';
 import { AccountService } from '../../core/services/account.service';
 import { NotificationItem, NotificationsService } from '../../core/services/notifications.service';
+import { ReferralService } from '../../core/services/referral.service';
+import { CommandPaletteService } from '../../core/services/command-palette.service';
 
 @Component({
   selector: 'app-header',
@@ -31,6 +33,8 @@ export class HeaderComponent {
     readonly translate: TranslateService,
     readonly account: AccountService,
     readonly notifications: NotificationsService,
+    readonly referral: ReferralService,
+    readonly palette: CommandPaletteService,
     private readonly router: Router
   ) {}
 

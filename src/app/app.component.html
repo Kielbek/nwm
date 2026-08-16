@@ -1,4 +1,9 @@
 <div class="app-shell">
+  <div
+    class="app-shell__progress"
+    [class.app-shell__progress--loading]="progressState() === 'loading'"
+    [class.app-shell__progress--finishing]="progressState() === 'finishing'"
+  ></div>
   @if (isMobile() && (sidebarOpen() || askOpen())) {
     <div class="app-shell__backdrop" (click)="closeSidebar(); closeAsk()"></div>
   }
@@ -13,4 +18,6 @@
   </div>
   <app-ask-panel [open]="askOpen()" [overlay]="isMobile()" (closeRequested)="closeAsk()" />
   <app-cookie-banner />
+  <app-command-palette />
+  <app-invite-modal />
 </div>

@@ -133,6 +133,88 @@
 
   <section class="settings__card">
     <div class="settings__card-head">
+      <h2>{{ translate.dict().settingsPage.securityTitle }}</h2>
+      <p>{{ translate.dict().settingsPage.securitySubtitle }}</p>
+    </div>
+
+    <p class="settings__demo-note">
+      <app-icon name="help" [size]="13" />
+      {{ translate.dict().settingsPage.securityDemoNote }}
+    </p>
+
+    <form class="settings__password-form" (ngSubmit)="changePassword()">
+      <label class="settings__field">
+        <span>{{ translate.dict().settingsPage.currentPasswordLabel }}</span>
+        <input
+          type="password"
+          autocomplete="current-password"
+          [ngModel]="currentPassword()"
+          (ngModelChange)="currentPassword.set($event)"
+          name="currentPassword"
+          required
+        />
+      </label>
+      <label class="settings__field">
+        <span>{{ translate.dict().settingsPage.newPasswordLabel }}</span>
+        <input
+          type="password"
+          autocomplete="new-password"
+          [ngModel]="newPassword()"
+          (ngModelChange)="newPassword.set($event)"
+          name="newPassword"
+          required
+        />
+      </label>
+      <label class="settings__field">
+        <span>{{ translate.dict().settingsPage.confirmPasswordLabel }}</span>
+        <input
+          type="password"
+          autocomplete="new-password"
+          [ngModel]="confirmPassword()"
+          (ngModelChange)="confirmPassword.set($event)"
+          name="confirmPassword"
+          required
+        />
+      </label>
+
+      @if (passwordError(); as error) {
+        <p class="settings__field-error">{{ error }}</p>
+      }
+
+      <button type="submit" class="settings__btn settings__btn--primary settings__password-submit">
+        {{ translate.dict().settingsPage.changePasswordButton }}
+      </button>
+    </form>
+
+    <div class="settings__row">
+      <div class="settings__row-info">
+        <strong>{{ translate.dict().settingsPage.twoFactorLabel }}</strong>
+        <span>{{ translate.dict().settingsPage.twoFactorDesc }}</span>
+      </div>
+      <div class="settings__row-actions">
+        <span class="settings__2fa-state">
+          {{
+            twoFactorEnabled()
+              ? translate.dict().settingsPage.twoFactorOn
+              : translate.dict().settingsPage.twoFactorOff
+          }}
+        </span>
+        <button
+          type="button"
+          class="settings__toggle"
+          [class.settings__toggle--on]="twoFactorEnabled()"
+          role="switch"
+          [attr.aria-checked]="twoFactorEnabled()"
+          (click)="toggleTwoFactor()"
+        >
+          <span class="settings__toggle-thumb"></span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="settings__card">
+    <div class="settings__card-head">
       <h2>{{ translate.dict().settingsPage.privacyTitle }}</h2>
       <p>{{ translate.dict().settingsPage.privacySubtitle }}</p>
     </div>

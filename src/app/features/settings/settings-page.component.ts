@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ThemeService, ThemeMode } from '../../core/services/theme.service';
 import { TranslateService, Lang } from '../../core/services/translate.service';
@@ -11,11 +12,13 @@ const NOTIFY_KEYS = {
   marketing: 'nwm-notify-marketing',
 };
 
+const TWO_FACTOR_KEY = 'nwm-2fa-enabled';
+
 @Component({
   selector: 'app-settings-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IconComponent],
+  imports: [FormsModule, IconComponent],
   templateUrl: './settings-page.component.html',
   styleUrl: './settings-page.component.scss',
 })
@@ -23,6 +26,12 @@ export class SettingsPageComponent {
   readonly notifyUpdates = signal(this.readNotify(NOTIFY_KEYS.updates, true));
   readonly notifyUsage = signal(this.readNotify(NOTIFY_KEYS.usage, true));
   readonly notifyMarketing = signal(this.readNotify(NOTIFY_KEYS.marketing, false));
+  readonly twoFactorEnabled = signal(this.readNotify(TWO_FACTOR_KEY, false));
+
+  readonly currentPassword = signal('');
+  readonly newPassword = signal('');
+  readonly confirmPassword = signal('');
+  readonly passwordError = signal<string | null>(null);
 
   readonly savedToast = signal<string | null>(null);
   readonly resetConfirmOpen = signal(false);
@@ -59,6 +68,31 @@ export class SettingsPageComponent {
   toggleNotifyMarketing(): void {
     this.notifyMarketing.update((v) => !v);
     this.writeNotify(NOTIFY_KEYS.marketing, this.notifyMarketing());
+    this.showToast(this.translate.dict().settingsPage.saved);
+  }
+
+  changePassword(): void {
+    const dict = this.translate.dict().settingsPage;
+    this.passwordError.set(null);
+
+    if (this.newPassword() !== this.confirmPassword()) {
+      this.passwordError.set(dict.passwordMismatch);
+      return;
+    }
+    if (this.newPassword().length < 8) {
+      this.passwordError.set(dict.passwordTooShort);
+      return;
+    }
+
+    this.currentPassword.set('');
+    this.newPassword.set('');
+    this.confirmPassword.set('');
+    this.showToast(dict.passwordChanged);
+  }
+
+  toggleTwoFactor(): void {
+    this.twoFactorEnabled.update((v) => !v);
+    this.writeNotify(TWO_FACTOR_KEY, this.twoFactorEnabled());
     this.showToast(this.translate.dict().settingsPage.saved);
   }
 

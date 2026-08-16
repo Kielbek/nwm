@@ -14,6 +14,11 @@ export const routes: Routes = [
       import('./features/voices/voices-page.component').then((m) => m.VoicesPageComponent),
   },
   {
+    path: 'history',
+    loadComponent: () =>
+      import('./features/history/history-page.component').then((m) => m.HistoryPageComponent),
+  },
+  {
     path: 'feedback',
     loadComponent: () =>
       import('./features/feedback/feedback-page.component').then(
@@ -37,5 +42,11 @@ export const routes: Routes = [
         (m) => m.SettingsPageComponent
       ),
   },
-  { path: '**', redirectTo: '' },
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./features/not-found/not-found-page.component').then(
+        (m) => m.NotFoundPageComponent
+      ),
+  },
 ];
