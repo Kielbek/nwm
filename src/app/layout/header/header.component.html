@@ -1,6 +1,6 @@
 <header class="header">
   <div class="header__left">
-    <button type="button" class="header__icon-btn">
+    <button type="button" class="header__icon-btn" aria-label="Przełącz menu boczne" (click)="toggleSidebar.emit()">
       <app-icon name="panel" [size]="18" />
     </button>
     <h1 class="header__title">{{ title }}</h1>
@@ -8,18 +8,18 @@
 
   <div class="header__search">
     <app-icon name="search" [size]="16" />
-    <span>Przeszukaj wszystko...</span>
+    <span class="header__search-text">Przeszukaj wszystko...</span>
     <kbd>⌘K</kbd>
   </div>
 
   <div class="header__right">
-    <button type="button" class="header__link">Opinie</button>
-    <button type="button" class="header__link">Dokumentacja</button>
+    <button type="button" class="header__link header__link--secondary">Opinie</button>
+    <button type="button" class="header__link header__link--secondary">Dokumentacja</button>
     <button type="button" class="header__link header__link--primary">
       <app-icon name="sparkle" [size]="14" />
-      Zapytaj
+      <span>Zapytaj</span>
     </button>
-    <button type="button" class="header__icon-btn">
+    <button type="button" class="header__icon-btn header__icon-btn--secondary">
       <app-icon name="folder" [size]="18" />
     </button>
     <button type="button" class="header__icon-btn header__icon-btn--dot">

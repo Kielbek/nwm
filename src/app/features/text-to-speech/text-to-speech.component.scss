@@ -3,12 +3,22 @@
   flex: 1;
   min-height: 0;
 
+  @media (max-width: 900px) {
+    flex-direction: column;
+    overflow-y: auto;
+    min-height: auto;
+  }
+
   &__editor {
     flex: 1;
     display: flex;
     flex-direction: column;
     padding: 28px 32px 20px;
     min-width: 0;
+
+    @media (max-width: 900px) {
+      padding: 20px;
+    }
   }
 
   &__textarea {
@@ -25,6 +35,11 @@
 
     &::placeholder {
       color: var(--text-muted);
+    }
+
+    @media (max-width: 900px) {
+      min-height: 220px;
+      flex: none;
     }
   }
 
@@ -117,6 +132,14 @@
     padding: 24px 24px 24px;
     border-left: 1px solid var(--border);
     overflow-y: auto;
+
+    @media (max-width: 900px) {
+      width: 100%;
+      border-left: none;
+      border-top: 1px solid var(--border);
+      padding: 20px;
+      overflow-y: visible;
+    }
   }
 
   &__promo {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 
 @Component({
@@ -11,4 +11,5 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
 })
 export class HeaderComponent {
   @Input() title = 'Text to Speech';
+  @Output() toggleSidebar = new EventEmitter<void>();
 }

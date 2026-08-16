@@ -1,7 +1,10 @@
 <div class="app-shell">
-  <app-sidebar />
+  @if (isMobile() && sidebarOpen()) {
+    <div class="app-shell__backdrop" (click)="closeSidebar()"></div>
+  }
+  <app-sidebar [open]="sidebarOpen()" [overlay]="isMobile()" (closeRequested)="closeSidebar()" />
   <div class="app-shell__main">
-    <app-header title="Text to Speech" />
+    <app-header title="Text to Speech" (toggleSidebar)="toggleSidebar()" />
     <app-text-to-speech />
   </div>
 </div>

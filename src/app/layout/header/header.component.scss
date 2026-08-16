@@ -128,5 +128,50 @@
     color: #fff;
     font-size: 13px;
     font-weight: 600;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 780px) {
+  .header {
+    padding: 0 12px;
+    gap: 10px;
+
+    &__left {
+      min-width: 0;
+    }
+
+    &__link--secondary {
+      display: none;
+    }
+
+    &__link--primary span {
+      display: none;
+    }
+
+    &__icon-btn--secondary {
+      display: none;
+    }
+  }
+}
+
+@media (max-width: 560px) {
+  .header {
+    &__title {
+      display: none;
+    }
+
+    &__search {
+      flex: 0 0 auto;
+      max-width: none;
+      width: 40px;
+      padding: 8px;
+      justify-content: center;
+    }
+
+    &__search-text,
+    &__search kbd {
+      display: none;
+    }
   }
 }
