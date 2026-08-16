@@ -2,17 +2,18 @@
   <section class="tts__editor">
     <textarea
       class="tts__textarea"
-      placeholder="Zacznij pisać tutaj lub wklej dowolny tekst, który chcesz zamienić na realistyczną mowę..."
+      [placeholder]="translate.dict().editor.placeholder"
       [maxlength]="maxCharacters"
       [ngModel]="text()"
       (ngModelChange)="text.set($event)"
+      (keydown)="onEditorKeydown($event)"
     ></textarea>
 
     @if (!text()) {
       <div class="tts__starters">
-        <span class="tts__starters-label">Zacznij od</span>
+        <span class="tts__starters-label">{{ translate.dict().editor.startFrom }}</span>
         <div class="tts__starters-grid">
-          @for (prompt of starterPrompts; track prompt.label) {
+          @for (prompt of starterPrompts(); track prompt.label) {
             <button type="button" class="tts__starter-chip" (click)="applyStarterPrompt(prompt)">
               <app-icon [name]="prompt.icon" [size]="16" />
               {{ prompt.label }}
@@ -31,7 +32,7 @@
         (click)="generate()"
       >
         <app-icon name="play" [size]="15" />
-        {{ ttsService.isSynthesizing() ? 'Generowanie…' : 'Generuj mowę' }}
+        {{ ttsService.isSynthesizing() ? translate.dict().editor.generating : translate.dict().editor.generate }}
       </button>
     </div>
 
@@ -41,21 +42,23 @@
   </section>
 
   <aside class="tts__settings">
-    <div class="tts__promo">
-      <div class="tts__promo-icon">
-        <span class="tts__promo-badge">V3</span>
+    @if (!tipDismissed()) {
+      <div class="tts__tip">
+        <div class="tts__tip-icon">
+          <app-icon name="sparkle" [size]="18" />
+        </div>
+        <div class="tts__tip-copy">
+          <strong>{{ translate.dict().tip.title }}</strong>
+          <span>{{ translate.dict().tip.description }}</span>
+        </div>
+        <button type="button" class="tts__tip-close" aria-label="Close" (click)="tipDismissed.set(true)">
+          <app-icon name="close" [size]="14" />
+        </button>
       </div>
-      <div class="tts__promo-copy">
-        <strong>Wypróbuj Voice Design dla v3</strong>
-        <span>Twórz ekspresyjne głosy dla modelu Eleven v3 Text to Speech</span>
-      </div>
-      <button type="button" class="tts__promo-close" aria-label="Zamknij">
-        <app-icon name="close" [size]="14" />
-      </button>
-    </div>
+    }
 
     <div class="tts__field">
-      <span class="tts__field-label">Głos</span>
+      <span class="tts__field-label">{{ translate.dict().settings.voice }}</span>
       <app-dropdown #voiceDropdown>
         <button type="button" class="tts__select" dropdownTrigger>
           <span class="tts__voice-avatar" [style.background]="selectedVoice().avatarColor"></span>
@@ -66,7 +69,7 @@
           <app-icon name="chevron-down" [size]="16" />
         </button>
         <div dropdownPanel>
-          @for (voice of voices; track voice.id) {
+          @for (voice of voices(); track voice.id) {
             <button type="button" class="tts__option" (click)="selectVoice(voice, voiceDropdown)">
               <span class="tts__voice-avatar" [style.background]="voice.avatarColor"></span>
               <span class="tts__select-copy">
@@ -80,21 +83,23 @@
     </div>
 
     <div class="tts__field">
-      <span class="tts__field-label">Model</span>
+      <span class="tts__field-label">{{ translate.dict().settings.model }}</span>
       <app-dropdown #modelDropdown>
         <button type="button" class="tts__select" dropdownTrigger>
           <span class="tts__model-badge">{{ selectedModel().badge }}</span>
           <span class="tts__select-copy">
             <strong>{{ selectedModel().name }}</strong>
+            <small>{{ selectedModel().description }}</small>
           </span>
           <app-icon name="chevron-down" [size]="16" />
         </button>
         <div dropdownPanel>
-          @for (model of models; track model.id) {
+          @for (model of models(); track model.id) {
             <button type="button" class="tts__option" (click)="selectModel(model, modelDropdown)">
               <span class="tts__model-badge">{{ model.badge }}</span>
               <span class="tts__select-copy">
                 <strong>{{ model.name }}</strong>
+                <small>{{ model.description }}</small>
               </span>
             </button>
           }
@@ -103,9 +108,9 @@
     </div>
 
     <app-slider
-      label="Prędkość"
-      minLabel="Wolniej"
-      maxLabel="Szybciej"
+      [label]="translate.dict().settings.speed"
+      [minLabel]="translate.dict().settings.speedSlower"
+      [maxLabel]="translate.dict().settings.speedFaster"
       [min]="0.5"
       [max]="2"
       [step]="0.05"
@@ -114,9 +119,9 @@
     />
 
     <app-slider
-      label="Stabilność"
-      minLabel="Bardziej zmienne"
-      maxLabel="Bardziej stabilne"
+      [label]="translate.dict().settings.stability"
+      [minLabel]="translate.dict().settings.stabilityVariable"
+      [maxLabel]="translate.dict().settings.stabilityStable"
       [min]="0"
       [max]="1"
       [step]="0.01"
@@ -125,9 +130,9 @@
     />
 
     <app-slider
-      label="Podobieństwo"
-      minLabel="Niski"
-      maxLabel="Wysoki"
+      [label]="translate.dict().settings.similarity"
+      [minLabel]="translate.dict().settings.similarityLow"
+      [maxLabel]="translate.dict().settings.similarityHigh"
       [min]="0"
       [max]="1"
       [step]="0.01"
@@ -136,9 +141,9 @@
     />
 
     <app-slider
-      label="Przesada w stylu"
-      minLabel="Brak"
-      maxLabel="Przesadzone"
+      [label]="translate.dict().settings.style"
+      [minLabel]="translate.dict().settings.styleNone"
+      [maxLabel]="translate.dict().settings.styleExaggerated"
       [min]="0"
       [max]="1"
       [step]="0.01"
@@ -147,7 +152,7 @@
     />
 
     <div class="tts__toggle-row">
-      <span class="tts__field-label">Nadpisanie języka</span>
+      <span class="tts__field-label">{{ translate.dict().settings.languageOverride }}</span>
       <button
         type="button"
         class="tts__toggle"
@@ -161,7 +166,7 @@
     </div>
 
     <div class="tts__field">
-      <span class="tts__field-label">Format wyjściowy</span>
+      <span class="tts__field-label">{{ translate.dict().settings.outputFormat }}</span>
       <app-dropdown #formatDropdown>
         <button type="button" class="tts__select tts__select--simple" dropdownTrigger>
           <span class="tts__select-copy">
@@ -170,7 +175,7 @@
           <app-icon name="chevron-down" [size]="16" />
         </button>
         <div dropdownPanel>
-          @for (format of outputFormats; track format.id) {
+          @for (format of outputFormats(); track format.id) {
             <button type="button" class="tts__option" (click)="selectFormat(format.id, formatDropdown)">
               <span class="tts__select-copy">
                 <strong>{{ format.label }}</strong>

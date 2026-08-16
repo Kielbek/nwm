@@ -1,0 +1,103 @@
+import { Dictionary } from './dictionary';
+
+export const en: Dictionary = {
+  header: {
+    pageTitle: 'Text to Speech',
+    searchPlaceholder: 'Search everything...',
+    feedback: 'Feedback',
+    docs: 'Docs',
+    ask: 'Ask',
+    toggleSidebar: 'Toggle sidebar',
+    theme: 'Theme',
+    themeLight: 'Light',
+    themeDark: 'Dark',
+    themeSystem: 'System',
+    language: 'Language',
+  },
+  sidebar: {
+    nav: 'Text to Speech',
+    closeMenu: 'Close menu',
+  },
+  editor: {
+    placeholder: 'Start typing here or paste any text you want to turn into realistic speech...',
+    startFrom: 'Start from',
+    generate: 'Generate speech',
+    generating: 'Generating…',
+    errorNoSpeechEngine: 'The speech engine is unavailable in this browser.',
+  },
+  tip: {
+    title: 'Keyboard shortcut',
+    description: 'Press Ctrl (⌘) + Enter in the text field to generate speech without clicking the button.',
+  },
+  settings: {
+    voice: 'Voice',
+    model: 'Model',
+    speed: 'Speed',
+    speedSlower: 'Slower',
+    speedFaster: 'Faster',
+    stability: 'Stability',
+    stabilityVariable: 'More variable',
+    stabilityStable: 'More stable',
+    similarity: 'Similarity',
+    similarityLow: 'Low',
+    similarityHigh: 'High',
+    style: 'Style exaggeration',
+    styleNone: 'None',
+    styleExaggerated: 'Exaggerated',
+    languageOverride: 'Language override',
+    outputFormat: 'Output format',
+  },
+  starters: [
+    {
+      label: 'Tell a story',
+      text: 'Once upon a time, in a small village surrounded by mountains, there lived a girl who dreamed of flying...',
+    },
+    {
+      label: 'Tell a silly joke',
+      text: 'Why did the programmer mix up Halloween and Christmas? Because Oct 31 == Dec 25.',
+    },
+    {
+      label: 'Record an ad',
+      text: 'Discover the new taste of summer — refreshing, natural, available today in your store!',
+    },
+    {
+      label: 'Speak multiple languages',
+      text: 'Hello! Hola! Bonjour! Ciao! Cześć! Welcome to our app.',
+    },
+    {
+      label: 'Direct a dramatic movie scene',
+      text: 'The door creaked. Silence. Then, from the dark, a whisper...',
+    },
+    {
+      label: 'Voice a video game character',
+      text: 'Welcome, traveler. Your adventure has only just begun.',
+    },
+    {
+      label: 'Introduce your podcast',
+      text: "Welcome to another episode! Today we're talking about something that will change how you think about technology.",
+    },
+    {
+      label: 'Guide a meditation session',
+      text: 'Sit comfortably, close your eyes, and take a deep breath...',
+    },
+  ],
+  voices: [
+    { name: 'Marek', description: 'Firm, confident' },
+    { name: 'Ania', description: 'Calm, narrative' },
+    { name: 'Kuba', description: 'Energetic, confident' },
+    { name: 'Zosia', description: 'Warm, friendly' },
+    { name: 'Tomasz', description: 'Neutral, all-purpose' },
+  ],
+  models: [
+    { name: 'Expressive', description: 'Rich emotion and intonation' },
+    { name: 'Standard', description: 'Natural sound, many languages' },
+    { name: 'Fast', description: 'Lowest latency, good quality' },
+    { name: 'Draft', description: 'Fastest preview, lower quality' },
+  ],
+  formats: [
+    'MP3 44.1 kHz (128kbps)',
+    'MP3 44.1 kHz (192kbps)',
+    'WAV 44.1 kHz (lossless)',
+    'OGG 44.1 kHz',
+  ],
+};

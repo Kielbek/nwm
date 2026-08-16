@@ -1,9 +1,16 @@
 <aside class="sidebar" [class.sidebar--open]="open" [class.sidebar--overlay]="overlay">
   <div class="sidebar__brand">
-    <span class="sidebar__brand-mark">II</span>
+    <span class="sidebar__brand-mark">
+      <app-icon name="text-to-speech" [size]="14" />
+    </span>
     <span class="sidebar__brand-name">NWM</span>
     @if (overlay) {
-      <button type="button" class="sidebar__close" aria-label="Zamknij menu" (click)="closeRequested.emit()">
+      <button
+        type="button"
+        class="sidebar__close"
+        [attr.aria-label]="translate.dict().sidebar.closeMenu"
+        (click)="closeRequested.emit()"
+      >
         <app-icon name="close" [size]="16" />
       </button>
     }
@@ -12,7 +19,7 @@
   <nav class="sidebar__nav">
     <button type="button" class="sidebar__item sidebar__item--active">
       <app-icon name="text-to-speech" [size]="18" />
-      <span>Text to Speech</span>
+      <span>{{ translate.dict().sidebar.nav }}</span>
     </button>
   </nav>
 </aside>

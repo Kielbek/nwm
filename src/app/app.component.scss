@@ -1,6 +1,6 @@
 .app-shell {
   display: flex;
-  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   position: relative;
 
@@ -17,5 +17,16 @@
     flex-direction: column;
     min-width: 0;
     min-height: 0;
+  }
+
+  @media (max-width: 900px) {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+
+    &__main {
+      min-height: 0;
+      overflow: visible;
+    }
   }
 }

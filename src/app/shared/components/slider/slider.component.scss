@@ -23,8 +23,8 @@
     border-radius: 999px;
     background: linear-gradient(
       to right,
-      var(--text-primary) 0%,
-      var(--text-primary) var(--fill, 0%),
+      var(--accent) 0%,
+      var(--accent) var(--fill, 0%),
       var(--border) var(--fill, 0%),
       var(--border) 100%
     );
@@ -37,7 +37,7 @@
       width: 14px;
       height: 14px;
       border-radius: 50%;
-      background: var(--text-primary);
+      background: var(--accent);
       border: 2px solid var(--bg-surface);
       box-shadow: 0 0 0 1px var(--border);
       cursor: pointer;
@@ -47,7 +47,7 @@
       width: 14px;
       height: 14px;
       border-radius: 50%;
-      background: var(--text-primary);
+      background: var(--accent);
       border: 2px solid var(--bg-surface);
       cursor: pointer;
     }

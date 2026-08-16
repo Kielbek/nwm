@@ -6,7 +6,8 @@ export type IconName =
   | 'text-to-speech' | 'sound-effects' | 'image-video' | 'voice-isolator'
   | 'voice-changer' | 'music' | 'speech-to-text' | 'more'
   | 'chevron-down' | 'chevron-right' | 'search' | 'bell' | 'folder'
-  | 'sparkle' | 'close' | 'play' | 'download' | 'panel' | 'invite';
+  | 'sparkle' | 'close' | 'play' | 'download' | 'panel' | 'invite'
+  | 'sun' | 'moon' | 'monitor' | 'globe' | 'check';
 
 @Component({
   selector: 'app-icon',
@@ -93,6 +94,23 @@ export type IconName =
         </ng-container>
         <ng-container *ngSwitchCase="'invite'">
           <circle cx="7" cy="7" r="3" /><path d="M2 17c0-3 2.2-5 5-5s5 2 5 5" /><path d="M14 5v6" /><path d="M11 8h6" />
+        </ng-container>
+        <ng-container *ngSwitchCase="'sun'">
+          <circle cx="10" cy="10" r="3.5" />
+          <path d="M10 2.5v2M10 15.5v2M17.5 10h-2M4.5 10h-2M15.3 4.7l-1.4 1.4M6.1 13.9l-1.4 1.4M15.3 15.3l-1.4-1.4M6.1 6.1 4.7 4.7" />
+        </ng-container>
+        <ng-container *ngSwitchCase="'moon'">
+          <path d="M16 12.2A6.8 6.8 0 0 1 7.8 4 6.8 6.8 0 1 0 16 12.2Z" />
+        </ng-container>
+        <ng-container *ngSwitchCase="'monitor'">
+          <rect x="3" y="4" width="14" height="9.5" rx="1.5" /><path d="M7.5 17h5" /><path d="M10 13.5V17" />
+        </ng-container>
+        <ng-container *ngSwitchCase="'globe'">
+          <circle cx="10" cy="10" r="7" />
+          <path d="M3 10h14" /><path d="M10 3c2.2 2 3.3 4.5 3.3 7s-1.1 5-3.3 7c-2.2-2-3.3-4.5-3.3-7s1.1-5 3.3-7Z" />
+        </ng-container>
+        <ng-container *ngSwitchCase="'check'">
+          <path d="M4.5 10.5l3.5 3.5 7.5-8" />
         </ng-container>
       </ng-container>
     </svg>

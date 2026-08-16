@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { IconComponent } from '../../shared/components/icon/icon.component';
+import { TranslateService } from '../../core/services/translate.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -13,4 +14,6 @@ export class SidebarComponent {
   @Input() open = true;
   @Input() overlay = false;
   @Output() closeRequested = new EventEmitter<void>();
+
+  constructor(readonly translate: TranslateService) {}
 }

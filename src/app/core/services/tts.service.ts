@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, of, tap } from 'rxjs';
 import { SynthesizeRequest, SynthesizeResult } from '../models/tts.models';
+import { TranslateService } from './translate.service';
 
 /**
  * Talks to the backend TTS endpoint when configured. Falls back to the
@@ -14,7 +15,7 @@ export class TtsService {
   readonly isSynthesizing = signal(false);
   readonly lastError = signal<string | null>(null);
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient, private readonly translate: TranslateService) {}
 
   synthesize(request: SynthesizeRequest): Observable<SynthesizeResult | null> {
     this.isSynthesizing.set(true);
@@ -32,11 +33,11 @@ export class TtsService {
 
   private speakWithBrowserFallback(text: string): void {
     if (!('speechSynthesis' in window) || !text.trim()) {
-      this.lastError.set('Silnik mowy jest niedostępny w tej przeglądarce.');
+      this.lastError.set(this.translate.dict().editor.errorNoSpeechEngine);
       return;
     }
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'pl-PL';
+    utterance.lang = this.translate.lang() === 'pl' ? 'pl-PL' : 'en-US';
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
   }
