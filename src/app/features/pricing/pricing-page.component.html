@@ -66,7 +66,11 @@
             }
           </ul>
 
-          <a class="pricing__plan-btn" routerLink="/app/profile">
+          <a
+            class="pricing__plan-btn"
+            routerLink="/app/checkout"
+            [queryParams]="{ type: 'plan', id: plan.id, cycle: billingCycle() }"
+          >
             {{ translate.dict().profilePage.choosePlan }}
           </a>
         </div>
@@ -86,7 +90,11 @@
           <strong>{{ formatNumber(pack.characters) }} {{ translate.dict().profilePage.characters }}</strong>
           <span>{{ pack.label }}</span>
           <div class="pricing__topup-price">{{ formatNumber(pack.price) }} zł</div>
-          <a class="pricing__plan-btn pricing__plan-btn--outline" routerLink="/app/profile">
+          <a
+            class="pricing__plan-btn pricing__plan-btn--outline"
+            routerLink="/app/checkout"
+            [queryParams]="{ type: 'topup', id: pack.id }"
+          >
             {{ translate.dict().profilePage.buyPack }}
           </a>
         </div>

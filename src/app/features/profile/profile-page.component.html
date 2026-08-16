@@ -188,13 +188,6 @@
     </div>
     <p class="profile__section-subtitle">{{ translate.dict().profilePage.topUpSubtitle }}</p>
 
-    @if (purchaseToast(); as chars) {
-      <div class="profile__toast">
-        <app-icon name="check" [size]="14" />
-        {{ translate.dict().profilePage.purchased.replace('{characters}', formatNumber(chars)) }}
-      </div>
-    }
-
     <div class="profile__topups">
       @for (pack of account.topUps(); track pack.id) {
         <div class="profile__topup">

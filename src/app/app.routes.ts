@@ -61,6 +61,13 @@ export const routes: Routes = [
             (m) => m.SettingsPageComponent
           ),
       },
+      {
+        path: 'checkout',
+        loadComponent: () =>
+          import('./features/checkout/checkout-page.component').then(
+            (m) => m.CheckoutPageComponent
+          ),
+      },
     ],
   },
   {

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { CarouselComponent } from '../../shared/components/carousel/carousel.component';
 import { AccountService, BillingCycle, PlanId } from '../../core/services/account.service';
@@ -21,9 +21,6 @@ export class ProfilePageComponent {
   readonly editingProfile = signal(false);
   readonly formName = signal('');
   readonly formEmail = signal('');
-
-  readonly purchaseToast = signal<number | null>(null);
-  private purchaseToastTimeout?: ReturnType<typeof setTimeout>;
 
   readonly ringCircumference = RING_CIRCUMFERENCE;
 
@@ -50,7 +47,11 @@ export class ProfilePageComponent {
       .profilePage.memberSince.replace('{date}', this.formatMemberSince(this.account.memberSince))
   );
 
-  constructor(readonly account: AccountService, readonly translate: TranslateService) {}
+  constructor(
+    readonly account: AccountService,
+    readonly translate: TranslateService,
+    private readonly router: Router
+  ) {}
 
   startEditingProfile(): void {
     this.formName.set(this.account.name());
@@ -75,7 +76,9 @@ export class ProfilePageComponent {
   }
 
   selectPlan(id: PlanId): void {
-    this.account.selectPlan(id);
+    this.router.navigate(['/app/checkout'], {
+      queryParams: { type: 'plan', id, cycle: this.account.billingCycle() },
+    });
   }
 
   planButtonLabel(id: PlanId, name: string): string {
@@ -88,13 +91,10 @@ export class ProfilePageComponent {
       : `${dict.downgradeTo} ${name}`;
   }
 
-  buyPack(topUp: { characters: number; price: number }): void {
-    this.account.buyTopUp(topUp);
-    this.purchaseToast.set(topUp.characters);
-    if (this.purchaseToastTimeout) {
-      clearTimeout(this.purchaseToastTimeout);
-    }
-    this.purchaseToastTimeout = setTimeout(() => this.purchaseToast.set(null), 3200);
+  buyPack(topUp: { id: string }): void {
+    this.router.navigate(['/app/checkout'], {
+      queryParams: { type: 'topup', id: topUp.id },
+    });
   }
 
   formatNumber(value: number): string {

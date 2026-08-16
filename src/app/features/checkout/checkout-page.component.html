@@ -1,0 +1,159 @@
+<div class="checkout">
+  @if (!orderFound()) {
+    <div class="checkout__empty">
+      <app-icon name="close" [size]="22" />
+      <strong>{{ translate.dict().checkoutPage.notFoundTitle }}</strong>
+      <p>{{ translate.dict().checkoutPage.notFoundBody }}</p>
+      <a class="checkout__btn checkout__btn--primary" routerLink="/pricing">
+        {{ translate.dict().checkoutPage.notFoundBack }}
+      </a>
+    </div>
+  } @else if (isComplete()) {
+    <div class="checkout__success">
+      <span class="checkout__success-icon">
+        <app-icon name="check" [size]="26" />
+      </span>
+      <h1>{{ translate.dict().checkoutPage.successTitle }}</h1>
+      <p>{{ successMessage() }}</p>
+      <a class="checkout__btn checkout__btn--primary" routerLink="/app/profile">
+        {{ translate.dict().checkoutPage.goToProfile }}
+      </a>
+    </div>
+  } @else {
+    <header class="checkout__hero">
+      <a class="checkout__back" routerLink="/pricing">
+        <app-icon name="chevron-right" [size]="13" class="checkout__back-icon" />
+        {{ translate.dict().checkoutPage.backToPricing }}
+      </a>
+      <h1>{{ translate.dict().checkoutPage.title }}</h1>
+      <p>{{ translate.dict().checkoutPage.subtitle }}</p>
+    </header>
+
+    <div class="checkout__layout">
+      <form class="checkout__form" (ngSubmit)="submit()">
+        <p class="checkout__demo-note">
+          <app-icon name="help" [size]="13" />
+          {{ translate.dict().checkoutPage.demoNote }}
+        </p>
+
+        <label class="checkout__field">
+          <span>{{ translate.dict().checkoutPage.cardholderLabel }}</span>
+          <input
+            type="text"
+            [ngModel]="cardholderName()"
+            (ngModelChange)="cardholderName.set($event)"
+            name="cardholderName"
+            [placeholder]="translate.dict().checkoutPage.cardholderPlaceholder"
+            autocomplete="cc-name"
+          />
+        </label>
+
+        <label class="checkout__field">
+          <span>{{ translate.dict().checkoutPage.cardNumberLabel }}</span>
+          <div class="checkout__card-input">
+            <app-icon name="edit" [size]="15" />
+            <input
+              type="text"
+              inputmode="numeric"
+              [ngModel]="cardNumber()"
+              (ngModelChange)="onCardNumberInput($event)"
+              name="cardNumber"
+              placeholder="4242 4242 4242 4242"
+              autocomplete="cc-number"
+            />
+          </div>
+        </label>
+
+        <div class="checkout__field-row">
+          <label class="checkout__field">
+            <span>{{ translate.dict().checkoutPage.expiryLabel }}</span>
+            <input
+              type="text"
+              inputmode="numeric"
+              [ngModel]="expiry()"
+              (ngModelChange)="onExpiryInput($event)"
+              name="expiry"
+              placeholder="MM/RR"
+              autocomplete="cc-exp"
+            />
+          </label>
+          <label class="checkout__field">
+            <span>{{ translate.dict().checkoutPage.cvcLabel }}</span>
+            <input
+              type="text"
+              inputmode="numeric"
+              [ngModel]="cvc()"
+              (ngModelChange)="onCvcInput($event)"
+              name="cvc"
+              placeholder="123"
+              autocomplete="cc-csc"
+            />
+          </label>
+        </div>
+
+        @if (formError(); as error) {
+          <p class="checkout__error">{{ error }}</p>
+        }
+
+        <button type="submit" class="checkout__btn checkout__btn--primary checkout__submit" [disabled]="isProcessing()">
+          @if (isProcessing()) {
+            <span class="checkout__spinner"></span>
+            {{ translate.dict().checkoutPage.processingButton }}
+          } @else {
+            <app-icon name="check" [size]="14" />
+            {{ translate.dict().checkoutPage.payButton }} · {{ formatNumber(totalPrice()) }} zł
+          }
+        </button>
+
+        <p class="checkout__secure-note">
+          <app-icon name="settings" [size]="12" />
+          {{ translate.dict().checkoutPage.secureNote }}
+        </p>
+      </form>
+
+      <aside class="checkout__summary">
+        <h2>{{ translate.dict().checkoutPage.orderSummaryTitle }}</h2>
+
+        @if (type() === 'plan' && plan(); as p) {
+          <div class="checkout__summary-row">
+            <span>{{ translate.dict().checkoutPage.planLabel }}</span>
+            <strong>{{ p.name }}</strong>
+          </div>
+          <div class="checkout__summary-row">
+            <span>{{ translate.dict().checkoutPage.billingLabel }}</span>
+            <strong>
+              {{
+                cycle() === 'monthly'
+                  ? translate.dict().profilePage.billingMonthly
+                  : translate.dict().profilePage.billingYearly
+              }}
+            </strong>
+          </div>
+          <ul class="checkout__summary-features">
+            @for (feature of p.features; track feature) {
+              <li>
+                <app-icon name="check" [size]="12" />
+                {{ feature }}
+              </li>
+            }
+          </ul>
+        } @else {
+          @if (topUp(); as t) {
+            <div class="checkout__summary-row">
+              <span>{{ translate.dict().checkoutPage.itemLabel }}</span>
+              <strong>{{ formatNumber(t.characters) }} {{ translate.dict().profilePage.characters }}</strong>
+            </div>
+            <div class="checkout__summary-row">
+              <span>{{ t.label }}</span>
+            </div>
+          }
+        }
+
+        <div class="checkout__summary-total">
+          <span>{{ translate.dict().checkoutPage.totalLabel }}</span>
+          <strong>{{ formatNumber(totalPrice()) }} zł</strong>
+        </div>
+      </aside>
+    </div>
+  }
+</div>
