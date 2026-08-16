@@ -25,10 +25,30 @@
           class="voices__card"
           [class.voices__card--active]="voice.id === voiceLibrary.selectedVoiceId()"
         >
-          @if (voice.id === voiceLibrary.selectedVoiceId()) {
-            <span class="voices__card-badge">{{ translate.dict().voicesPage.current }}</span>
-          }
-          <span class="voices__card-avatar" [style.background]="voice.avatarColor"></span>
+          <div class="voices__card-top">
+            <span class="voices__card-avatar" [style.background]="voice.avatarColor"></span>
+            <div class="voices__card-top-right">
+              @if (voice.id === voiceLibrary.selectedVoiceId()) {
+                <span class="voices__card-badge">{{ translate.dict().voicesPage.current }}</span>
+              }
+              <button
+                type="button"
+                class="voices__card-preview"
+                [class.voices__card-preview--playing]="voicePreview.playingVoiceId() === voice.id"
+                [attr.aria-label]="
+                  voicePreview.playingVoiceId() === voice.id
+                    ? translate.dict().voiceDropdown.stopPreview
+                    : translate.dict().voiceDropdown.preview
+                "
+                (click)="togglePreview(voice, $event)"
+              >
+                <app-icon
+                  [name]="voicePreview.playingVoiceId() === voice.id ? 'pause' : 'play'"
+                  [size]="13"
+                />
+              </button>
+            </div>
+          </div>
           <strong class="voices__card-name">{{ voice.name }}</strong>
           <span class="voices__card-desc">{{ voice.description }}</span>
           <button type="button" class="voices__card-btn" (click)="selectVoice(voice.id)">

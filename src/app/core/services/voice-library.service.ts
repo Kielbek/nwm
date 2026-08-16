@@ -4,14 +4,16 @@ import { TranslateService } from './translate.service';
 interface VoiceMeta {
   id: string;
   avatarColor: string;
+  previewPitch: number;
+  previewRate: number;
 }
 
 const VOICE_META: VoiceMeta[] = [
-  { id: 'marek', avatarColor: '#c7d2fe' },
-  { id: 'ania', avatarColor: '#fde68a' },
-  { id: 'kuba', avatarColor: '#bfdbfe' },
-  { id: 'zosia', avatarColor: '#fbcfe8' },
-  { id: 'tomasz', avatarColor: '#e7e5e4' },
+  { id: 'marek', avatarColor: '#c7d2fe', previewPitch: 0.85, previewRate: 1 },
+  { id: 'ania', avatarColor: '#fde68a', previewPitch: 1.05, previewRate: 0.9 },
+  { id: 'kuba', avatarColor: '#bfdbfe', previewPitch: 1.1, previewRate: 1.15 },
+  { id: 'zosia', avatarColor: '#fbcfe8', previewPitch: 1.2, previewRate: 0.95 },
+  { id: 'tomasz', avatarColor: '#e7e5e4', previewPitch: 1, previewRate: 1 },
 ];
 
 /**

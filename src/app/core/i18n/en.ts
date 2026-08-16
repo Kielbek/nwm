@@ -30,6 +30,8 @@ export const en: Dictionary = {
     searchPlaceholder: 'Search voices...',
     seeAll: 'See all voices',
     noResults: 'No voices match your search.',
+    preview: 'Play voice sample',
+    stopPreview: 'Stop preview',
   },
   voicesPage: {
     title: 'Voices',

@@ -84,16 +84,38 @@
           </div>
           <div class="tts__voice-list">
             @for (voice of filteredVoices(); track voice.id) {
-              <button type="button" class="tts__option" (click)="selectVoice(voice, voiceDropdown)">
-                <span class="tts__voice-avatar" [style.background]="voice.avatarColor"></span>
-                <span class="tts__select-copy">
-                  <strong>{{ voice.name }}</strong>
-                  <small>{{ voice.description }}</small>
-                </span>
-                @if (voice.id === voiceLibrary.selectedVoiceId()) {
-                  <app-icon name="check" [size]="15" class="tts__option-check" />
-                }
-              </button>
+              <div class="tts__option-row">
+                <button
+                  type="button"
+                  class="tts__option tts__option-main"
+                  (click)="selectVoice(voice, voiceDropdown)"
+                >
+                  <span class="tts__voice-avatar" [style.background]="voice.avatarColor"></span>
+                  <span class="tts__select-copy">
+                    <strong>{{ voice.name }}</strong>
+                    <small>{{ voice.description }}</small>
+                  </span>
+                  @if (voice.id === voiceLibrary.selectedVoiceId()) {
+                    <app-icon name="check" [size]="15" class="tts__option-check" />
+                  }
+                </button>
+                <button
+                  type="button"
+                  class="tts__option-preview"
+                  [class.tts__option-preview--playing]="voicePreview.playingVoiceId() === voice.id"
+                  [attr.aria-label]="
+                    voicePreview.playingVoiceId() === voice.id
+                      ? translate.dict().voiceDropdown.stopPreview
+                      : translate.dict().voiceDropdown.preview
+                  "
+                  (click)="togglePreview(voice, $event)"
+                >
+                  <app-icon
+                    [name]="voicePreview.playingVoiceId() === voice.id ? 'pause' : 'play'"
+                    [size]="12"
+                  />
+                </button>
+              </div>
             } @empty {
               <p class="tts__voice-empty">{{ translate.dict().voiceDropdown.noResults }}</p>
             }

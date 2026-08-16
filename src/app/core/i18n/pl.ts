@@ -31,6 +31,8 @@ export const pl: Dictionary = {
     searchPlaceholder: 'Szukaj głosu...',
     seeAll: 'Zobacz wszystkie głosy',
     noResults: 'Brak głosów pasujących do wyszukiwania.',
+    preview: 'Odsłuchaj próbkę głosu',
+    stopPreview: 'Zatrzymaj odsłuch',
   },
   voicesPage: {
     title: 'Głosy',

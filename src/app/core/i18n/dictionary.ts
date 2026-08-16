@@ -43,6 +43,8 @@ export interface Dictionary {
     searchPlaceholder: string;
     seeAll: string;
     noResults: string;
+    preview: string;
+    stopPreview: string;
   };
   voicesPage: {
     title: string;

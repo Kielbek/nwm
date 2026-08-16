@@ -7,6 +7,7 @@ import { DropdownComponent } from '../../shared/components/dropdown/dropdown.com
 import { TtsService } from '../../core/services/tts.service';
 import { TranslateService } from '../../core/services/translate.service';
 import { VoiceLibraryService } from '../../core/services/voice-library.service';
+import { VoicePreviewService, PreviewableVoice } from '../../core/services/voice-preview.service';
 import { OutputFormat } from '../../core/models/tts.models';
 
 const MAX_CHARACTERS = 5000;
@@ -89,6 +90,7 @@ export class TextToSpeechComponent {
     readonly ttsService: TtsService,
     readonly translate: TranslateService,
     readonly voiceLibrary: VoiceLibraryService,
+    readonly voicePreview: VoicePreviewService,
     private readonly router: Router
   ) {}
 
@@ -97,11 +99,18 @@ export class TextToSpeechComponent {
   }
 
   selectVoice(voice: { id: string }, dropdown: DropdownComponent): void {
+    this.voicePreview.stop();
     this.voiceLibrary.selectVoice(voice.id);
     dropdown.close();
   }
 
+  togglePreview(voice: PreviewableVoice, event: Event): void {
+    event.stopPropagation();
+    this.voicePreview.toggle(voice);
+  }
+
   browseAllVoices(dropdown: DropdownComponent): void {
+    this.voicePreview.stop();
     dropdown.close();
     this.router.navigateByUrl('/voices');
   }
