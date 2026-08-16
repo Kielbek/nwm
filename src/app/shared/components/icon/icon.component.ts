@@ -7,7 +7,8 @@ export type IconName =
   | 'voice-changer' | 'music' | 'speech-to-text' | 'more'
   | 'chevron-down' | 'chevron-right' | 'search' | 'bell' | 'folder'
   | 'sparkle' | 'close' | 'play' | 'download' | 'panel' | 'invite'
-  | 'sun' | 'moon' | 'monitor' | 'globe' | 'check' | 'pause' | 'send' | 'trash';
+  | 'sun' | 'moon' | 'monitor' | 'globe' | 'check' | 'pause' | 'send' | 'trash'
+  | 'help' | 'link' | 'book';
 
 @Component({
   selector: 'app-icon',
@@ -121,6 +122,19 @@ export type IconName =
         <ng-container *ngSwitchCase="'trash'">
           <path d="M4.5 6h11" /><path d="M8 6V4.5h4V6" />
           <path d="M6 6l.7 9.5A1 1 0 0 0 7.7 16.5h4.6a1 1 0 0 0 1-.9L14 6" />
+        </ng-container>
+        <ng-container *ngSwitchCase="'help'">
+          <circle cx="10" cy="10" r="7" />
+          <path d="M7.8 7.8a2.2 2.2 0 1 1 3.3 1.9c-.7.4-1.1.9-1.1 1.8v.3" />
+          <path d="M10 14.5v.1" />
+        </ng-container>
+        <ng-container *ngSwitchCase="'link'">
+          <path d="M8.5 11.5a3 3 0 0 0 4 .2l2-2a3 3 0 0 0-4.2-4.2l-1 1" />
+          <path d="M11.5 8.5a3 3 0 0 0-4-.2l-2 2a3 3 0 0 0 4.2 4.2l1-1" />
+        </ng-container>
+        <ng-container *ngSwitchCase="'book'">
+          <path d="M4 4.5h5A2 2 0 0 1 11 6.5v9A1.5 1.5 0 0 0 9.5 14H4Z" />
+          <path d="M16 4.5h-5A2 2 0 0 0 9 6.5v9A1.5 1.5 0 0 1 10.5 14H16Z" />
         </ng-container>
       </ng-container>
     </svg>

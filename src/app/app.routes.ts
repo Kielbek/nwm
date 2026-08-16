@@ -20,5 +20,10 @@ export const routes: Routes = [
         (m) => m.FeedbackPageComponent
       ),
   },
+  {
+    path: 'docs',
+    loadComponent: () =>
+      import('./features/docs/docs-page.component').then((m) => m.DocsPageComponent),
+  },
   { path: '**', redirectTo: '' },
 ];

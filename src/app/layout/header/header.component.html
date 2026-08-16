@@ -25,9 +25,13 @@
     >
       {{ translate.dict().header.feedback }}
     </a>
-    <button type="button" class="header__link header__link--secondary">
+    <a
+      class="header__link header__link--secondary"
+      routerLink="/docs"
+      routerLinkActive="header__link--active-route"
+    >
       {{ translate.dict().header.docs }}
-    </button>
+    </a>
     <button
       type="button"
       class="header__link header__link--primary"

@@ -1,0 +1,100 @@
+<div class="docs" #scrollRoot>
+  <div class="docs__inner">
+    <header class="docs__hero">
+      <h1 class="docs__title">{{ docs.content().title }}</h1>
+      <p class="docs__subtitle">{{ docs.content().subtitle }}</p>
+      <div class="docs__search">
+        <app-icon name="search" [size]="16" />
+        <input
+          type="text"
+          [placeholder]="docs.content().searchPlaceholder"
+          [ngModel]="search()"
+          (ngModelChange)="search.set($event)"
+        />
+      </div>
+    </header>
+
+    <div class="docs__layout">
+      <nav class="docs__nav">
+        @for (category of filteredCategories(); track category.id) {
+          <div class="docs__nav-group">
+            <div class="docs__nav-group-title">
+              <app-icon [name]="category.icon" [size]="14" />
+              <span>{{ category.title }}</span>
+            </div>
+            <div class="docs__nav-links">
+              @for (article of category.articles; track article.id) {
+                <button
+                  type="button"
+                  class="docs__nav-link"
+                  [class.docs__nav-link--active]="activeArticleId() === article.id"
+                  (click)="scrollTo(article.id)"
+                >
+                  {{ article.title }}
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </nav>
+
+      <div class="docs__content">
+        @if (!filteredCategories().length) {
+          <p class="docs__search-empty">{{ docs.content().searchEmpty }}</p>
+        }
+
+        @for (category of filteredCategories(); track category.id) {
+          <section class="docs__category">
+            <h2 class="docs__category-title">
+              <app-icon [name]="category.icon" [size]="18" />
+              {{ category.title }}
+            </h2>
+
+            @for (article of category.articles; track article.id) {
+              <article class="docs__article" [id]="article.id" #articleEl>
+                <div class="docs__article-heading">
+                  <h3>{{ article.title }}</h3>
+                  <button
+                    type="button"
+                    class="docs__copy-link"
+                    [attr.aria-label]="docs.content().copyLink"
+                    (click)="copyLink(article.id)"
+                  >
+                    <app-icon [name]="copiedId() === article.id ? 'check' : 'link'" [size]="13" />
+                  </button>
+                </div>
+
+                @for (block of article.blocks; track $index) {
+                  @switch (block.type) {
+                    @case ('p') {
+                      <p class="docs__p">{{ block.text }}</p>
+                    }
+                    @case ('ul') {
+                      <ul class="docs__ul">
+                        @for (item of block.items; track item) {
+                          <li>{{ item }}</li>
+                        }
+                      </ul>
+                    }
+                    @case ('note') {
+                      <div class="docs__note">
+                        <app-icon name="sparkle" [size]="14" />
+                        <span>{{ block.text }}</span>
+                      </div>
+                    }
+                    @case ('kbd') {
+                      <div class="docs__kbd-row">
+                        <kbd class="docs__kbd">{{ block.keys }}</kbd>
+                        <span>{{ block.text }}</span>
+                      </div>
+                    }
+                  }
+                }
+              </article>
+            }
+          </section>
+        }
+      </div>
+    </div>
+  </div>
+</div>
