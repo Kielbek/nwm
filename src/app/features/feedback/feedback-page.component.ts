@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { StarRatingComponent } from '../../shared/components/star-rating/star-rating.component';
@@ -38,7 +38,7 @@ export class FeedbackPageComponent {
     readonly translate: TranslateService,
     seo: SeoService
   ) {
-    seo.setPrivateTitle('Opinie');
+    effect(() => seo.setPrivateTitle(this.translate.dict().seo.feedbackTitle));
   }
 
   toggleFilter(stars: number): void {

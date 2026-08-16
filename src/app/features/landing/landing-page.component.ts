@@ -6,6 +6,7 @@ import {
   OnDestroy,
   QueryList,
   ViewChildren,
+  effect,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
@@ -57,12 +58,6 @@ export class LandingPageComponent implements AfterViewInit, OnDestroy {
     readonly feedback: FeedbackService,
     private readonly seo: SeoService
   ) {
-    this.seo.update({
-      title: 'NWM — Zamień tekst w naturalnie brzmiącą mowę | Synteza mowy online',
-      description:
-        'NWM to profesjonalna aplikacja do syntezy mowy (text-to-speech) z realistycznymi głosami, wieloma językami i formatami eksportu. Zamień tekst w naturalnie brzmiącą mowę za darmo.',
-      path: '/',
-    });
     this.seo.removeJsonLd('ld-faq');
     this.seo.setJsonLd('ld-organization', {
       '@context': 'https://schema.org',
@@ -70,6 +65,15 @@ export class LandingPageComponent implements AfterViewInit, OnDestroy {
       name: 'NWM',
       url: 'https://nwm.app/',
       logo: 'https://nwm.app/og-image.png',
+    });
+    effect(() => {
+      const dict = this.translate.dict().seo;
+      this.seo.update({
+        title: dict.landingTitle,
+        description: dict.landingDescription,
+        path: '/',
+        locale: dict.ogLocale,
+      });
     });
   }
 

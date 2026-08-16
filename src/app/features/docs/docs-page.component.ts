@@ -8,6 +8,7 @@ import {
   ViewChild,
   ViewChildren,
   computed,
+  effect,
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -54,7 +55,7 @@ export class DocsPageComponent implements AfterViewInit, OnDestroy {
   private suppressObserverUntil = 0;
 
   constructor(readonly docs: DocsService, readonly translate: TranslateService, seo: SeoService) {
-    seo.setPrivateTitle('Dokumentacja');
+    effect(() => seo.setPrivateTitle(this.translate.dict().seo.docsTitle));
   }
 
   ngAfterViewInit(): void {

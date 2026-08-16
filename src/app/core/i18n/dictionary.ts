@@ -412,4 +412,21 @@ export interface Dictionary {
   testimonials: TestimonialCopy[];
   plans: PlanCopy[];
   topUps: TopUpCopy[];
+  seo: {
+    ogLocale: string;
+    landingTitle: string;
+    landingDescription: string;
+    pricingTitle: string;
+    pricingDescription: string;
+    notFoundTitle: string;
+    notFoundDescription: string;
+    generatorTitle: string;
+    voicesTitle: string;
+    historyTitle: string;
+    feedbackTitle: string;
+    docsTitle: string;
+    profileTitle: string;
+    settingsTitle: string;
+    checkoutTitle: string;
+  };
 }

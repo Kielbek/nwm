@@ -608,4 +608,23 @@ export const en: Dictionary = {
     notFoundBack: 'See pricing',
     secureNote: "This connection is encrypted. We don't store your full card number.",
   },
+  seo: {
+    ogLocale: 'en_US',
+    landingTitle: 'NWM — Turn Text into Natural-Sounding Speech | Online Text-to-Speech',
+    landingDescription:
+      'NWM is a professional text-to-speech app with realistic voices, multiple languages and export formats. Turn text into natural-sounding speech for free.',
+    pricingTitle: 'Pricing — NWM | Plans and prices for text-to-speech',
+    pricingDescription:
+      'Check out NWM plans and pricing — from a free plan to options for teams. Flexible monthly and yearly billing, plus extra character packs.',
+    notFoundTitle: 'Page Not Found (404) — NWM',
+    notFoundDescription: 'This page does not exist or has been moved.',
+    generatorTitle: 'Speech Generator',
+    voicesTitle: 'Voices',
+    historyTitle: 'Generation History',
+    feedbackTitle: 'Feedback',
+    docsTitle: 'Documentation',
+    profileTitle: 'Profile',
+    settingsTitle: 'Settings',
+    checkoutTitle: 'Checkout',
+  },
 };

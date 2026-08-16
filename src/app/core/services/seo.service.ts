@@ -12,6 +12,7 @@ export interface SeoConfig {
   path?: string;
   noindex?: boolean;
   image?: string;
+  locale?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -31,6 +32,7 @@ export class SeoService {
 
     this.setTag('property', 'og:type', 'website');
     this.setTag('property', 'og:site_name', SITE_NAME);
+    this.setTag('property', 'og:locale', config.locale ?? 'pl_PL');
     this.setTag('property', 'og:url', url);
     this.setTag('property', 'og:title', config.title);
     this.setTag('property', 'og:description', config.description);
@@ -47,6 +49,10 @@ export class SeoService {
   /** For private/app pages: sets title + noindex only, no canonical/OG rewrite. */
   setPrivateTitle(title: string): void {
     this.titleService.setTitle(`${title} — ${SITE_NAME}`);
+    this.setNoIndex();
+  }
+
+  setNoIndex(): void {
     this.setTag('name', 'robots', 'noindex, nofollow');
   }
 

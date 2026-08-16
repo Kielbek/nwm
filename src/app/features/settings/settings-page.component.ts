@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ThemeService, ThemeMode } from '../../core/services/theme.service';
@@ -46,7 +46,7 @@ export class SettingsPageComponent {
     readonly cookieConsent: CookieConsentService,
     seo: SeoService
   ) {
-    seo.setPrivateTitle('Ustawienia');
+    effect(() => seo.setPrivateTitle(this.translate.dict().seo.settingsTitle));
   }
 
   setTheme(mode: ThemeMode): void {

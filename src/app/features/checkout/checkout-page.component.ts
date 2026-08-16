@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
@@ -66,7 +66,7 @@ export class CheckoutPageComponent {
     readonly translate: TranslateService,
     seo: SeoService
   ) {
-    seo.setPrivateTitle('Finalizacja płatności');
+    effect(() => seo.setPrivateTitle(this.translate.dict().seo.checkoutTitle));
     route.queryParamMap.subscribe((params) => {
       this.type.set(params.get('type') === 'topup' ? 'topup' : 'plan');
       this.itemId.set(params.get('id') ?? '');

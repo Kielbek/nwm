@@ -612,4 +612,23 @@ export const pl: Dictionary = {
     notFoundBack: 'Zobacz cennik',
     secureNote: 'Połączenie jest szyfrowane. Nie przechowujemy pełnego numeru karty.',
   },
+  seo: {
+    ogLocale: 'pl_PL',
+    landingTitle: 'NWM — Zamień tekst w naturalnie brzmiącą mowę | Synteza mowy online',
+    landingDescription:
+      'NWM to profesjonalna aplikacja do syntezy mowy (text-to-speech) z realistycznymi głosami, wieloma językami i formatami eksportu. Zamień tekst w naturalnie brzmiącą mowę za darmo.',
+    pricingTitle: 'Cennik — NWM | Plany i ceny za syntezę mowy',
+    pricingDescription:
+      'Sprawdź plany i cennik NWM — od darmowego planu po opcje dla zespołów. Elastyczne rozliczenia miesięczne i roczne, pakiety dodatkowych znaków.',
+    notFoundTitle: 'Strona nie znaleziona (404) — NWM',
+    notFoundDescription: 'Ta strona nie istnieje lub została przeniesiona.',
+    generatorTitle: 'Generator mowy',
+    voicesTitle: 'Głosy',
+    historyTitle: 'Historia generowania',
+    feedbackTitle: 'Opinie',
+    docsTitle: 'Dokumentacja',
+    profileTitle: 'Profil',
+    settingsTitle: 'Ustawienia',
+    checkoutTitle: 'Finalizacja płatności',
+  },
 };

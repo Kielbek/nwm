@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { PublicNavComponent } from '../../shared/components/public-nav/public-nav.component';
@@ -27,24 +27,27 @@ export class PricingPageComponent {
     readonly account: AccountService,
     private readonly seo: SeoService
   ) {
-    this.seo.update({
-      title: 'Cennik — NWM | Plany i ceny za syntezę mowy',
-      description:
-        'Sprawdź plany i cennik NWM — od darmowego planu po opcje dla zespołów. Elastyczne rozliczenia miesięczne i roczne, pakiety dodatkowych znaków.',
-      path: '/pricing',
-    });
     this.seo.removeJsonLd('ld-organization');
-    this.seo.setJsonLd('ld-faq', {
-      '@context': 'https://schema.org',
-      '@type': 'FAQPage',
-      mainEntity: this.translate.dict().pricingFaq.map((faq) => ({
-        '@type': 'Question',
-        name: faq.question,
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: faq.answer,
-        },
-      })),
+    effect(() => {
+      const dict = this.translate.dict();
+      this.seo.update({
+        title: dict.seo.pricingTitle,
+        description: dict.seo.pricingDescription,
+        path: '/pricing',
+        locale: dict.seo.ogLocale,
+      });
+      this.seo.setJsonLd('ld-faq', {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: dict.pricingFaq.map((faq) => ({
+          '@type': 'Question',
+          name: faq.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: faq.answer,
+          },
+        })),
+      });
     });
   }
 

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { IconComponent, IconName } from '../../shared/components/icon/icon.component';
@@ -97,7 +97,7 @@ export class TextToSpeechComponent {
     private readonly router: Router,
     seo: SeoService
   ) {
-    seo.setPrivateTitle('Generator mowy');
+    effect(() => seo.setPrivateTitle(this.translate.dict().seo.generatorTitle));
     const pending = this.history.consumePendingReuse();
     if (pending) {
       this.text.set(pending.text);

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
@@ -54,7 +54,7 @@ export class ProfilePageComponent {
     private readonly router: Router,
     seo: SeoService
   ) {
-    seo.setPrivateTitle('Profil');
+    effect(() => seo.setPrivateTitle(this.translate.dict().seo.profileTitle));
   }
 
   startEditingProfile(): void {

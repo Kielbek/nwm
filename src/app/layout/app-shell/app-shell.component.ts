@@ -30,9 +30,9 @@ export class AppShellComponent {
   readonly askOpen = signal(false);
 
   constructor(router: Router, seo: SeoService) {
-    seo.setPrivateTitle('Aplikacja');
     seo.removeJsonLd('ld-organization');
     seo.removeJsonLd('ld-faq');
+    seo.setNoIndex();
     router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       if (this.isMobile()) {
         this.closeSidebar();

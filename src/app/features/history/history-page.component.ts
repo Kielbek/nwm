@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import {
@@ -29,7 +29,7 @@ export class HistoryPageComponent {
     private readonly router: Router,
     seo: SeoService
   ) {
-    seo.setPrivateTitle('Historia generowania');
+    effect(() => seo.setPrivateTitle(this.translate.dict().seo.historyTitle));
   }
 
   snippet(text: string): string {
