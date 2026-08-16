@@ -1,0 +1,84 @@
+@if (visible()) {
+  <div class="cookie-banner" role="dialog" aria-modal="false" [attr.aria-label]="translate.dict().cookieBanner.title">
+    <div class="cookie-banner__panel">
+      @if (!customizing()) {
+        <div class="cookie-banner__icon">
+          <app-icon name="cookie" [size]="22" />
+        </div>
+        <div class="cookie-banner__body">
+          <strong class="cookie-banner__title">{{ translate.dict().cookieBanner.title }}</strong>
+          <p class="cookie-banner__message">{{ translate.dict().cookieBanner.message }}</p>
+        </div>
+        <div class="cookie-banner__actions">
+          <button type="button" class="cookie-banner__btn" (click)="openCustomize()">
+            {{ translate.dict().cookieBanner.customize }}
+          </button>
+          <button type="button" class="cookie-banner__btn" (click)="rejectAll()">
+            {{ translate.dict().cookieBanner.rejectAll }}
+          </button>
+          <button type="button" class="cookie-banner__btn cookie-banner__btn--primary" (click)="acceptAll()">
+            {{ translate.dict().cookieBanner.acceptAll }}
+          </button>
+        </div>
+      } @else {
+        <div class="cookie-banner__customize">
+          <div class="cookie-banner__customize-head">
+            <app-icon name="cookie" [size]="18" />
+            <strong>{{ translate.dict().cookieBanner.title }}</strong>
+          </div>
+
+          <ul class="cookie-banner__categories">
+            <li class="cookie-banner__category">
+              <div class="cookie-banner__category-info">
+                <strong>{{ translate.dict().cookieBanner.essentialTitle }}</strong>
+                <span>{{ translate.dict().cookieBanner.essentialDesc }}</span>
+              </div>
+              <span class="cookie-banner__always-on">{{ translate.dict().cookieBanner.essentialAlwaysOn }}</span>
+            </li>
+            <li class="cookie-banner__category">
+              <div class="cookie-banner__category-info">
+                <strong>{{ translate.dict().cookieBanner.analyticsTitle }}</strong>
+                <span>{{ translate.dict().cookieBanner.analyticsDesc }}</span>
+              </div>
+              <button
+                type="button"
+                class="cookie-banner__toggle"
+                [class.cookie-banner__toggle--on]="draftAnalytics()"
+                role="switch"
+                [attr.aria-checked]="draftAnalytics()"
+                (click)="toggleAnalytics()"
+              >
+                <span class="cookie-banner__toggle-thumb"></span>
+              </button>
+            </li>
+            <li class="cookie-banner__category">
+              <div class="cookie-banner__category-info">
+                <strong>{{ translate.dict().cookieBanner.marketingTitle }}</strong>
+                <span>{{ translate.dict().cookieBanner.marketingDesc }}</span>
+              </div>
+              <button
+                type="button"
+                class="cookie-banner__toggle"
+                [class.cookie-banner__toggle--on]="draftMarketing()"
+                role="switch"
+                [attr.aria-checked]="draftMarketing()"
+                (click)="toggleMarketing()"
+              >
+                <span class="cookie-banner__toggle-thumb"></span>
+              </button>
+            </li>
+          </ul>
+
+          <div class="cookie-banner__actions">
+            <button type="button" class="cookie-banner__btn" (click)="backToSimple()">
+              {{ translate.dict().cookieBanner.backToSimple }}
+            </button>
+            <button type="button" class="cookie-banner__btn cookie-banner__btn--primary" (click)="savePreferences()">
+              {{ translate.dict().cookieBanner.save }}
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}

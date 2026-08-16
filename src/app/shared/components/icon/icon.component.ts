@@ -8,7 +8,7 @@ export type IconName =
   | 'chevron-down' | 'chevron-right' | 'search' | 'bell' | 'folder'
   | 'sparkle' | 'close' | 'play' | 'download' | 'panel' | 'invite'
   | 'sun' | 'moon' | 'monitor' | 'globe' | 'check' | 'pause' | 'send' | 'trash'
-  | 'help' | 'link' | 'book' | 'logout' | 'edit';
+  | 'help' | 'link' | 'book' | 'logout' | 'edit' | 'settings' | 'cookie';
 
 @Component({
   selector: 'app-icon',
@@ -142,6 +142,20 @@ export type IconName =
         </ng-container>
         <ng-container *ngSwitchCase="'edit'">
           <path d="M12.5 3.5 16.5 7.5 7 17H3v-4Z" /><path d="M11 5l4 4" />
+        </ng-container>
+        <ng-container *ngSwitchCase="'settings'">
+          <circle cx="10" cy="10" r="2.6" />
+          <path
+            d="M10 3.5v1.6M10 14.9v1.6M16.5 10h-1.6M5.1 10H3.5M14.6 5.4l-1.1 1.1M6.5 13.5l-1.1 1.1M14.6 14.6l-1.1-1.1M6.5 6.5 5.4 5.4"
+          />
+        </ng-container>
+        <ng-container *ngSwitchCase="'cookie'">
+          <path
+            d="M17 10.8A7 7 0 1 1 9.2 3c-.2.9.1 1.9.9 2.5.8.6 1.9.6 2.7 0 .1.9.7 1.7 1.6 2 .9.3 1.9 0 2.6-.6.3.9 0 1.9-.7 2.5.9.1 1.6.7 1.7 1.4Z"
+          />
+          <circle cx="8" cy="10" r=".8" fill="currentColor" stroke="none" />
+          <circle cx="11.5" cy="12.5" r=".8" fill="currentColor" stroke="none" />
+          <circle cx="8.5" cy="14" r=".8" fill="currentColor" stroke="none" />
         </ng-container>
       </ng-container>
     </svg>

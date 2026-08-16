@@ -1,0 +1,195 @@
+<div class="settings">
+  <header class="settings__hero">
+    <h1 class="settings__title">{{ translate.dict().settingsPage.title }}</h1>
+    <p class="settings__subtitle">{{ translate.dict().settingsPage.subtitle }}</p>
+  </header>
+
+  @if (savedToast(); as message) {
+    <div class="settings__toast">
+      <app-icon name="check" [size]="14" />
+      {{ message }}
+    </div>
+  }
+
+  <section class="settings__card">
+    <div class="settings__card-head">
+      <h2>{{ translate.dict().settingsPage.appearanceTitle }}</h2>
+      <p>{{ translate.dict().settingsPage.appearanceSubtitle }}</p>
+    </div>
+
+    <div class="settings__row">
+      <span class="settings__row-label">{{ translate.dict().settingsPage.themeLabel }}</span>
+      <div class="settings__segmented">
+        <button
+          type="button"
+          class="settings__segment"
+          [class.settings__segment--active]="theme.mode() === 'light'"
+          (click)="setTheme('light')"
+        >
+          <app-icon name="sun" [size]="15" />
+          {{ translate.dict().settingsPage.themeLight }}
+        </button>
+        <button
+          type="button"
+          class="settings__segment"
+          [class.settings__segment--active]="theme.mode() === 'dark'"
+          (click)="setTheme('dark')"
+        >
+          <app-icon name="moon" [size]="15" />
+          {{ translate.dict().settingsPage.themeDark }}
+        </button>
+        <button
+          type="button"
+          class="settings__segment"
+          [class.settings__segment--active]="theme.mode() === 'system'"
+          (click)="setTheme('system')"
+        >
+          <app-icon name="monitor" [size]="15" />
+          {{ translate.dict().settingsPage.themeSystem }}
+        </button>
+      </div>
+    </div>
+
+    <div class="settings__row">
+      <span class="settings__row-label">{{ translate.dict().settingsPage.languageLabel }}</span>
+      <div class="settings__segmented">
+        <button
+          type="button"
+          class="settings__segment"
+          [class.settings__segment--active]="translate.lang() === 'pl'"
+          (click)="setLang('pl')"
+        >
+          Polski
+        </button>
+        <button
+          type="button"
+          class="settings__segment"
+          [class.settings__segment--active]="translate.lang() === 'en'"
+          (click)="setLang('en')"
+        >
+          English
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="settings__card">
+    <div class="settings__card-head">
+      <h2>{{ translate.dict().settingsPage.notificationsTitle }}</h2>
+      <p>{{ translate.dict().settingsPage.notificationsSubtitle }}</p>
+    </div>
+
+    <div class="settings__row">
+      <div class="settings__row-info">
+        <strong>{{ translate.dict().settingsPage.notifyUpdatesLabel }}</strong>
+        <span>{{ translate.dict().settingsPage.notifyUpdatesDesc }}</span>
+      </div>
+      <button
+        type="button"
+        class="settings__toggle"
+        [class.settings__toggle--on]="notifyUpdates()"
+        role="switch"
+        [attr.aria-checked]="notifyUpdates()"
+        (click)="toggleNotifyUpdates()"
+      >
+        <span class="settings__toggle-thumb"></span>
+      </button>
+    </div>
+
+    <div class="settings__row">
+      <div class="settings__row-info">
+        <strong>{{ translate.dict().settingsPage.notifyUsageLabel }}</strong>
+        <span>{{ translate.dict().settingsPage.notifyUsageDesc }}</span>
+      </div>
+      <button
+        type="button"
+        class="settings__toggle"
+        [class.settings__toggle--on]="notifyUsage()"
+        role="switch"
+        [attr.aria-checked]="notifyUsage()"
+        (click)="toggleNotifyUsage()"
+      >
+        <span class="settings__toggle-thumb"></span>
+      </button>
+    </div>
+
+    <div class="settings__row">
+      <div class="settings__row-info">
+        <strong>{{ translate.dict().settingsPage.notifyMarketingLabel }}</strong>
+        <span>{{ translate.dict().settingsPage.notifyMarketingDesc }}</span>
+      </div>
+      <button
+        type="button"
+        class="settings__toggle"
+        [class.settings__toggle--on]="notifyMarketing()"
+        role="switch"
+        [attr.aria-checked]="notifyMarketing()"
+        (click)="toggleNotifyMarketing()"
+      >
+        <span class="settings__toggle-thumb"></span>
+      </button>
+    </div>
+  </section>
+
+  <section class="settings__card">
+    <div class="settings__card-head">
+      <h2>{{ translate.dict().settingsPage.privacyTitle }}</h2>
+      <p>{{ translate.dict().settingsPage.privacySubtitle }}</p>
+    </div>
+
+    <div class="settings__row">
+      <div class="settings__row-info">
+        <strong>{{ translate.dict().settingsPage.cookiePrefsLabel }}</strong>
+        <span>{{ translate.dict().settingsPage.cookiePrefsDesc }}</span>
+      </div>
+      <button type="button" class="settings__btn" (click)="manageCookies()">
+        <app-icon name="cookie" [size]="14" />
+        {{ translate.dict().settingsPage.manageCookies }}
+      </button>
+    </div>
+
+    <div class="settings__row">
+      <div class="settings__row-info">
+        <strong>{{ translate.dict().settingsPage.exportLabel }}</strong>
+        <span>{{ translate.dict().settingsPage.exportDesc }}</span>
+      </div>
+      <button type="button" class="settings__btn" (click)="exportData()">
+        <app-icon name="download" [size]="14" />
+        {{ translate.dict().settingsPage.exportButton }}
+      </button>
+    </div>
+  </section>
+
+  <section class="settings__card settings__card--danger">
+    <div class="settings__card-head">
+      <h2>{{ translate.dict().settingsPage.dangerTitle }}</h2>
+      <p>{{ translate.dict().settingsPage.dangerSubtitle }}</p>
+    </div>
+
+    @if (!resetConfirmOpen()) {
+      <div class="settings__row">
+        <div class="settings__row-info">
+          <strong>{{ translate.dict().settingsPage.resetLabel }}</strong>
+          <span>{{ translate.dict().settingsPage.resetDesc }}</span>
+        </div>
+        <button type="button" class="settings__btn settings__btn--danger" (click)="startReset()">
+          <app-icon name="trash" [size]="14" />
+          {{ translate.dict().settingsPage.resetButton }}
+        </button>
+      </div>
+    } @else {
+      <div class="settings__confirm">
+        <strong>{{ translate.dict().settingsPage.resetConfirmTitle }}</strong>
+        <p>{{ translate.dict().settingsPage.resetConfirmBody }}</p>
+        <div class="settings__confirm-actions">
+          <button type="button" class="settings__btn" (click)="cancelReset()">
+            {{ translate.dict().settingsPage.resetCancelAction }}
+          </button>
+          <button type="button" class="settings__btn settings__btn--danger-solid" (click)="confirmReset()">
+            {{ translate.dict().settingsPage.resetConfirmAction }}
+          </button>
+        </div>
+      </div>
+    }
+  </section>
+</div>

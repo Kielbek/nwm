@@ -30,5 +30,12 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/profile/profile-page.component').then((m) => m.ProfilePageComponent),
   },
+  {
+    path: 'settings',
+    loadComponent: () =>
+      import('./features/settings/settings-page.component').then(
+        (m) => m.SettingsPageComponent
+      ),
+  },
   { path: '**', redirectTo: '' },
 ];

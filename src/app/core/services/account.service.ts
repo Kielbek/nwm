@@ -128,6 +128,22 @@ export class AccountService {
     this.write(STORAGE_KEYS.email, email);
   }
 
+  resetAccount(): void {
+    const defaultName = 'Marta Kowalska';
+    const defaultEmail = 'marta.kowalska@example.com';
+
+    this.name.set(defaultName);
+    this.email.set(defaultEmail);
+    this.planId.set('free');
+    this.billingCycle.set('monthly');
+    this.charactersUsed.set(0);
+    this.bonusCharacters.set(0);
+    this.purchases.set([]);
+    this.renewalDaysLeft.set(30);
+
+    Object.values(STORAGE_KEYS).forEach((key) => localStorage.removeItem(key));
+  }
+
   private readStored(key: string, fallback: string): string {
     if (typeof window === 'undefined') {
       return fallback;

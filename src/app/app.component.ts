@@ -4,13 +4,14 @@ import { filter } from 'rxjs';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { HeaderComponent } from './layout/header/header.component';
 import { AskPanelComponent } from './layout/ask-panel/ask-panel.component';
+import { CookieBannerComponent } from './shared/components/cookie-banner/cookie-banner.component';
 
 const MOBILE_BREAKPOINT = 780;
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, SidebarComponent, HeaderComponent, AskPanelComponent],
+  imports: [RouterOutlet, SidebarComponent, HeaderComponent, AskPanelComponent, CookieBannerComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

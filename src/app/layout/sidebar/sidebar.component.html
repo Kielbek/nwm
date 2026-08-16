@@ -31,4 +31,11 @@
       <span>{{ translate.dict().sidebar.voices }}</span>
     </a>
   </nav>
+
+  <nav class="sidebar__nav sidebar__nav--bottom">
+    <a class="sidebar__item" routerLink="/settings" routerLinkActive="sidebar__item--active">
+      <app-icon name="settings" [size]="18" />
+      <span>{{ translate.dict().sidebar.settings }}</span>
+    </a>
+  </nav>
 </aside>
