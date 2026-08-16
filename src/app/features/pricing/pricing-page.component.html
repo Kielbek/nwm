@@ -1,0 +1,127 @@
+<div class="pricing">
+  <app-public-nav />
+
+  <header class="pricing__hero">
+    <h1>{{ translate.dict().pricingPage.title }}</h1>
+    <p>{{ translate.dict().pricingPage.subtitle }}</p>
+
+    <div class="pricing__cycle-toggle">
+      <button
+        type="button"
+        class="pricing__cycle-btn"
+        [class.pricing__cycle-btn--active]="billingCycle() === 'monthly'"
+        (click)="setBillingCycle('monthly')"
+      >
+        {{ translate.dict().profilePage.billingMonthly }}
+      </button>
+      <button
+        type="button"
+        class="pricing__cycle-btn"
+        [class.pricing__cycle-btn--active]="billingCycle() === 'yearly'"
+        (click)="setBillingCycle('yearly')"
+      >
+        {{ translate.dict().profilePage.billingYearly }}
+        <span class="pricing__savings-badge">{{ translate.dict().profilePage.yearlySavings }}</span>
+      </button>
+    </div>
+  </header>
+
+  <section class="pricing__grid-section">
+    <div class="pricing__grid">
+      @for (plan of account.plans(); track plan.id; let i = $index) {
+        <div class="pricing__plan" [class.pricing__plan--featured]="i === featuredPlanIndex">
+          @if (i === featuredPlanIndex) {
+            <span class="pricing__plan-badge">{{ translate.dict().landing.pricingMostPopular }}</span>
+          }
+          <strong class="pricing__plan-name">{{ plan.name }}</strong>
+          <span class="pricing__plan-tagline">{{ plan.tagline }}</span>
+
+          <div class="pricing__plan-price">
+            @if ((billingCycle() === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice) === 0) {
+              <strong>{{ translate.dict().profilePage.free }}</strong>
+            } @else {
+              <strong>
+                {{ formatNumber(billingCycle() === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice) }} zł
+              </strong>
+              <span>
+                {{
+                  billingCycle() === 'monthly'
+                    ? translate.dict().profilePage.perMonth
+                    : translate.dict().profilePage.perYear
+                }}
+              </span>
+            }
+          </div>
+
+          <span class="pricing__plan-limit">
+            {{ formatNumber(plan.characterLimit) }} {{ translate.dict().profilePage.usageCharacters }} / mies.
+          </span>
+
+          <ul class="pricing__plan-features">
+            @for (feature of plan.features; track feature) {
+              <li>
+                <app-icon name="check" [size]="13" />
+                {{ feature }}
+              </li>
+            }
+          </ul>
+
+          <a class="pricing__plan-btn" routerLink="/app/profile">
+            {{ translate.dict().profilePage.choosePlan }}
+          </a>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="pricing__topups">
+    <header class="pricing__section-head">
+      <h2>{{ translate.dict().profilePage.topUpTitle }}</h2>
+      <p>{{ translate.dict().profilePage.topUpSubtitle }}</p>
+    </header>
+
+    <div class="pricing__topups-grid">
+      @for (pack of account.topUps(); track pack.id) {
+        <div class="pricing__topup">
+          <strong>{{ formatNumber(pack.characters) }} {{ translate.dict().profilePage.characters }}</strong>
+          <span>{{ pack.label }}</span>
+          <div class="pricing__topup-price">{{ formatNumber(pack.price) }} zł</div>
+          <a class="pricing__plan-btn pricing__plan-btn--outline" routerLink="/app/profile">
+            {{ translate.dict().profilePage.buyPack }}
+          </a>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="pricing__faq">
+    <header class="pricing__section-head">
+      <h2>{{ translate.dict().pricingPage.faqTitle }}</h2>
+      <p>{{ translate.dict().pricingPage.faqSubtitle }}</p>
+    </header>
+
+    <div class="pricing__faq-list">
+      @for (item of translate.dict().pricingFaq; track item.question; let i = $index) {
+        <div class="pricing__faq-item" [class.pricing__faq-item--open]="openFaqIndex() === i">
+          <button type="button" class="pricing__faq-question" (click)="toggleFaq(i)">
+            {{ item.question }}
+            <app-icon name="chevron-down" [size]="16" class="pricing__faq-chevron" />
+          </button>
+          @if (openFaqIndex() === i) {
+            <p class="pricing__faq-answer">{{ item.answer }}</p>
+          }
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="pricing__final-cta">
+    <h2>{{ translate.dict().landing.finalCtaTitle }}</h2>
+    <p>{{ translate.dict().landing.finalCtaSubtitle }}</p>
+    <a class="pricing__plan-btn pricing__plan-btn--large" routerLink="/app">
+      {{ translate.dict().landing.finalCtaButton }}
+    </a>
+  </section>
+
+  <app-public-footer />
+</div>

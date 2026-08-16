@@ -540,4 +540,41 @@ export const en: Dictionary = {
       description: 'Click "Generate speech" and download the finished recording in your chosen format.',
     },
   ],
+  pricingPage: {
+    title: 'Pricing',
+    subtitle: 'Transparent pricing, no hidden costs. Start for free and scale as you grow.',
+    faqTitle: 'Frequently asked questions',
+    faqSubtitle: "Can't find an answer? Reach out via the Ask panel once you're signed in.",
+  },
+  pricingFaq: [
+    {
+      question: 'Can I change my plan at any time?',
+      answer:
+        'Yes. You can upgrade or downgrade whenever you like — the change applies immediately and billing adjusts to the new plan.',
+    },
+    {
+      question: 'What happens if I go over my monthly character limit?',
+      answer:
+        "Speech generation pauses until your limit renews or you buy a top-up — we never charge you extra automatically.",
+    },
+    {
+      question: "Do unused characters roll over to next month?",
+      answer:
+        "Your subscription limit renews monthly and doesn't roll over. Purchased top-up packs are different — those never expire.",
+    },
+    {
+      question: 'Can I cancel my subscription at any time?',
+      answer:
+        'Yes, you can cancel anytime from your account settings — no notice period and no extra fees.',
+    },
+    {
+      question: 'What payment methods are supported?',
+      answer: 'We support payment cards, plus — on the Business plan — bank transfer with a VAT invoice.',
+    },
+    {
+      question: 'What is the difference between the Free plan and paid plans?',
+      answer:
+        'The Free plan gives you basic voices and the Standard model to get started. Paid plans unlock every voice, the Expressive model, higher limits, and priority generation.',
+    },
+  ],
 };

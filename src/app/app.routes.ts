@@ -7,6 +7,11 @@ export const routes: Routes = [
       import('./features/landing/landing-page.component').then((m) => m.LandingPageComponent),
   },
   {
+    path: 'pricing',
+    loadComponent: () =>
+      import('./features/pricing/pricing-page.component').then((m) => m.PricingPageComponent),
+  },
+  {
     path: 'app',
     loadComponent: () =>
       import('./layout/app-shell/app-shell.component').then((m) => m.AppShellComponent),

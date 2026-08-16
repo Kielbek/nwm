@@ -1,0 +1,47 @@
+<nav class="public-nav">
+  <a class="public-nav__logo" routerLink="/">
+    <span class="public-nav__logo-mark">
+      <app-icon name="text-to-speech" [size]="14" />
+    </span>
+    NWM
+  </a>
+
+  <div class="public-nav__links">
+    <a routerLink="/" fragment="features">{{ translate.dict().landing.navFeatures }}</a>
+    <a routerLink="/" fragment="how-it-works">{{ translate.dict().landing.navHowItWorks }}</a>
+    <a routerLink="/" fragment="voices">{{ translate.dict().landing.navVoices }}</a>
+    <a routerLink="/pricing" routerLinkActive="public-nav__link--active">{{ translate.dict().landing.navPricing }}</a>
+    <a routerLink="/" fragment="reviews">{{ translate.dict().landing.navReviews }}</a>
+  </div>
+
+  <div class="public-nav__actions">
+    <div class="public-nav__lang-toggle">
+      <button
+        type="button"
+        class="public-nav__lang-btn"
+        [class.public-nav__lang-btn--active]="translate.lang() === 'pl'"
+        (click)="setLang('pl')"
+      >
+        PL
+      </button>
+      <button
+        type="button"
+        class="public-nav__lang-btn"
+        [class.public-nav__lang-btn--active]="translate.lang() === 'en'"
+        (click)="setLang('en')"
+      >
+        EN
+      </button>
+    </div>
+    <button
+      type="button"
+      class="public-nav__icon-btn"
+      [attr.aria-label]="translate.dict().header.theme"
+      (click)="setTheme(theme.mode() === 'dark' ? 'light' : 'dark')"
+    >
+      <app-icon [name]="theme.mode() === 'dark' ? 'moon' : 'sun'" [size]="17" />
+    </button>
+    <a class="public-nav__link" routerLink="/app">{{ translate.dict().landing.navOpenApp }}</a>
+    <a class="public-nav__cta" routerLink="/app">{{ translate.dict().landing.navTryFree }}</a>
+  </div>
+</nav>

@@ -11,8 +11,9 @@ import { RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { CarouselComponent } from '../../shared/components/carousel/carousel.component';
 import { StarRatingComponent } from '../../shared/components/star-rating/star-rating.component';
-import { TranslateService, Lang } from '../../core/services/translate.service';
-import { ThemeService, ThemeMode } from '../../core/services/theme.service';
+import { PublicNavComponent } from '../../shared/components/public-nav/public-nav.component';
+import { PublicFooterComponent } from '../../shared/components/public-footer/public-footer.component';
+import { TranslateService } from '../../core/services/translate.service';
 import { AccountService } from '../../core/services/account.service';
 import { VoiceLibraryService } from '../../core/services/voice-library.service';
 import { VoicePreviewService, PreviewableVoice } from '../../core/services/voice-preview.service';
@@ -24,7 +25,14 @@ const FEATURED_PLAN_INDICES = [0, 2, 5];
   selector: 'app-landing-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IconComponent, CarouselComponent, StarRatingComponent],
+  imports: [
+    RouterLink,
+    IconComponent,
+    CarouselComponent,
+    StarRatingComponent,
+    PublicNavComponent,
+    PublicFooterComponent,
+  ],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.scss',
 })
@@ -34,7 +42,6 @@ export class LandingPageComponent implements AfterViewInit, OnDestroy {
     ElementRef<HTMLElement>
   >;
 
-  readonly currentYear = new Date().getFullYear();
   readonly waveformBars = Array.from({ length: 28 }, (_, i) => i);
 
   private revealObserver?: IntersectionObserver;
@@ -43,7 +50,6 @@ export class LandingPageComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     readonly translate: TranslateService,
-    readonly theme: ThemeService,
     readonly account: AccountService,
     readonly voiceLibrary: VoiceLibraryService,
     readonly voicePreview: VoicePreviewService,
@@ -99,19 +105,6 @@ export class LandingPageComponent implements AfterViewInit, OnDestroy {
   togglePreview(voice: PreviewableVoice, event: Event): void {
     event.stopPropagation();
     this.voicePreview.toggle(voice);
-  }
-
-  scrollToId(id: string, event: Event): void {
-    event.preventDefault();
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  setLang(lang: Lang): void {
-    this.translate.setLang(lang);
-  }
-
-  setTheme(mode: ThemeMode): void {
-    this.theme.setMode(mode);
   }
 
   private animateStats(): void {

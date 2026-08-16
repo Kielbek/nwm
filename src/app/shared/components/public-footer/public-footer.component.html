@@ -1,0 +1,36 @@
+<footer class="public-footer">
+  <div class="public-footer__top">
+    <div class="public-footer__brand">
+      <a class="public-footer__logo" routerLink="/">
+        <span class="public-footer__logo-mark">
+          <app-icon name="text-to-speech" [size]="14" />
+        </span>
+        NWM
+      </a>
+      <p>{{ translate.dict().landing.footerTagline }}</p>
+    </div>
+
+    <div class="public-footer__col">
+      <strong>{{ translate.dict().landing.footerProductTitle }}</strong>
+      <a routerLink="/" fragment="features">{{ translate.dict().landing.navFeatures }}</a>
+      <a routerLink="/pricing">{{ translate.dict().landing.navPricing }}</a>
+      <a routerLink="/app/voices">{{ translate.dict().landing.navVoices }}</a>
+      <a routerLink="/app/docs">{{ translate.dict().header.docs }}</a>
+    </div>
+
+    <div class="public-footer__col">
+      <strong>{{ translate.dict().landing.footerCompanyTitle }}</strong>
+      <a routerLink="/app/feedback">{{ translate.dict().header.feedback }}</a>
+      <a routerLink="/app/settings">{{ translate.dict().sidebar.settings }}</a>
+    </div>
+
+    <div class="public-footer__col">
+      <strong>{{ translate.dict().landing.footerLegalTitle }}</strong>
+      <a routerLink="/app/docs">{{ translate.dict().cookieBanner.policyLink }}</a>
+    </div>
+  </div>
+
+  <div class="public-footer__bottom">
+    <span>{{ translate.dict().landing.footerCopyright.replace('{year}', currentYear.toString()) }}</span>
+  </div>
+</footer>

@@ -543,4 +543,42 @@ export const pl: Dictionary = {
       description: 'Kliknij „Generuj mowę” i pobierz gotowe nagranie w wybranym formacie.',
     },
   ],
+  pricingPage: {
+    title: 'Cennik',
+    subtitle: 'Przejrzyste ceny, bez ukrytych kosztów. Zacznij za darmo i skaluj w miarę potrzeb.',
+    faqTitle: 'Najczęściej zadawane pytania',
+    faqSubtitle: 'Nie znalazłeś odpowiedzi? Napisz do nas przez panel Zapytaj po zalogowaniu.',
+  },
+  pricingFaq: [
+    {
+      question: 'Czy mogę zmienić plan w dowolnym momencie?',
+      answer:
+        'Tak. Możesz przejść na wyższy lub niższy plan w każdej chwili — zmiana obowiązuje natychmiast, a rozliczenie dostosowuje się do nowego planu.',
+    },
+    {
+      question: 'Co się stanie, gdy przekroczę miesięczny limit znaków?',
+      answer:
+        'Generowanie mowy zatrzyma się do czasu odnowienia limitu albo dokupienia dodatkowych znaków — nigdy nie obciążymy Cię automatycznie dodatkową opłatą.',
+    },
+    {
+      question: 'Czy niewykorzystane znaki przechodzą na kolejny miesiąc?',
+      answer:
+        'Limit w ramach subskrypcji odnawia się co miesiąc i nie kumuluje się. Dokupione pakiety znaków są inne — te nigdy nie wygasają.',
+    },
+    {
+      question: 'Czy mogę anulować subskrypcję w dowolnym momencie?',
+      answer:
+        'Tak, subskrypcję możesz anulować w każdej chwili w ustawieniach konta — bez okresu wypowiedzenia i bez dodatkowych opłat.',
+    },
+    {
+      question: 'Jakie formy płatności są obsługiwane?',
+      answer:
+        'Obsługujemy karty płatnicze oraz — w planie Business — płatność przelewem z fakturą VAT.',
+    },
+    {
+      question: 'Czym różni się plan Darmowy od planów płatnych?',
+      answer:
+        'Plan Darmowy daje dostęp do podstawowych głosów i modelu Standard na start. Plany płatne odblokowują wszystkie głosy, model Ekspresyjny, wyższe limity i priorytetowe generowanie.',
+    },
+  ],
 };

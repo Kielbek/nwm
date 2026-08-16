@@ -48,6 +48,11 @@ export interface StepCopy {
   description: string;
 }
 
+export interface FaqCopy {
+  question: string;
+  answer: string;
+}
+
 export interface Dictionary {
   header: {
     pageTitle: string;
@@ -363,6 +368,13 @@ export interface Dictionary {
   landingStats: StatCopy[];
   landingFeatures: FeatureCopy[];
   landingSteps: StepCopy[];
+  pricingPage: {
+    title: string;
+    subtitle: string;
+    faqTitle: string;
+    faqSubtitle: string;
+  };
+  pricingFaq: FaqCopy[];
   starters: StarterCopy[];
   voices: VoiceCopy[];
   models: ModelCopy[];
