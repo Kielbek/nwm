@@ -1,15 +1,20 @@
 # NWM — Text to Speech
 
-Aplikacja webowa do konwersji tekstu na mowę, zaprojektowana w stylu edytora ElevenLabs (sidebar nawigacyjny, edytor tekstu ze startowymi promptami, panel ustawień głosu po prawej).
+Aplikacja webowa do konwersji tekstu na mowę z panelem AI do pomocy w pisaniu ("Zapytaj"), przeglądem głosów i przełącznikiem motywu/języka.
 
-Zbudowana w Angularze 18 (standalone components, signals).
+Zbudowana w Angularze 18 (standalone components, signals, Router).
 
 ## Struktura
 
-- `src/app/layout/` — powłoka aplikacji: `sidebar` (nawigacja) i `header` (pasek górny z wyszukiwarką)
-- `src/app/features/text-to-speech/` — główny widok: edytor tekstu, starterowe prompty, panel ustawień (głos, model, prędkość, stabilność, podobieństwo, przesada w stylu, format wyjściowy)
-- `src/app/shared/components/` — komponenty wielokrotnego użytku: `icon`, `slider` (suwak), `dropdown`
-- `src/app/core/` — modele domenowe (`models/tts.models.ts`) i `TtsService`, który wysyła żądanie do `/api/tts/synthesize`, a w razie braku backendu korzysta z wbudowanego w przeglądarkę `speechSynthesis` jako fallbacku demo
+- `src/app/layout/` — powłoka aplikacji: `sidebar` (nawigacja), `header` (wyszukiwarka, motyw, język, przycisk Zapytaj), `ask-panel` (czat AI)
+- `src/app/features/text-to-speech/` — edytor tekstu, starterowe prompty, panel ustawień (głos, model, prędkość, stabilność, podobieństwo, przesada w stylu, format wyjściowy)
+- `src/app/features/voices/` — dedykowana strona `/voices` z przeszukiwalną siatką głosów
+- `src/app/shared/components/` — komponenty wielokrotnego użytku: `icon`, `slider`, `dropdown` (z wersją "bottom sheet" na mobile)
+- `src/app/core/` — serwisy i modele:
+  - `TtsService` — wysyła żądanie do `/api/tts/synthesize`, fallback: `speechSynthesis` przeglądarki
+  - `ChatService` — wysyła żądanie do `/api/chat/gemini`, fallback: szablonowe odpowiedzi demo (pomoc przy scenariuszu/reklamie/hooku)
+  - `VoiceLibraryService`, `VoicePreviewService` — lista głosów + odsłuch próbki (pitch/rate na głos)
+  - `ThemeService`, `TranslateService` — motyw jasny/ciemny/systemowy, i18n PL/EN
 
 ## Development server
 
@@ -26,5 +31,6 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 ## Kolejne kroki
 
 - Podłączyć prawdziwe API TTS (np. endpoint proxy do ElevenLabs) pod `/api/tts/synthesize`.
-- Dodać odtwarzacz audio z wygenerowanym plikiem oraz historię generacji (zakładka "Historia" widoczna w oryginalnym designie).
-- Podłączyć routing dla pozostałych pozycji menu (Głosy, Studio, Flowy itd.), obecnie działa tylko widok Text to Speech.
+- Podłączyć prawdziwe API Gemini pod `/api/chat/gemini` (obecnie panel Zapytaj działa w trybie demo z szablonowymi odpowiedziami).
+- Dodać odtwarzacz audio z wygenerowanym plikiem oraz historię generacji.
+- Prawdziwe próbki audio głosów zamiast podglądu opartego o `speechSynthesis` przeglądarki.

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { IconComponent, IconName } from '../../shared/components/icon/icon.component';
 import { DropdownComponent } from '../../shared/components/dropdown/dropdown.component';
 import { ThemeMode, ThemeService } from '../../core/services/theme.service';
@@ -13,7 +13,9 @@ import { Lang, TranslateService } from '../../core/services/translate.service';
   styleUrl: './header.component.scss',
 })
 export class HeaderComponent {
+  @Input() askOpen = false;
   @Output() toggleSidebar = new EventEmitter<void>();
+  @Output() toggleAsk = new EventEmitter<void>();
 
   readonly themeIcon: Record<ThemeMode, IconName> = {
     light: 'sun',

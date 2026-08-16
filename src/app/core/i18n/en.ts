@@ -98,6 +98,22 @@ export const en: Dictionary = {
       text: 'Sit comfortably, close your eyes, and take a deep breath...',
     },
   ],
+  ask: {
+    title: 'Ask',
+    subtitle: 'AI Assistant (Gemini)',
+    demoBadge: 'DEMO',
+    placeholder: 'Type a message...',
+    emptyHint: 'Ask for help with a script, ad copy, picking a voice tone, and more.',
+    send: 'Send',
+    close: 'Close Ask panel',
+    clear: 'Clear conversation',
+    suggestions: [
+      'Write a 30-second ad script',
+      'Suggest a strong hook for my opening line',
+      'Trim my text down to the essentials',
+      'How do I pick a voice tone for an ad?',
+    ],
+  },
   voices: [
     { name: 'Marek', description: 'Firm, confident' },
     { name: 'Ania', description: 'Calm, narrative' },

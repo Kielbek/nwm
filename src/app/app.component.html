@@ -1,10 +1,15 @@
 <div class="app-shell">
-  @if (isMobile() && sidebarOpen()) {
-    <div class="app-shell__backdrop" (click)="closeSidebar()"></div>
+  @if (isMobile() && (sidebarOpen() || askOpen())) {
+    <div class="app-shell__backdrop" (click)="closeSidebar(); closeAsk()"></div>
   }
   <app-sidebar [open]="sidebarOpen()" [overlay]="isMobile()" (closeRequested)="closeSidebar()" />
   <div class="app-shell__main">
-    <app-header (toggleSidebar)="toggleSidebar()" />
+    <app-header
+      [askOpen]="askOpen()"
+      (toggleSidebar)="toggleSidebar()"
+      (toggleAsk)="toggleAsk()"
+    />
     <router-outlet></router-outlet>
   </div>
+  <app-ask-panel [open]="askOpen()" [overlay]="isMobile()" (closeRequested)="closeAsk()" />
 </div>

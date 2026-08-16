@@ -1,0 +1,85 @@
+<aside class="ask" [class.ask--open]="open" [class.ask--overlay]="overlay">
+  <div class="ask__header">
+    <div class="ask__title-group">
+      <span class="ask__badge-icon">
+        <app-icon name="sparkle" [size]="14" />
+      </span>
+      <div class="ask__title-copy">
+        <div class="ask__title-row">
+          <strong class="ask__title">{{ translate.dict().ask.title }}</strong>
+          <span class="ask__demo-badge">{{ translate.dict().ask.demoBadge }}</span>
+        </div>
+        <span class="ask__subtitle">{{ translate.dict().ask.subtitle }}</span>
+      </div>
+    </div>
+    <div class="ask__header-actions">
+      @if (chat.messages().length) {
+        <button
+          type="button"
+          class="ask__icon-btn"
+          [attr.aria-label]="translate.dict().ask.clear"
+          (click)="chat.clear()"
+        >
+          <app-icon name="trash" [size]="15" />
+        </button>
+      }
+      <button
+        type="button"
+        class="ask__icon-btn"
+        [attr.aria-label]="translate.dict().ask.close"
+        (click)="closeRequested.emit()"
+      >
+        <app-icon name="close" [size]="16" />
+      </button>
+    </div>
+  </div>
+
+  <div class="ask__body" #body>
+    @if (!chat.messages().length) {
+      <div class="ask__empty">
+        <p class="ask__empty-text">{{ translate.dict().ask.emptyHint }}</p>
+        <div class="ask__suggestions">
+          @for (suggestion of translate.dict().ask.suggestions; track suggestion) {
+            <button type="button" class="ask__suggestion-chip" (click)="sendSuggestion(suggestion)">
+              {{ suggestion }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+
+    @for (message of chat.messages(); track message.id) {
+      <div class="ask__message" [class.ask__message--user]="message.role === 'user'">
+        <div class="ask__bubble">{{ message.text }}</div>
+      </div>
+    }
+
+    @if (chat.isSending()) {
+      <div class="ask__message">
+        <div class="ask__bubble ask__bubble--typing">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <form class="ask__composer" (ngSubmit)="submit()">
+    <textarea
+      class="ask__input"
+      rows="1"
+      [placeholder]="translate.dict().ask.placeholder"
+      [ngModel]="draft()"
+      name="draft"
+      (ngModelChange)="draft.set($event)"
+      (keydown.enter)="onEnter($event)"
+    ></textarea>
+    <button
+      type="submit"
+      class="ask__send"
+      [attr.aria-label]="translate.dict().ask.send"
+      [disabled]="!draft().trim() || chat.isSending()"
+    >
+      <app-icon name="send" [size]="16" />
+    </button>
+  </form>
+</aside>

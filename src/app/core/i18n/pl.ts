@@ -100,6 +100,23 @@ export const pl: Dictionary = {
       text: 'Usiądź wygodnie, zamknij oczy i weź głęboki oddech...',
     },
   ],
+  ask: {
+    title: 'Zapytaj',
+    subtitle: 'Asystent AI (Gemini)',
+    demoBadge: 'DEMO',
+    placeholder: 'Napisz wiadomość...',
+    emptyHint:
+      'Zapytaj o pomoc przy scenariuszu, tekście reklamy, doborze tonu głosu i nie tylko.',
+    send: 'Wyślij',
+    close: 'Zamknij panel Zapytaj',
+    clear: 'Wyczyść rozmowę',
+    suggestions: [
+      'Napisz scenariusz 30-sekundowej reklamy',
+      'Zaproponuj mocny hook na pierwsze zdanie',
+      'Skróć mój tekst do samego sedna',
+      'Jak dobrać ton głosu do reklamy?',
+    ],
+  },
   voices: [
     { name: 'Marek', description: 'Stanowczy, pewny siebie' },
     { name: 'Ania', description: 'Spokojna, narracyjna' },

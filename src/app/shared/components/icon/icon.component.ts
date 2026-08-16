@@ -7,7 +7,7 @@ export type IconName =
   | 'voice-changer' | 'music' | 'speech-to-text' | 'more'
   | 'chevron-down' | 'chevron-right' | 'search' | 'bell' | 'folder'
   | 'sparkle' | 'close' | 'play' | 'download' | 'panel' | 'invite'
-  | 'sun' | 'moon' | 'monitor' | 'globe' | 'check' | 'pause';
+  | 'sun' | 'moon' | 'monitor' | 'globe' | 'check' | 'pause' | 'send' | 'trash';
 
 @Component({
   selector: 'app-icon',
@@ -114,6 +114,13 @@ export type IconName =
         </ng-container>
         <ng-container *ngSwitchCase="'pause'">
           <path d="M6.5 4.5v11" /><path d="M13.5 4.5v11" />
+        </ng-container>
+        <ng-container *ngSwitchCase="'send'">
+          <path d="M10 15.5V5" /><path d="M5.5 9.5 10 5l4.5 4.5" />
+        </ng-container>
+        <ng-container *ngSwitchCase="'trash'">
+          <path d="M4.5 6h11" /><path d="M8 6V4.5h4V6" />
+          <path d="M6 6l.7 9.5A1 1 0 0 0 7.7 16.5h4.6a1 1 0 0 0 1-.9L14 6" />
         </ng-container>
       </ng-container>
     </svg>

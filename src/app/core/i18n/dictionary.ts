@@ -77,6 +77,17 @@ export interface Dictionary {
     languageOverride: string;
     outputFormat: string;
   };
+  ask: {
+    title: string;
+    subtitle: string;
+    demoBadge: string;
+    placeholder: string;
+    emptyHint: string;
+    send: string;
+    close: string;
+    clear: string;
+    suggestions: string[];
+  };
   starters: StarterCopy[];
   voices: VoiceCopy[];
   models: ModelCopy[];
