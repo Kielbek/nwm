@@ -36,6 +36,17 @@
     </a>
   </nav>
 
+  @if (recentEntries().length) {
+    <div class="sidebar__history">
+      @for (entry of recentEntries(); track entry.id) {
+        <button type="button" class="sidebar__history-item" (click)="reuse(entry)">
+          <span class="sidebar__history-text">{{ snippet(entry.text) }}</span>
+          <span class="sidebar__history-time">{{ relativeTime(entry.createdAt) }}</span>
+        </button>
+      }
+    </div>
+  }
+
   <nav class="sidebar__nav sidebar__nav--bottom">
     <a class="sidebar__item" routerLink="/app/settings" routerLinkActive="sidebar__item--active">
       <app-icon name="settings" [size]="18" />
