@@ -31,8 +31,13 @@
       <div class="tts__starters">
         <span class="tts__starters-label">{{ translate.dict().editor.startFrom }}</span>
         <div class="tts__starters-grid">
-          @for (prompt of starterPrompts(); track prompt.label) {
-            <button type="button" class="tts__starter-chip" (click)="applyStarterPrompt(prompt)">
+          @for (prompt of starterPrompts(); track prompt.label; let i = $index) {
+            <button
+              type="button"
+              class="tts__starter-chip"
+              [style.--stagger]="i"
+              (click)="applyStarterPrompt(prompt)"
+            >
               <app-icon [name]="prompt.icon" [size]="16" />
               {{ prompt.label }}
             </button>
