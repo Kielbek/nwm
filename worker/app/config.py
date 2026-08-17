@@ -9,6 +9,13 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+# Loads worker/.env into the process environment. Does nothing (silently)
+# if the file doesn't exist, e.g. in Docker where real env vars are passed
+# in directly via --env-file / docker-compose instead.
+load_dotenv()
+
 
 def _env(name: str, default: str) -> str:
     return os.environ.get(name, default)
