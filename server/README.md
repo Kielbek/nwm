@@ -145,6 +145,53 @@ wiring the frontend callback page is a separate piece of work.)
   `423 Locked` even with the correct password. A successful login resets
   the counter. This is per-account state in the database (not per-IP like
   the rate limiter above), so it survives across IPs/devices.
+- **Per-user rate limiting**: once logged in, `/api/tts/**` and
+  `/api/billing/**` (excluding the public webhook) are also limited per
+  account (`RATE_LIMIT_USER_CAPACITY`/`RATE_LIMIT_USER_REFILL`, default
+  30/minute) — the IP-based limiter above only covers the unauthenticated
+  auth endpoints.
+- **Admin role**: `/api/admin/**` requires `ROLE_ADMIN`, enforced both at
+  the `SecurityConfig` request-matcher level and via `@PreAuthorize` on
+  `AdminController` (method security is explicitly enabled —
+  `@EnableMethodSecurity` — specifically so `hasRole('ADMIN')` is actually
+  evaluated, not just declared). There's no self-service way to become an
+  admin; set the `role` column to `ADMIN` directly in the database.
+- **Content-Security-Policy**: `default-src 'self'` plus the minimum
+  relaxations Swagger UI at `/docs` needs (`unsafe-inline` for its bundled
+  script/style), `frame-ancestors 'none'`.
+
+## Password reset & email verification
+
+- `POST /api/auth/forgot-password` `{ email }` → always `200`, whether or
+  not the email is registered (no account enumeration). If it matches a
+  local account, a single-use, 1-hour token is issued and emailed.
+- `POST /api/auth/reset-password` `{ token, newPassword }` → sets the new
+  password, resets the lockout counter, and revokes every existing refresh
+  token for the account (a password reset is treated as "this account may
+  have been compromised").
+- `POST /api/auth/verify-email` `{ token }` → confirms the address; the
+  token is issued automatically on registration (24-hour validity) and can
+  be re-sent via `POST /api/auth/verify-email/resend` (authenticated).
+
+Emails are sent via `EmailService` — `SmtpEmailService` (real SMTP,
+`spring-boot-starter-mail`) when `MAIL_ENABLED=true`, or
+`LoggingEmailService` (logs the link instead of sending) when it's `false`
+(the `.env.example` default), so the whole flow is exercisable — and is
+exercised by `PasswordResetAndEmailVerificationTest` — without SMTP
+credentials.
+
+## Admin
+
+Support/ops tooling for `ROLE_ADMIN` accounts, under `/api/admin`:
+
+- `GET /users?query=` — paginated, optional email substring search
+- `GET /users/{id}` — full account detail (plan, quota, subscription
+  status, lockout state)
+- `POST /users/{id}/grant-characters` `{ amount }` — comp bonus
+  characters without going through Stripe (refunds, support gestures)
+- `POST /users/{id}/plan` `{ planId }` — manually override a user's plan
+- `GET /jobs?status=` — browse generation jobs across all users, for
+  troubleshooting a report
 
 ## Billing (Stripe)
 
@@ -199,9 +246,12 @@ a table the frontend can poll or show a bell icon for.
 
 Events that currently create a notification: welcome message on
 registration, TTS generation failure (with a refund note), subscription
-activated/canceled, payment failed, and top-up purchased. Adding a new
-notification type is a one-line call to `NotificationService.notify(...)`
-from wherever the triggering event happens.
+activated/canceled, payment failed, payment succeeded (subscription
+renewal only — the first payment on a new subscription is covered by the
+activation notification instead), and top-up purchased (including admin
+character grants). Adding a new notification type is a one-line call to
+`NotificationService.notify(...)` from wherever the triggering event
+happens.
 
 ## Logging
 
@@ -215,26 +265,34 @@ console instead. See `src/main/resources/logback-spring.xml`.
 
 ## What's deliberately out of scope for this pass
 
-- **Email verification / password reset emails**: the `email_verified`
-  flag exists on the user and is exposed via the API, but no email is
-  actually sent anywhere yet. Wiring real delivery (SES/SMTP) is a
-  follow-up. Notifications above are in-app only, not email/push.
-- **Admin/moderation endpoints**: the `Role` enum has `ADMIN` but nothing
-  currently checks for it beyond `@PreAuthorize` being ready to.
-- **Distributed rate limiting / lockout**: both are single-instance state
-  (in-memory bucket, DB row respectively) — the lockout is already safe
-  across nodes since it's DB-backed, but the IP rate limiter is not and
-  would need a Redis-backed Bucket4j bucket behind a load balancer.
-- **Metrics/tracing**: Actuator health/info is exposed, but there's no
-  Micrometer/Prometheus metrics registry or distributed tracing wired up
-  yet.
+- **Real email delivery by default**: `MAIL_ENABLED=false` out of the box
+  — password reset and verification links are logged, not emailed, until
+  real SMTP credentials are configured. See "Password reset & email
+  verification" above.
+- **Distributed rate limiting / lockout**: rate limiting (both the
+  IP-based auth limiter and the per-user TTS/billing limiter) is
+  single-instance, in-memory Bucket4j state — a multi-node deployment
+  needs a Redis-backed bucket instead. Account lockout is DB-backed and
+  already safe across nodes.
+- **Metrics/tracing**: Actuator exposes `health` (DB, S3, and — via
+  Spring Boot's own autoconfiguration — RabbitMQ) and `info`, but there's
+  no Micrometer/Prometheus metrics registry or distributed tracing wired
+  up yet.
 - **CI/CD**: no pipeline configuration for this module yet (build/test is
   manual — `mvn test`).
+- **Resilience beyond timeouts**: Stripe and S3 calls have connect/read
+  timeouts set so a hung dependency can't hang a request thread forever,
+  but there's no retry/circuit-breaker layer (e.g. Resilience4j) yet.
+- **Testcontainers-based integration tests**: the dependency is in
+  `pom.xml`, but every test currently runs against H2 — this sandbox has
+  no Docker daemon to actually exercise Flyway/native queries against a
+  real Postgres. Worth adding once there's a CI environment with Docker.
 - **Frontend integration**: the Angular app does not call this backend
   yet — it still runs entirely on local mock services backed by
   `localStorage`. Wiring it up (real HTTP calls, the `/auth/callback`
   route for Google OAuth, Stripe Checkout redirects, the notification
-  bell) is a separate, not-yet-started piece of work.
+  bell, reset-password/verify-email pages) is a separate, not-yet-started
+  piece of work.
 - **The Python worker itself**: this repo only defines the queue contract
   it expects; the worker is a separate project that doesn't exist yet.
 
@@ -249,8 +307,15 @@ Runs against an in-memory H2 database with messaging disabled
 required. Covers: application context boot, the full
 register → login → refresh (with rotation) → logout flow including
 negative cases (wrong password, reused refresh token, duplicate email),
-and TTS quota enforcement (accepted within quota, `402 Payment Required`
-over quota, `401` unauthenticated).
+account lockout after repeated failed logins, TTS quota enforcement
+(accepted within quota, `402 Payment Required` over quota, `401`
+unauthenticated), notifications, the Stripe webhook (signature
+verification + replay/idempotency, using a real HMAC-SHA256 signature
+computed the same way Stripe does), password reset and email
+verification (with `EmailService` mocked to capture the link instead of
+sending it), per-user rate limiting (tripped with an artificially low
+test-only capacity), and the admin endpoints (including that a non-admin
+gets `403`).
 
 The `docker-compose.yml` stack (real Postgres/RabbitMQ/MinIO) is what
 actually exercises Flyway migrations against Postgres and the RabbitMQ

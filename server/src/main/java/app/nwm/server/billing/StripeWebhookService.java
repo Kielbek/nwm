@@ -52,6 +52,7 @@ public class StripeWebhookService {
       case "customer.subscription.updated" -> handleSubscriptionUpdated(event);
       case "customer.subscription.deleted" -> handleSubscriptionDeleted(event);
       case "invoice.payment_failed" -> handlePaymentFailed(event);
+      case "invoice.payment_succeeded" -> handlePaymentSucceeded(event);
       default -> log.debug("No handler for Stripe event type {} — ignoring", event.getType());
     }
 
@@ -201,6 +202,34 @@ public class StripeWebhookService {
                   NotificationType.PAYMENT_FAILED,
                   "Problem z płatnością",
                   "Nie udało się pobrać opłaty za fakturę. Zaktualizuj metodę płatności.");
+            });
+  }
+
+  private void handlePaymentSucceeded(Event event) {
+    Invoice invoice = deserialize(event, Invoice.class);
+    if (invoice == null || invoice.getCustomer() == null) {
+      return;
+    }
+    // Only the recurring-renewal case gets a notification — the very first
+    // invoice on a new subscription is already covered by the
+    // SUBSCRIPTION_ACTIVATED notification fired from checkout.session.completed.
+    if (!"subscription_cycle".equals(invoice.getBillingReason())) {
+      return;
+    }
+    userRepository
+        .findByStripeCustomerId(invoice.getCustomer())
+        .ifPresent(
+            user -> {
+              if (user.getSubscriptionStatus() == SubscriptionStatus.PAST_DUE) {
+                user.setSubscriptionStatus(SubscriptionStatus.ACTIVE);
+                userRepository.save(user);
+              }
+              log.info("Subscription renewal payment succeeded for user {}", user.getId());
+              notificationService.notify(
+                  user,
+                  NotificationType.PAYMENT_SUCCEEDED,
+                  "Płatność zaakceptowana",
+                  "Twoja subskrypcja została odnowiona. Dziękujemy!");
             });
   }
 

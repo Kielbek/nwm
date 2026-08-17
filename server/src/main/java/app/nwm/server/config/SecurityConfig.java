@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -30,12 +31,17 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
+// Required for @PreAuthorize("hasRole('ADMIN')") on AdminController — without
+// it, only the coarse authorizeHttpRequests().anyRequest().authenticated()
+// rule below applies, which does not distinguish USER from ADMIN.
+@EnableMethodSecurity
 public class SecurityConfig {
 
   private static final int BCRYPT_STRENGTH = 12;
 
   private final AppProperties appProperties;
   private final JwtAuthenticationFilter jwtAuthenticationFilter;
+  private final UserRateLimitFilter userRateLimitFilter;
   private final CustomOAuth2UserService customOAuth2UserService;
   private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
   private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
@@ -44,12 +50,14 @@ public class SecurityConfig {
   public SecurityConfig(
       AppProperties appProperties,
       JwtAuthenticationFilter jwtAuthenticationFilter,
+      UserRateLimitFilter userRateLimitFilter,
       CustomOAuth2UserService customOAuth2UserService,
       OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler,
       OAuth2LoginFailureHandler oAuth2LoginFailureHandler,
       ObjectMapper objectMapper) {
     this.appProperties = appProperties;
     this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    this.userRateLimitFilter = userRateLimitFilter;
     this.customOAuth2UserService = customOAuth2UserService;
     this.oAuth2LoginSuccessHandler = oAuth2LoginSuccessHandler;
     this.oAuth2LoginFailureHandler = oAuth2LoginFailureHandler;
@@ -90,7 +98,16 @@ public class SecurityConfig {
                             referrer.policy(
                                 ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN))
                     .httpStrictTransportSecurity(
-                        hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000)))
+                        hsts -> hsts.includeSubDomains(true).maxAgeInSeconds(31536000))
+                    .contentSecurityPolicy(
+                        csp ->
+                            csp.policyDirectives(
+                                "default-src 'self'; "
+                                    + "script-src 'self' 'unsafe-inline'; "
+                                    + "style-src 'self' 'unsafe-inline'; "
+                                    + "img-src 'self' data:; "
+                                    + "connect-src 'self'; "
+                                    + "frame-ancestors 'none'")))
         .authorizeHttpRequests(
             auth ->
                 auth.requestMatchers(
@@ -104,6 +121,8 @@ public class SecurityConfig {
                         "/api-docs/**",
                         "/v3/api-docs/**")
                     .permitAll()
+                    .requestMatchers("/api/admin/**")
+                    .hasRole("ADMIN")
                     .anyRequest()
                     .authenticated())
         .exceptionHandling(
@@ -117,7 +136,8 @@ public class SecurityConfig {
                     .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
                     .successHandler(oAuth2LoginSuccessHandler)
                     .failureHandler(oAuth2LoginFailureHandler))
-        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+        .addFilterAfter(userRateLimitFilter, JwtAuthenticationFilter.class);
 
     return http.build();
   }

@@ -1,8 +1,11 @@
 package app.nwm.server.auth;
 
 import app.nwm.server.auth.dto.AuthResponse;
+import app.nwm.server.auth.dto.ForgotPasswordRequest;
 import app.nwm.server.auth.dto.LoginRequest;
 import app.nwm.server.auth.dto.RegisterRequest;
+import app.nwm.server.auth.dto.ResetPasswordRequest;
+import app.nwm.server.auth.dto.VerifyEmailRequest;
 import app.nwm.server.common.ApiException;
 import app.nwm.server.security.SecurityUser;
 import jakarta.servlet.http.HttpServletRequest;
@@ -65,6 +68,31 @@ public class AuthController {
     authService.logoutAllSessions(principal.getId());
     response.addCookie(AuthCookies.clear());
     return ResponseEntity.noContent().build();
+  }
+
+  @PostMapping("/api/auth/forgot-password")
+  public ResponseEntity<Void> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+    authService.forgotPassword(request.email());
+    return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/api/auth/reset-password")
+  public ResponseEntity<Void> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+    authService.resetPassword(request.token(), request.newPassword());
+    return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/api/auth/verify-email")
+  public ResponseEntity<Void> verifyEmail(@Valid @RequestBody VerifyEmailRequest request) {
+    authService.verifyEmail(request.token());
+    return ResponseEntity.ok().build();
+  }
+
+  @PostMapping("/api/auth/verify-email/resend")
+  @PreAuthorize("isAuthenticated()")
+  public ResponseEntity<Void> resendVerificationEmail(@AuthenticationPrincipal SecurityUser principal) {
+    authService.requestEmailVerification(principal.getId());
+    return ResponseEntity.ok().build();
   }
 
   private void attachRefreshCookie(HttpServletResponse response, AuthService.IssuedSession session) {

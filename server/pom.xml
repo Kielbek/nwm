@@ -101,6 +101,12 @@
       <artifactId>spring-boot-starter-amqp</artifactId>
     </dependency>
 
+    <!-- Transactional email (password reset / verification) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-mail</artifactId>
+    </dependency>
+
     <!-- Object storage (S3-compatible) -->
     <dependency>
       <groupId>software.amazon.awssdk</groupId>

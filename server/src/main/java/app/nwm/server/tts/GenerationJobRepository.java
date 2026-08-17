@@ -10,4 +10,8 @@ public interface GenerationJobRepository extends JpaRepository<GenerationJob, UU
   Optional<GenerationJob> findByIdAndUserId(UUID id, UUID userId);
 
   Page<GenerationJob> findByUserIdOrderByCreatedAtDesc(UUID userId, Pageable pageable);
+
+  Page<GenerationJob> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+  Page<GenerationJob> findByStatusOrderByCreatedAtDesc(app.nwm.server.tts.JobStatus status, Pageable pageable);
 }

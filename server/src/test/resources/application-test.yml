@@ -42,6 +42,10 @@ app:
   rate-limit:
     auth-capacity: 1000
     auth-refill-per-minute: 1000
+    # Deliberately tiny so UserRateLimitFilterTest can trip it in a couple of
+    # requests instead of needing hundreds of MockMvc calls.
+    user-capacity: 2
+    user-refill-per-minute: 2
   lockout:
     failure-threshold: 3
     duration-minutes: 15

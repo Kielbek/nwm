@@ -12,7 +12,8 @@ public record AppProperties(
     Storage storage,
     RateLimit rateLimit,
     Lockout lockout,
-    Stripe stripe) {
+    Stripe stripe,
+    Mail mail) {
 
   public record Cors(String allowedOrigins) {
     public String[] originsArray() {
@@ -38,7 +39,11 @@ public record AppProperties(
       boolean pathStyleAccess,
       int presignTtlMinutes) {}
 
-  public record RateLimit(int authCapacity, int authRefillPerMinute) {}
+  public record RateLimit(
+      int authCapacity,
+      int authRefillPerMinute,
+      int userCapacity,
+      int userRefillPerMinute) {}
 
   /** Per-account lockout after repeated failed logins — a defense rate limiting alone doesn't cover. */
   public record Lockout(int failureThreshold, int durationMinutes) {}
@@ -51,4 +56,11 @@ public record AppProperties(
       String cancelUrl,
       String portalReturnUrl,
       Map<String, String> priceIds) {}
+
+  /**
+   * When {@code enabled} is false, {@code LoggingEmailService} logs the email
+   * content instead of sending it — the password-reset/verification flow
+   * still works end-to-end for local dev without real SMTP credentials.
+   */
+  public record Mail(boolean enabled, String from) {}
 }

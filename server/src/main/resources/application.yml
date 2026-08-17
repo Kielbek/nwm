@@ -36,6 +36,21 @@ spring:
           max-attempts: 3
           multiplier: 2
 
+  mail:
+    host: ${SMTP_HOST:localhost}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USERNAME:}
+    password: ${SMTP_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${SMTP_AUTH:true}
+          starttls:
+            enable: ${SMTP_STARTTLS:true}
+          connectiontimeout: 10000
+          timeout: 10000
+          writetimeout: 10000
+
   security:
     oauth2:
       client:
@@ -92,6 +107,8 @@ app:
   rate-limit:
     auth-capacity: ${RATE_LIMIT_AUTH_CAPACITY:10}
     auth-refill-per-minute: ${RATE_LIMIT_AUTH_REFILL:10}
+    user-capacity: ${RATE_LIMIT_USER_CAPACITY:30}
+    user-refill-per-minute: ${RATE_LIMIT_USER_REFILL:30}
   lockout:
     failure-threshold: ${LOCKOUT_FAILURE_THRESHOLD:5}
     duration-minutes: ${LOCKOUT_DURATION_MINUTES:15}
@@ -116,6 +133,9 @@ app:
       topup-small: ${STRIPE_PRICE_TOPUP_SMALL:}
       topup-medium: ${STRIPE_PRICE_TOPUP_MEDIUM:}
       topup-large: ${STRIPE_PRICE_TOPUP_LARGE:}
+  mail:
+    enabled: ${MAIL_ENABLED:false}
+    from: ${MAIL_FROM:noreply@nwm.app}
 
 logging:
   level:

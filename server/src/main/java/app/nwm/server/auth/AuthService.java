@@ -6,12 +6,15 @@ import app.nwm.server.auth.dto.RegisterRequest;
 import app.nwm.server.auth.jwt.JwtService;
 import app.nwm.server.common.ApiException;
 import app.nwm.server.config.AppProperties;
+import app.nwm.server.email.EmailService;
 import app.nwm.server.notification.NotificationService;
 import app.nwm.server.notification.NotificationType;
 import app.nwm.server.user.AuthProvider;
 import app.nwm.server.user.User;
 import app.nwm.server.user.UserRepository;
 import app.nwm.server.user.dto.UserResponse;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +35,11 @@ public class AuthService {
   private final AuthenticationManager authenticationManager;
   private final JwtService jwtService;
   private final RefreshTokenService refreshTokenService;
+  private final VerificationTokenService verificationTokenService;
   private final NotificationService notificationService;
+  private final EmailService emailService;
   private final AppProperties.Lockout lockout;
+  private final String frontendUrl;
 
   public AuthService(
       UserRepository userRepository,
@@ -41,15 +47,20 @@ public class AuthService {
       AuthenticationManager authenticationManager,
       JwtService jwtService,
       RefreshTokenService refreshTokenService,
+      VerificationTokenService verificationTokenService,
       NotificationService notificationService,
+      EmailService emailService,
       AppProperties appProperties) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.authenticationManager = authenticationManager;
     this.jwtService = jwtService;
     this.refreshTokenService = refreshTokenService;
+    this.verificationTokenService = verificationTokenService;
     this.notificationService = notificationService;
+    this.emailService = emailService;
     this.lockout = appProperties.lockout();
+    this.frontendUrl = appProperties.frontendUrl();
   }
 
   @Transactional
@@ -71,6 +82,7 @@ public class AuthService {
         NotificationType.WELCOME,
         "Witaj w NWM",
         "Dziękujemy za dołączenie! Zacznij od wygenerowania pierwszej mowy z tekstu.");
+    sendVerificationEmail(user);
     return issueSession(user);
   }
 
@@ -123,6 +135,74 @@ public class AuthService {
   @Transactional
   public void logoutAllSessions(java.util.UUID userId) {
     refreshTokenService.revokeAllForUser(userId);
+  }
+
+  /**
+   * Always succeeds from the caller's point of view, whether or not the email
+   * belongs to an account — revealing that would let an attacker enumerate
+   * registered emails via the reset flow.
+   */
+  @Transactional
+  public void forgotPassword(String email) {
+    userRepository
+        .findByEmail(email)
+        .filter(user -> user.getProvider() == AuthProvider.LOCAL)
+        .ifPresent(
+            user -> {
+              String token = verificationTokenService.issue(
+                  user, VerificationTokenType.PASSWORD_RESET, VerificationTokenService.PASSWORD_RESET_TTL);
+              String link = frontendUrl + "/reset-password?token=" + urlEncode(token);
+              emailService.sendPasswordReset(user.getEmail(), link);
+              log.info("Issued password reset token for user {}", user.getId());
+            });
+  }
+
+  @Transactional
+  public void resetPassword(String rawToken, String newPassword) {
+    User user =
+        verificationTokenService
+            .consume(rawToken, VerificationTokenType.PASSWORD_RESET)
+            .orElseThrow(() -> ApiException.badRequest("Reset link is invalid or has expired"));
+
+    user.setPasswordHash(passwordEncoder.encode(newPassword));
+    user.resetFailedLogins();
+    userRepository.save(user);
+    // A password reset is a strong signal the account may have been at risk —
+    // invalidate every existing session, including whatever the attacker (if
+    // any) was using.
+    refreshTokenService.revokeAllForUser(user.getId());
+    log.info("Password reset completed for user {}", user.getId());
+  }
+
+  @Transactional
+  public void requestEmailVerification(java.util.UUID userId) {
+    User user = userRepository.findById(userId).orElseThrow(() -> ApiException.notFound("User not found"));
+    if (user.isEmailVerified()) {
+      return;
+    }
+    sendVerificationEmail(user);
+  }
+
+  @Transactional
+  public void verifyEmail(String rawToken) {
+    User user =
+        verificationTokenService
+            .consume(rawToken, VerificationTokenType.EMAIL_VERIFICATION)
+            .orElseThrow(() -> ApiException.badRequest("Verification link is invalid or has expired"));
+    user.setEmailVerified(true);
+    userRepository.save(user);
+    log.info("Email verified for user {}", user.getId());
+  }
+
+  private void sendVerificationEmail(User user) {
+    String token = verificationTokenService.issue(
+        user, VerificationTokenType.EMAIL_VERIFICATION, VerificationTokenService.EMAIL_VERIFICATION_TTL);
+    String link = frontendUrl + "/verify-email?token=" + urlEncode(token);
+    emailService.sendEmailVerification(user.getEmail(), link);
+  }
+
+  private static String urlEncode(String value) {
+    return URLEncoder.encode(value, StandardCharsets.UTF_8);
   }
 
   private IssuedSession issueSession(User user) {

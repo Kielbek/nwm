@@ -34,7 +34,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class AuthRateLimitFilter extends OncePerRequestFilter {
 
   private static final Set<String> LIMITED_PATHS =
-      Set.of("/api/auth/login", "/api/auth/register");
+      Set.of("/api/auth/login", "/api/auth/register", "/api/auth/forgot-password");
 
   private final Map<String, Bucket> buckets = new ConcurrentHashMap<>();
   private final AppProperties.RateLimit rateLimit;

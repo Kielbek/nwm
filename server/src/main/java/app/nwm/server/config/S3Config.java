@@ -1,10 +1,12 @@
 package app.nwm.server.config;
 
 import java.net.URI;
+import java.time.Duration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.client.config.ClientOverrideConfiguration;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Configuration;
@@ -28,6 +30,13 @@ public class S3Config {
         .credentialsProvider(credentialsProvider(storage))
         .serviceConfiguration(
             S3Configuration.builder().pathStyleAccessEnabled(storage.pathStyleAccess()).build())
+        // A hung S3/MinIO connection shouldn't be able to hang a request thread
+        // indefinitely — bound both the whole call and a single attempt.
+        .overrideConfiguration(
+            ClientOverrideConfiguration.builder()
+                .apiCallTimeout(Duration.ofSeconds(30))
+                .apiCallAttemptTimeout(Duration.ofSeconds(10))
+                .build())
         .build();
   }
 

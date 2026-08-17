@@ -16,6 +16,9 @@ public class StripeConfig {
     this.stripe = properties.stripe();
   }
 
+  private static final int CONNECT_TIMEOUT_MS = 10_000;
+  private static final int READ_TIMEOUT_MS = 30_000;
+
   @PostConstruct
   void init() {
     if (stripe.secretKey() == null || stripe.secretKey().isBlank()) {
@@ -23,5 +26,10 @@ public class StripeConfig {
           "app.stripe.enabled is true but STRIPE_SECRET_KEY is not set");
     }
     Stripe.apiKey = stripe.secretKey();
+    // Without this, a hung Stripe API call blocks the request thread
+    // indefinitely — the SDK's own defaults are much longer than acceptable
+    // for a synchronous checkout/portal endpoint.
+    Stripe.setConnectTimeout(CONNECT_TIMEOUT_MS);
+    Stripe.setReadTimeout(READ_TIMEOUT_MS);
   }
 }
