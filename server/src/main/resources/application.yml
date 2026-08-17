@@ -74,7 +74,12 @@ management:
     health:
       probes:
         enabled: true
-      show-details: when-authorized
+      # when-authorized never actually shows anything on this API, since
+      # /actuator/health is permitAll and unauthenticated requests never
+      # carry a Principal — set MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS=always
+      # (e.g. temporarily, while debugging a DOWN status) to see which
+      # dependency (db/s3/rabbit/diskSpace) is actually failing.
+      show-details: ${MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS:when-authorized}
 
 springdoc:
   swagger-ui:
