@@ -111,23 +111,48 @@
   &__starter-chip {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 9px 14px;
+    gap: 9px;
+    padding: 8px 16px 8px 8px;
     border: 1px solid var(--border);
-    border-radius: 999px;
+    border-radius: 14px;
     background: var(--bg-surface);
     font-size: 13px;
+    font-weight: 500;
     color: var(--text-secondary);
     cursor: pointer;
     white-space: nowrap;
     opacity: 0;
     animation: tts-starter-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
     animation-delay: calc(var(--stagger, 0) * 45ms);
+    transition:
+      transform 0.18s ease,
+      border-color 0.18s ease,
+      box-shadow 0.18s ease,
+      background 0.18s ease;
+
+    app-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+      border-radius: 9px;
+      background: var(--accent-soft);
+      color: var(--accent-deep);
+      transition: background 0.18s ease, color 0.18s ease;
+    }
 
     &:hover {
-      background: var(--bg-hover);
       color: var(--text-primary);
-      border-color: var(--border-strong);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px -10px hsl(var(--shadow-color) / 0.6);
+
+      app-icon {
+        background: var(--accent);
+        color: var(--accent-contrast);
+      }
     }
   }
 
