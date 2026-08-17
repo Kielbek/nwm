@@ -9,7 +9,11 @@ services:
       POSTGRES_USER: ${DB_USERNAME:-nwm}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-nwm}
     ports:
-      - "5432:5432"
+      # Host-side port only — the app always talks to postgres:5432 over the
+      # internal Docker network regardless of this value. Overridable because
+      # 5432 is a very common collision with a locally-installed Postgres or
+      # another project's container already bound to it on the host.
+      - "${DB_HOST_PORT:-5433}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -25,8 +29,8 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USERNAME:-nwm}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-nwm}
     ports:
-      - "5672:5672"   # AMQP
-      - "15672:15672" # management UI
+      - "${RABBITMQ_HOST_PORT:-5672}:5672"           # AMQP
+      - "${RABBITMQ_MANAGEMENT_HOST_PORT:-15672}:15672" # management UI
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
     healthcheck:
@@ -43,8 +47,8 @@ services:
       MINIO_ROOT_USER: ${S3_ACCESS_KEY:-nwm}
       MINIO_ROOT_PASSWORD: ${S3_SECRET_KEY:-nwm12345}
     ports:
-      - "9000:9000" # S3 API
-      - "9001:9001" # console
+      - "${S3_HOST_PORT:-9000}:9000"          # S3 API
+      - "${S3_CONSOLE_HOST_PORT:-9001}:9001"  # console
     volumes:
       - minio-data:/data
     healthcheck:
@@ -131,7 +135,7 @@ services:
       SERVER_PORT: 8080
       SPRING_PROFILES_ACTIVE: docker
     ports:
-      - "8080:8080"
+      - "${APP_HOST_PORT:-8080}:8080"
 
 volumes:
   postgres-data:
