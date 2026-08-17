@@ -22,6 +22,8 @@ export const pl: Dictionary = {
     history: 'Historia',
     settings: 'Ustawienia',
     closeMenu: 'Zamknij menu',
+    historyToday: 'Dzisiaj',
+    historyYesterday: 'Wczoraj',
   },
   editor: {
     placeholder:

@@ -22,6 +22,8 @@ export const en: Dictionary = {
     history: 'History',
     settings: 'Settings',
     closeMenu: 'Close menu',
+    historyToday: 'Today',
+    historyYesterday: 'Yesterday',
   },
   editor: {
     placeholder: 'Start typing here or paste any text you want to turn into realistic speech...',

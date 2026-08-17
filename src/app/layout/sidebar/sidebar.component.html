@@ -38,11 +38,42 @@
 
   @if (recentEntries().length) {
     <div class="sidebar__history">
-      @for (entry of recentEntries(); track entry.id) {
-        <button type="button" class="sidebar__history-item" (click)="reuse(entry)">
-          <span class="sidebar__history-text">{{ snippet(entry.text) }}</span>
-          <span class="sidebar__history-time">{{ relativeTime(entry.createdAt) }}</span>
-        </button>
+      @for (group of historyGroups(); track group.label) {
+        <span class="sidebar__history-date">{{ group.label }}</span>
+        @for (entry of group.entries; track entry.id) {
+          <div class="sidebar__history-item">
+            <button type="button" class="sidebar__history-main" (click)="reuse(entry)">
+              <span class="sidebar__history-text">{{ snippet(entry.text) }}</span>
+              <span class="sidebar__history-time">{{ relativeTime(entry.createdAt) }}</span>
+            </button>
+            <div class="sidebar__history-actions">
+              <button
+                type="button"
+                class="sidebar__history-action"
+                [attr.aria-label]="translate.dict().historyPage.replay"
+                (click)="replay(entry)"
+              >
+                <app-icon name="play" [size]="12" />
+              </button>
+              <button
+                type="button"
+                class="sidebar__history-action"
+                [attr.aria-label]="translate.dict().historyPage.reuse"
+                (click)="reuse(entry)"
+              >
+                <app-icon name="edit" [size]="12" />
+              </button>
+              <button
+                type="button"
+                class="sidebar__history-action"
+                [attr.aria-label]="translate.dict().historyPage.delete"
+                (click)="remove(entry.id)"
+              >
+                <app-icon name="trash" [size]="12" />
+              </button>
+            </div>
+          </div>
+        }
       }
     </div>
   }

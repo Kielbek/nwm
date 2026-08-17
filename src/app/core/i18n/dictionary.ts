@@ -75,6 +75,8 @@ export interface Dictionary {
     history: string;
     settings: string;
     closeMenu: string;
+    historyToday: string;
+    historyYesterday: string;
   };
   editor: {
     placeholder: string;
