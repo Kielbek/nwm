@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, HostListener, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { IconComponent } from '../icon/icon.component';
+import { CarouselComponent } from '../carousel/carousel.component';
 import { UpgradeModalService } from '../../../core/services/upgrade-modal.service';
 import { AccountService, BillingCycle, PlanId } from '../../../core/services/account.service';
 import { TranslateService } from '../../../core/services/translate.service';
@@ -16,7 +17,7 @@ const FEATURED_PLAN_ID: PlanId = 'pro';
   selector: 'app-upgrade-modal',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IconComponent],
+  imports: [IconComponent, CarouselComponent],
   templateUrl: './upgrade-modal.component.html',
   styleUrl: './upgrade-modal.component.scss',
 })
