@@ -5,6 +5,7 @@ import { DropdownComponent } from '../../shared/components/dropdown/dropdown.com
 import { ThemeMode, ThemeService } from '../../core/services/theme.service';
 import { Lang, TranslateService } from '../../core/services/translate.service';
 import { AccountService } from '../../core/services/account.service';
+import { AuthService } from '../../core/services/auth.service';
 import { NotificationItem, NotificationsService } from '../../core/services/notifications.service';
 import { ReferralService } from '../../core/services/referral.service';
 import { CommandPaletteService } from '../../core/services/command-palette.service';
@@ -32,11 +33,17 @@ export class HeaderComponent {
     readonly theme: ThemeService,
     readonly translate: TranslateService,
     readonly account: AccountService,
+    private readonly auth: AuthService,
     readonly notifications: NotificationsService,
     readonly referral: ReferralService,
     readonly palette: CommandPaletteService,
     private readonly router: Router
   ) {}
+
+  signOut(dropdown: DropdownComponent): void {
+    dropdown.close();
+    this.auth.logout().subscribe(() => this.router.navigateByUrl('/login'));
+  }
 
   selectTheme(mode: ThemeMode, dropdown: DropdownComponent): void {
     this.theme.setMode(mode);

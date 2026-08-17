@@ -4,6 +4,8 @@ import { Router, RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { CarouselComponent } from '../../shared/components/carousel/carousel.component';
 import { AccountService, BillingCycle, PlanId } from '../../core/services/account.service';
+import { AuthService } from '../../core/services/auth.service';
+import { BillingService } from '../../core/services/billing.service';
 import { TranslateService } from '../../core/services/translate.service';
 import { SeoService } from '../../core/services/seo.service';
 
@@ -21,7 +23,10 @@ const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 export class ProfilePageComponent {
   readonly editingProfile = signal(false);
   readonly formName = signal('');
-  readonly formEmail = signal('');
+  readonly isSavingProfile = signal(false);
+  readonly isSendingVerification = signal(false);
+  readonly verificationSent = signal(false);
+  readonly isOpeningPortal = signal(false);
 
   readonly ringCircumference = RING_CIRCUMFERENCE;
 
@@ -50,6 +55,8 @@ export class ProfilePageComponent {
 
   constructor(
     readonly account: AccountService,
+    private readonly auth: AuthService,
+    private readonly billing: BillingService,
     readonly translate: TranslateService,
     private readonly router: Router,
     seo: SeoService
@@ -59,24 +66,57 @@ export class ProfilePageComponent {
 
   startEditingProfile(): void {
     this.formName.set(this.account.name());
-    this.formEmail.set(this.account.email());
     this.editingProfile.set(true);
   }
 
   saveProfile(): void {
-    if (!this.formName().trim() || !this.formEmail().trim()) {
+    const name = this.formName().trim();
+    if (!name || this.isSavingProfile()) {
       return;
     }
-    this.account.updateProfile(this.formName().trim(), this.formEmail().trim());
-    this.editingProfile.set(false);
+    this.isSavingProfile.set(true);
+    this.account.updateProfile(name).subscribe({
+      next: () => {
+        this.isSavingProfile.set(false);
+        this.editingProfile.set(false);
+      },
+      error: () => this.isSavingProfile.set(false),
+    });
   }
 
   cancelEditingProfile(): void {
     this.editingProfile.set(false);
   }
 
+  resendVerificationEmail(): void {
+    if (this.isSendingVerification()) {
+      return;
+    }
+    this.isSendingVerification.set(true);
+    this.auth.resendVerificationEmail().subscribe({
+      next: () => {
+        this.isSendingVerification.set(false);
+        this.verificationSent.set(true);
+      },
+      error: () => this.isSendingVerification.set(false),
+    });
+  }
+
   setBillingCycle(cycle: BillingCycle): void {
     this.account.setBillingCycle(cycle);
+  }
+
+  openBillingPortal(): void {
+    if (this.isOpeningPortal()) {
+      return;
+    }
+    this.isOpeningPortal.set(true);
+    this.billing.openBillingPortal().subscribe({
+      next: (session) => {
+        window.location.href = session.url;
+      },
+      error: () => this.isOpeningPortal.set(false),
+    });
   }
 
   selectPlan(id: PlanId): void {

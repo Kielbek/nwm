@@ -1,0 +1,23 @@
+<app-auth-layout [tagline]="translate.dict().authLayout.taglineLogin">
+  <div class="auth-form">
+    @if (state() === 'working') {
+      <div class="auth-form__success">
+        <span class="auth-form__success-icon">
+          <span class="auth-form__spinner" style="border-top-color: var(--accent); width: 22px; height: 22px;"></span>
+        </span>
+        <h1 class="auth-form__title">{{ translate.dict().authCallbackPage.workingTitle }}</h1>
+      </div>
+    } @else {
+      <div class="auth-form__success">
+        <span class="auth-form__success-icon">
+          <app-icon name="close" [size]="22" />
+        </span>
+        <h1 class="auth-form__title">{{ translate.dict().authCallbackPage.errorTitle }}</h1>
+        <p>{{ translate.dict().authCallbackPage.errorBody }}</p>
+      </div>
+      <a class="auth-form__btn auth-form__btn--primary" routerLink="/login">
+        {{ translate.dict().authCallbackPage.backToLogin }}
+      </a>
+    }
+  </div>
+</app-auth-layout>

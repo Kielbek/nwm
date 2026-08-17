@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { ThemeService, ThemeMode } from '../../core/services/theme.service';
 import { TranslateService, Lang } from '../../core/services/translate.service';
 import { AccountService } from '../../core/services/account.service';
+import { AuthService } from '../../core/services/auth.service';
 import { CookieConsentService } from '../../core/services/cookie-consent.service';
 import { SeoService } from '../../core/services/seo.service';
 
@@ -29,10 +31,7 @@ export class SettingsPageComponent {
   readonly notifyMarketing = signal(this.readNotify(NOTIFY_KEYS.marketing, false));
   readonly twoFactorEnabled = signal(this.readNotify(TWO_FACTOR_KEY, false));
 
-  readonly currentPassword = signal('');
-  readonly newPassword = signal('');
-  readonly confirmPassword = signal('');
-  readonly passwordError = signal<string | null>(null);
+  readonly isSendingResetLink = signal(false);
 
   readonly savedToast = signal<string | null>(null);
   readonly resetConfirmOpen = signal(false);
@@ -43,6 +42,8 @@ export class SettingsPageComponent {
     readonly theme: ThemeService,
     readonly translate: TranslateService,
     readonly account: AccountService,
+    private readonly auth: AuthService,
+    private readonly router: Router,
     readonly cookieConsent: CookieConsentService,
     seo: SeoService
   ) {
@@ -75,23 +76,21 @@ export class SettingsPageComponent {
     this.showToast(this.translate.dict().settingsPage.saved);
   }
 
-  changePassword(): void {
-    const dict = this.translate.dict().settingsPage;
-    this.passwordError.set(null);
-
-    if (this.newPassword() !== this.confirmPassword()) {
-      this.passwordError.set(dict.passwordMismatch);
+  sendPasswordResetLink(): void {
+    const email = this.account.email();
+    if (!email || this.isSendingResetLink()) {
       return;
     }
-    if (this.newPassword().length < 8) {
-      this.passwordError.set(dict.passwordTooShort);
-      return;
-    }
-
-    this.currentPassword.set('');
-    this.newPassword.set('');
-    this.confirmPassword.set('');
-    this.showToast(dict.passwordChanged);
+    this.isSendingResetLink.set(true);
+    this.auth.forgotPassword(email).subscribe({
+      next: () => {
+        this.isSendingResetLink.set(false);
+        this.showToast(this.translate.dict().settingsPage.passwordChanged);
+      },
+      error: () => {
+        this.isSendingResetLink.set(false);
+      },
+    });
   }
 
   toggleTwoFactor(): void {
@@ -135,9 +134,11 @@ export class SettingsPageComponent {
   }
 
   confirmReset(): void {
-    this.account.resetAccount();
     this.resetConfirmOpen.set(false);
-    this.showToast(this.translate.dict().settingsPage.resetDone);
+    this.auth.logout().subscribe(() => {
+      this.showToast(this.translate.dict().settingsPage.resetDone);
+      this.router.navigateByUrl('/login');
+    });
   }
 
   private showToast(message: string): void {

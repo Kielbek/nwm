@@ -94,6 +94,20 @@ docker compose up --build
 - RabbitMQ management UI: `http://localhost:15672`
 - MinIO console: `http://localhost:9001`
 
+### Running with the Angular frontend
+
+The frontend (repo root, `ng serve`) is a full client of this API — real
+login/register, Google OAuth, password reset, notifications, billing
+checkout, and TTS generation all go through it, no more mock services. In
+dev, `proxy.conf.json` at the repo root forwards `/api`, `/oauth2`, and
+`/login` from `http://localhost:4200` to this backend on `:8080` (wired
+into `ng serve` via `angular.json`'s `serve.configurations.development`),
+so `npm start` and this backend running side by side is enough — no env
+var changes needed. `src/environments/environment.ts` has `apiUrl: ''`;
+only set it to an absolute URL if the frontend and backend end up
+deployed on genuinely different origins in production (this backend's
+CORS config already allows credentials for that case).
+
 Without Docker, `mvn spring-boot:run` works against a Postgres/RabbitMQ/
 MinIO you run yourself, pointed at via the env vars in `.env.example`.
 
@@ -117,10 +131,8 @@ Login flow: `GET /oauth2/authorization/google` → Google → `POST
 `OAuth2LoginSuccessHandler` issues the same access/refresh token pair a
 normal login would, sets the refresh token as an httpOnly cookie, and
 redirects to `{FRONTEND_URL}/auth/callback?token=<access-token>`. The
-Angular app needs a route at `/auth/callback` that reads `token` from the
-query string, stores it, and calls `GET /api/users/me`. (That route
-doesn't exist in the Angular app yet — this backend is ready for it, but
-wiring the frontend callback page is a separate piece of work.)
+Angular app's `/auth/callback` route reads `token` (or `error`) from the
+query string and calls `GET /api/users/me` to complete the session.
 
 ## Auth model
 
@@ -287,14 +299,10 @@ console instead. See `src/main/resources/logback-spring.xml`.
   `pom.xml`, but every test currently runs against H2 — this sandbox has
   no Docker daemon to actually exercise Flyway/native queries against a
   real Postgres. Worth adding once there's a CI environment with Docker.
-- **Frontend integration**: the Angular app does not call this backend
-  yet — it still runs entirely on local mock services backed by
-  `localStorage`. Wiring it up (real HTTP calls, the `/auth/callback`
-  route for Google OAuth, Stripe Checkout redirects, the notification
-  bell, reset-password/verify-email pages) is a separate, not-yet-started
-  piece of work.
 - **The Python worker itself**: this repo only defines the queue contract
   it expects; the worker is a separate project that doesn't exist yet.
+  Without it, TTS jobs stay `PENDING` forever — everything else (auth,
+  billing, notifications) works fully end to end regardless.
 
 ## Tests
 

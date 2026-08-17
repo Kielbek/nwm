@@ -41,3 +41,19 @@ export interface SynthesizeResult {
   audioUrl: string;
   durationSeconds: number;
 }
+
+export type JobStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
+
+export interface JobResponse {
+  id: string;
+  status: JobStatus;
+  text: string;
+  voiceId: string;
+  modelId: string;
+  outputFormat: string;
+  characterCount: number;
+  durationSeconds: number | null;
+  downloadUrl: string | null;
+  errorMessage: string | null;
+  createdAt: string;
+}

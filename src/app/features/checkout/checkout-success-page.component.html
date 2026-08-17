@@ -1,0 +1,12 @@
+<div class="checkout">
+  <div class="checkout__success">
+    <span class="checkout__success-icon">
+      <app-icon name="check" [size]="26" />
+    </span>
+    <h1>{{ translate.dict().checkoutPage.successGenericTitle }}</h1>
+    <p>{{ translate.dict().checkoutPage.successGenericBody }}</p>
+    <a class="checkout__btn checkout__btn--primary" routerLink="/app/profile">
+      {{ translate.dict().checkoutPage.goToProfile }}
+    </a>
+  </div>
+</div>

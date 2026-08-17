@@ -1,0 +1,50 @@
+<app-auth-layout [tagline]="translate.dict().authLayout.taglineLogin">
+  <div class="auth-form">
+    @switch (state()) {
+      @case ('checking') {
+        <div class="auth-form__success">
+          <span class="auth-form__success-icon">
+            <span class="auth-form__spinner" style="border-top-color: var(--accent); width: 22px; height: 22px;"></span>
+          </span>
+          <h1 class="auth-form__title">{{ translate.dict().verifyEmailPage.checkingTitle }}</h1>
+        </div>
+      }
+      @case ('success') {
+        <div class="auth-form__success">
+          <span class="auth-form__success-icon">
+            <app-icon name="check" [size]="22" />
+          </span>
+          <h1 class="auth-form__title">{{ translate.dict().verifyEmailPage.successTitle }}</h1>
+          <p>{{ translate.dict().verifyEmailPage.successBody }}</p>
+        </div>
+        <a class="auth-form__btn auth-form__btn--primary" routerLink="/app">
+          {{ translate.dict().verifyEmailPage.goToApp }}
+        </a>
+      }
+      @case ('missing-token') {
+        <div class="auth-form__success">
+          <span class="auth-form__success-icon">
+            <app-icon name="close" [size]="22" />
+          </span>
+          <h1 class="auth-form__title">{{ translate.dict().verifyEmailPage.errorTitle }}</h1>
+          <p>{{ translate.dict().verifyEmailPage.missingTokenBody }}</p>
+        </div>
+        <a class="auth-form__btn auth-form__btn--primary" routerLink="/app">
+          {{ translate.dict().verifyEmailPage.goToApp }}
+        </a>
+      }
+      @case ('error') {
+        <div class="auth-form__success">
+          <span class="auth-form__success-icon">
+            <app-icon name="close" [size]="22" />
+          </span>
+          <h1 class="auth-form__title">{{ translate.dict().verifyEmailPage.errorTitle }}</h1>
+          <p>{{ translate.dict().verifyEmailPage.errorBody }}</p>
+        </div>
+        <a class="auth-form__btn auth-form__btn--primary" routerLink="/app">
+          {{ translate.dict().verifyEmailPage.goToApp }}
+        </a>
+      }
+    }
+  </div>
+</app-auth-layout>

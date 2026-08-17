@@ -17,8 +17,23 @@
             </div>
             <span class="profile__email">{{ account.email() }}</span>
             <span class="profile__meta">
-              <app-icon name="check" [size]="11" />
-              {{ translate.dict().profilePage.verifiedEmail }}
+              @if (account.emailVerified()) {
+                <app-icon name="check" [size]="11" />
+                {{ translate.dict().profilePage.verifiedEmail }}
+              } @else if (verificationSent()) {
+                <app-icon name="mail" [size]="11" />
+                {{ translate.dict().profilePage.verificationSent }}
+              } @else {
+                <button
+                  type="button"
+                  class="profile__verify-link"
+                  [disabled]="isSendingVerification()"
+                  (click)="resendVerificationEmail()"
+                >
+                  <app-icon name="mail" [size]="11" />
+                  {{ translate.dict().profilePage.verifyEmailPrompt }}
+                </button>
+              }
               <span class="profile__meta-dot">·</span>
               {{ memberSinceLabel() }}
             </span>
@@ -28,12 +43,13 @@
                 <span>{{ translate.dict().profilePage.nameLabel }}</span>
                 <input type="text" [ngModel]="formName()" (ngModelChange)="formName.set($event)" />
               </label>
-              <label class="profile__field">
-                <span>{{ translate.dict().profilePage.emailLabel }}</span>
-                <input type="email" [ngModel]="formEmail()" (ngModelChange)="formEmail.set($event)" />
-              </label>
               <div class="profile__edit-actions">
-                <button type="button" class="profile__btn profile__btn--primary" (click)="saveProfile()">
+                <button
+                  type="button"
+                  class="profile__btn profile__btn--primary"
+                  [disabled]="isSavingProfile()"
+                  (click)="saveProfile()"
+                >
                   {{ translate.dict().profilePage.save }}
                 </button>
                 <button type="button" class="profile__btn" (click)="cancelEditingProfile()">
@@ -105,6 +121,16 @@
   <section class="profile__section">
     <div class="profile__section-head">
       <h2>{{ translate.dict().profilePage.planTitle }}</h2>
+      <div class="profile__section-actions">
+      <button
+        type="button"
+        class="profile__btn"
+        [disabled]="isOpeningPortal()"
+        (click)="openBillingPortal()"
+      >
+        <app-icon name="settings" [size]="13" />
+        {{ translate.dict().profilePage.manageBilling }}
+      </button>
       <div class="profile__cycle-toggle">
         <button
           type="button"
@@ -123,6 +149,7 @@
           {{ translate.dict().profilePage.billingYearly }}
           <span class="profile__savings-badge">{{ translate.dict().profilePage.yearlySavings }}</span>
         </button>
+      </div>
       </div>
     </div>
 

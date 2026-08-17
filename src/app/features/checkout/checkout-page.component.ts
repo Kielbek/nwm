@@ -1,20 +1,19 @@
 import { ChangeDetectionStrategy, Component, computed, effect, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { AccountService, BillingCycle } from '../../core/services/account.service';
+import { BillingService } from '../../core/services/billing.service';
 import { TranslateService } from '../../core/services/translate.service';
 import { SeoService } from '../../core/services/seo.service';
+import { BackendBillingCycle, BackendPlanId } from '../../core/models/auth.models';
 
 type CheckoutType = 'plan' | 'topup';
-
-const PROCESSING_DELAY_MS = 1100;
 
 @Component({
   selector: 'app-checkout-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, RouterLink, IconComponent],
+  imports: [RouterLink, IconComponent],
   templateUrl: './checkout-page.component.html',
   styleUrl: './checkout-page.component.scss',
 })
@@ -23,14 +22,8 @@ export class CheckoutPageComponent {
   readonly itemId = signal('');
   readonly cycle = signal<BillingCycle>('monthly');
 
-  readonly cardholderName = signal('');
-  readonly cardNumber = signal('');
-  readonly expiry = signal('');
-  readonly cvc = signal('');
-
-  readonly formError = signal<string | null>(null);
-  readonly isProcessing = signal(false);
-  readonly isComplete = signal(false);
+  readonly isRedirecting = signal(false);
+  readonly errorMessage = signal<string | null>(null);
 
   readonly plan = computed(() => this.account.plans().find((p) => p.id === this.itemId()));
   readonly topUp = computed(() => this.account.topUps().find((t) => t.id === this.itemId()));
@@ -50,19 +43,10 @@ export class CheckoutPageComponent {
     return this.topUp()?.price ?? 0;
   });
 
-  readonly successMessage = computed(() => {
-    const dict = this.translate.dict().checkoutPage;
-    if (this.type() === 'plan') {
-      return dict.successPlanBody.replace('{plan}', this.plan()?.name ?? '');
-    }
-    const topUp = this.topUp();
-    const characters = topUp ? this.formatNumber(topUp.characters) : '';
-    return dict.successTopUpBody.replace('{characters}', characters);
-  });
-
   constructor(
     route: ActivatedRoute,
     readonly account: AccountService,
+    private readonly billing: BillingService,
     readonly translate: TranslateService,
     seo: SeoService
   ) {
@@ -75,63 +59,30 @@ export class CheckoutPageComponent {
     });
   }
 
-  onCardNumberInput(value: string): void {
-    const digits = value.replace(/\D/g, '').slice(0, 16);
-    this.cardNumber.set((digits.match(/.{1,4}/g) ?? []).join(' '));
-  }
-
-  onExpiryInput(value: string): void {
-    const digits = value.replace(/\D/g, '').slice(0, 4);
-    this.expiry.set(digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits);
-  }
-
-  onCvcInput(value: string): void {
-    this.cvc.set(value.replace(/\D/g, '').slice(0, 3));
-  }
-
   formatNumber(value: number): string {
     return value.toLocaleString(this.translate.lang() === 'pl' ? 'pl-PL' : 'en-US');
   }
 
-  submit(): void {
-    const dict = this.translate.dict().checkoutPage;
+  proceedToCheckout(): void {
+    this.errorMessage.set(null);
+    this.isRedirecting.set(true);
 
-    if (
-      !this.cardholderName().trim() ||
-      !this.cardNumber().trim() ||
-      !this.expiry().trim() ||
-      !this.cvc().trim()
-    ) {
-      this.formError.set(dict.errorRequired);
-      return;
-    }
-    if (this.cardNumber().replace(/\s/g, '').length !== 16) {
-      this.formError.set(dict.errorCardNumber);
-      return;
-    }
-    if (!/^\d{2}\/\d{2}$/.test(this.expiry())) {
-      this.formError.set(dict.errorExpiry);
-      return;
-    }
-    if (this.cvc().length !== 3) {
-      this.formError.set(dict.errorCvc);
-      return;
-    }
+    const request$ =
+      this.type() === 'plan'
+        ? this.billing.createSubscriptionCheckout(
+            this.itemId().toUpperCase() as BackendPlanId,
+            this.cycle().toUpperCase() as BackendBillingCycle
+          )
+        : this.billing.createTopUpCheckout(this.itemId());
 
-    this.formError.set(null);
-    this.isProcessing.set(true);
-
-    setTimeout(() => {
-      const plan = this.plan();
-      const topUp = this.topUp();
-      if (this.type() === 'plan' && plan) {
-        this.account.selectPlan(plan.id);
-        this.account.setBillingCycle(this.cycle());
-      } else if (this.type() === 'topup' && topUp) {
-        this.account.buyTopUp(topUp);
-      }
-      this.isProcessing.set(false);
-      this.isComplete.set(true);
-    }, PROCESSING_DELAY_MS);
+    request$.subscribe({
+      next: (session) => {
+        window.location.href = session.url;
+      },
+      error: () => {
+        this.isRedirecting.set(false);
+        this.errorMessage.set(this.translate.dict().checkoutPage.errorCheckout);
+      },
+    });
   }
 }

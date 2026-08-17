@@ -186,10 +186,10 @@
           <app-icon name="edit" [size]="15" />
           <span class="header__menu-item-label">{{ translate.dict().header.profile }}</span>
         </a>
-        <a class="header__menu-item" routerLink="/" (click)="accountDropdown.close()">
+        <button type="button" class="header__menu-item" (click)="signOut(accountDropdown)">
           <app-icon name="logout" [size]="15" />
           <span class="header__menu-item-label">{{ translate.dict().header.signOut }}</span>
-        </a>
+        </button>
       </div>
     </app-dropdown>
   </div>

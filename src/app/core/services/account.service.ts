@@ -1,5 +1,8 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, effect, signal } from '@angular/core';
+import { Observable, map } from 'rxjs';
 import { TranslateService } from './translate.service';
+import { AuthService } from './auth.service';
+import { BackendBillingCycle, BackendPlanId } from '../models/auth.models';
 
 export type PlanId = 'free' | 'starter' | 'pro' | 'creator' | 'premium' | 'business';
 export type BillingCycle = 'monthly' | 'yearly';
@@ -41,27 +44,19 @@ const TOP_UP_META: TopUpMeta[] = [
 
 const PLAN_ORDER: PlanId[] = ['free', 'starter', 'pro', 'creator', 'premium', 'business'];
 
-const STORAGE_KEYS = {
-  name: 'nwm-account-name',
-  email: 'nwm-account-email',
-  plan: 'nwm-account-plan',
-  cycle: 'nwm-account-cycle',
-};
-
 @Injectable({ providedIn: 'root' })
 export class AccountService {
-  readonly name = signal(this.readStored(STORAGE_KEYS.name, 'Marta Kowalska'));
-  readonly email = signal(this.readStored(STORAGE_KEYS.email, 'marta.kowalska@example.com'));
-  readonly planId = signal<PlanId>(this.readStored(STORAGE_KEYS.plan, 'pro') as PlanId);
-  readonly billingCycle = signal<BillingCycle>(
-    this.readStored(STORAGE_KEYS.cycle, 'monthly') as BillingCycle
-  );
+  readonly name = signal('');
+  readonly email = signal('');
+  readonly planId = signal<PlanId>('free');
+  readonly billingCycle = signal<BillingCycle>('monthly');
 
-  readonly charactersUsed = signal(184_320);
+  readonly charactersUsed = signal(0);
   readonly bonusCharacters = signal(0);
+  readonly emailVerified = signal(false);
   readonly purchases = signal<Purchase[]>([]);
   readonly renewalDaysLeft = signal(14);
-  readonly memberSince = new Date('2025-01-14T00:00:00Z');
+  readonly memberSince = new Date();
 
   readonly plans = computed(() =>
     PLAN_META.map((meta, i) => ({ ...meta, ...this.translate.dict().plans[i] }))
@@ -93,66 +88,63 @@ export class AccountService {
       .toUpperCase()
   );
 
-  constructor(private readonly translate: TranslateService) {}
+  constructor(private readonly translate: TranslateService, private readonly auth: AuthService) {
+    // Mirrors the authenticated backend user onto the same signals every
+    // existing consumer (header, profile, settings, notifications) already
+    // reads — so none of them need to know AccountService used to be a
+    // localStorage mock. Cleared back to defaults on sign-out.
+    effect(() => {
+      const user = this.auth.currentUser();
+      if (user) {
+        this.name.set(user.name);
+        this.email.set(user.email);
+        this.emailVerified.set(user.emailVerified);
+        this.planId.set(this.mapPlanId(user.planId));
+        this.billingCycle.set(this.mapBillingCycle(user.billingCycle));
+        this.charactersUsed.set(user.charactersUsed);
+        this.bonusCharacters.set(user.bonusCharacters);
+      } else if (this.auth.ready()) {
+        this.resetLocalState();
+      }
+    }, { allowSignalWrites: true });
+  }
 
   planRank(id: PlanId): number {
     return PLAN_ORDER.indexOf(id);
   }
 
-  selectPlan(id: PlanId): void {
-    this.planId.set(id);
-    this.write(STORAGE_KEYS.plan, id);
-  }
-
+  /**
+   * Local-only preview toggle for the plan carousel's monthly/yearly price
+   * display — NOT a change to the user's actual subscribed cycle (that only
+   * changes via a real Stripe checkout/portal flow and is re-synced from the
+   * backend on the next `currentUser()` update).
+   */
   setBillingCycle(cycle: BillingCycle): void {
     this.billingCycle.set(cycle);
-    this.write(STORAGE_KEYS.cycle, cycle);
   }
 
-  buyTopUp(topUp: { characters: number; price: number }): void {
-    this.bonusCharacters.update((v) => v + topUp.characters);
-    this.purchases.update((list) => [
-      {
-        id: `${Date.now()}`,
-        characters: topUp.characters,
-        price: topUp.price,
-        date: new Date().toLocaleDateString(this.translate.lang() === 'pl' ? 'pl-PL' : 'en-US'),
-      },
-      ...list,
-    ]);
+  /** Updates the account's display name against the real backend (email/plan changes go through their own flows). */
+  updateProfile(name: string): Observable<void> {
+    return this.auth.updateName(name).pipe(map(() => undefined));
   }
 
-  updateProfile(name: string, email: string): void {
-    this.name.set(name);
-    this.email.set(email);
-    this.write(STORAGE_KEYS.name, name);
-    this.write(STORAGE_KEYS.email, email);
-  }
-
-  resetAccount(): void {
-    const defaultName = 'Marta Kowalska';
-    const defaultEmail = 'marta.kowalska@example.com';
-
-    this.name.set(defaultName);
-    this.email.set(defaultEmail);
+  resetLocalState(): void {
+    this.name.set('');
+    this.email.set('');
+    this.emailVerified.set(false);
     this.planId.set('free');
     this.billingCycle.set('monthly');
     this.charactersUsed.set(0);
     this.bonusCharacters.set(0);
     this.purchases.set([]);
     this.renewalDaysLeft.set(30);
-
-    Object.values(STORAGE_KEYS).forEach((key) => localStorage.removeItem(key));
   }
 
-  private readStored(key: string, fallback: string): string {
-    if (typeof window === 'undefined') {
-      return fallback;
-    }
-    return localStorage.getItem(key) ?? fallback;
+  private mapPlanId(id: BackendPlanId): PlanId {
+    return id.toLowerCase() as PlanId;
   }
 
-  private write(key: string, value: string): void {
-    localStorage.setItem(key, value);
+  private mapBillingCycle(cycle: BackendBillingCycle): BillingCycle {
+    return cycle.toLowerCase() as BillingCycle;
   }
 }

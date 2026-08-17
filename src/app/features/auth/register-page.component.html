@@ -1,0 +1,95 @@
+<app-auth-layout [tagline]="translate.dict().authLayout.taglineRegister">
+  <form class="auth-form" (ngSubmit)="submit()">
+    <h1 class="auth-form__title">{{ translate.dict().registerPage.title }}</h1>
+    <p class="auth-form__subtitle">{{ translate.dict().registerPage.subtitle }}</p>
+
+    <button type="button" class="auth-form__btn" (click)="signInWithGoogle()">
+      <app-icon name="google" [size]="17" />
+      {{ translate.dict().registerPage.googleButton }}
+    </button>
+
+    <div class="auth-form__divider">{{ translate.dict().registerPage.divider }}</div>
+
+    <label class="auth-form__field">
+      <span>{{ translate.dict().registerPage.nameLabel }}</span>
+      <input
+        type="text"
+        class="auth-form__input"
+        [ngModel]="name()"
+        (ngModelChange)="name.set($event)"
+        name="name"
+        autocomplete="name"
+        [placeholder]="translate.dict().registerPage.namePlaceholder"
+      />
+    </label>
+
+    <label class="auth-form__field">
+      <span>{{ translate.dict().registerPage.emailLabel }}</span>
+      <input
+        type="email"
+        class="auth-form__input"
+        [ngModel]="email()"
+        (ngModelChange)="email.set($event)"
+        name="email"
+        autocomplete="email"
+        [placeholder]="translate.dict().registerPage.emailPlaceholder"
+      />
+    </label>
+
+    <label class="auth-form__field">
+      <span>{{ translate.dict().registerPage.passwordLabel }}</span>
+      <div class="auth-form__input-wrap">
+        <input
+          [type]="showPassword() ? 'text' : 'password'"
+          [ngModel]="password()"
+          (ngModelChange)="password.set($event)"
+          name="password"
+          autocomplete="new-password"
+          [placeholder]="translate.dict().registerPage.passwordPlaceholder"
+        />
+        <button
+          type="button"
+          class="auth-form__input-toggle"
+          (click)="showPassword.set(!showPassword())"
+          [attr.aria-label]="translate.dict().loginPage.togglePassword"
+        >
+          <app-icon [name]="showPassword() ? 'eye-off' : 'eye'" [size]="16" />
+        </button>
+      </div>
+    </label>
+
+    <label class="auth-form__field">
+      <span>{{ translate.dict().registerPage.confirmPasswordLabel }}</span>
+      <input
+        [type]="showPassword() ? 'text' : 'password'"
+        class="auth-form__input"
+        [ngModel]="confirmPassword()"
+        (ngModelChange)="confirmPassword.set($event)"
+        name="confirmPassword"
+        autocomplete="new-password"
+        [placeholder]="translate.dict().registerPage.confirmPasswordPlaceholder"
+      />
+    </label>
+
+    @if (errorMessage(); as error) {
+      <p class="auth-form__error">
+        <app-icon name="close" [size]="13" />
+        {{ error }}
+      </p>
+    }
+
+    <button type="submit" class="auth-form__btn auth-form__btn--primary" [disabled]="isSubmitting()">
+      @if (isSubmitting()) {
+        <span class="auth-form__spinner"></span>
+        {{ translate.dict().registerPage.submitting }}
+      } @else {
+        {{ translate.dict().registerPage.submit }}
+      }
+    </button>
+
+    <p class="auth-form__footer">
+      {{ translate.dict().registerPage.haveAccount }}
+      <a routerLink="/login">{{ translate.dict().registerPage.loginLink }}</a>
+    </p>
+  </form>
+</app-auth-layout>

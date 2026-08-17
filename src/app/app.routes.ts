@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './core/guards/auth.guard';
+import { guestGuard } from './core/guards/guest.guard';
 
 export const routes: Routes = [
   {
@@ -12,7 +14,50 @@ export const routes: Routes = [
       import('./features/pricing/pricing-page.component').then((m) => m.PricingPageComponent),
   },
   {
+    path: 'login',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./features/auth/login-page.component').then((m) => m.LoginPageComponent),
+  },
+  {
+    path: 'register',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./features/auth/register-page.component').then((m) => m.RegisterPageComponent),
+  },
+  {
+    path: 'forgot-password',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./features/auth/forgot-password-page.component').then(
+        (m) => m.ForgotPasswordPageComponent
+      ),
+  },
+  {
+    path: 'reset-password',
+    canActivate: [guestGuard],
+    loadComponent: () =>
+      import('./features/auth/reset-password-page.component').then(
+        (m) => m.ResetPasswordPageComponent
+      ),
+  },
+  {
+    path: 'verify-email',
+    loadComponent: () =>
+      import('./features/auth/verify-email-page.component').then(
+        (m) => m.VerifyEmailPageComponent
+      ),
+  },
+  {
+    path: 'auth/callback',
+    loadComponent: () =>
+      import('./features/auth/auth-callback-page.component').then(
+        (m) => m.AuthCallbackPageComponent
+      ),
+  },
+  {
     path: 'app',
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./layout/app-shell/app-shell.component').then((m) => m.AppShellComponent),
     children: [
@@ -66,6 +111,13 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/checkout/checkout-page.component').then(
             (m) => m.CheckoutPageComponent
+          ),
+      },
+      {
+        path: 'checkout/success',
+        loadComponent: () =>
+          import('./features/checkout/checkout-success-page.component').then(
+            (m) => m.CheckoutSuccessPageComponent
           ),
       },
     ],

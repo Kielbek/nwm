@@ -138,53 +138,18 @@
     </div>
 
     <p class="settings__demo-note">
-      <app-icon name="help" [size]="13" />
+      <app-icon name="mail" [size]="13" />
       {{ translate.dict().settingsPage.securityDemoNote }}
     </p>
 
-    <form class="settings__password-form" (ngSubmit)="changePassword()">
-      <label class="settings__field">
-        <span>{{ translate.dict().settingsPage.currentPasswordLabel }}</span>
-        <input
-          type="password"
-          autocomplete="current-password"
-          [ngModel]="currentPassword()"
-          (ngModelChange)="currentPassword.set($event)"
-          name="currentPassword"
-          required
-        />
-      </label>
-      <label class="settings__field">
-        <span>{{ translate.dict().settingsPage.newPasswordLabel }}</span>
-        <input
-          type="password"
-          autocomplete="new-password"
-          [ngModel]="newPassword()"
-          (ngModelChange)="newPassword.set($event)"
-          name="newPassword"
-          required
-        />
-      </label>
-      <label class="settings__field">
-        <span>{{ translate.dict().settingsPage.confirmPasswordLabel }}</span>
-        <input
-          type="password"
-          autocomplete="new-password"
-          [ngModel]="confirmPassword()"
-          (ngModelChange)="confirmPassword.set($event)"
-          name="confirmPassword"
-          required
-        />
-      </label>
-
-      @if (passwordError(); as error) {
-        <p class="settings__field-error">{{ error }}</p>
-      }
-
-      <button type="submit" class="settings__btn settings__btn--primary settings__password-submit">
-        {{ translate.dict().settingsPage.changePasswordButton }}
-      </button>
-    </form>
+    <button
+      type="button"
+      class="settings__btn settings__btn--primary settings__password-submit"
+      [disabled]="isSendingResetLink()"
+      (click)="sendPasswordResetLink()"
+    >
+      {{ translate.dict().settingsPage.changePasswordButton }}
+    </button>
 
     <div class="settings__row">
       <div class="settings__row-info">
