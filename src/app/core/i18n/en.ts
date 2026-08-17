@@ -478,6 +478,13 @@ export const en: Dictionary = {
     copiedLabel: 'Copied!',
     close: 'Close',
   },
+  upgradeModal: {
+    title: "You're out of characters",
+    subtitle: 'Switch to a bigger plan to keep generating without interruption.',
+    close: 'Close',
+    alreadyTopTier: "You're already on our largest plan — buy extra characters from your profile page.",
+    seeAllPlans: 'See all plans',
+  },
   landing: {
     navFeatures: 'Features',
     navHowItWorks: 'How it works',

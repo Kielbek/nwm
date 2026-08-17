@@ -357,6 +357,13 @@ export interface Dictionary {
     copiedLabel: string;
     close: string;
   };
+  upgradeModal: {
+    title: string;
+    subtitle: string;
+    close: string;
+    alreadyTopTier: string;
+    seeAllPlans: string;
+  };
   landing: {
     navFeatures: string;
     navHowItWorks: string;

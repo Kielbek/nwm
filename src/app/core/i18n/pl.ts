@@ -481,6 +481,13 @@ export const pl: Dictionary = {
     copiedLabel: 'Skopiowano!',
     close: 'Zamknij',
   },
+  upgradeModal: {
+    title: 'Skończyły się znaki',
+    subtitle: 'Przełącz się na wyższy plan, żeby dalej generować mowę bez przerwy.',
+    close: 'Zamknij',
+    alreadyTopTier: 'Masz już nasz największy plan — dokup dodatkowe znaki na stronie profilu.',
+    seeAllPlans: 'Zobacz wszystkie plany',
+  },
   landing: {
     navFeatures: 'Funkcje',
     navHowItWorks: 'Jak to działa',

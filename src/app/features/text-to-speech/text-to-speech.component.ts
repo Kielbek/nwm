@@ -14,6 +14,8 @@ import {
   GenerationHistoryService,
 } from '../../core/services/generation-history.service';
 import { AccountService } from '../../core/services/account.service';
+import { AuthService } from '../../core/services/auth.service';
+import { UpgradeModalService } from '../../core/services/upgrade-modal.service';
 import { SeoService } from '../../core/services/seo.service';
 import { OutputFormat } from '../../core/models/tts.models';
 
@@ -117,6 +119,8 @@ export class TextToSpeechComponent {
     readonly voicePreview: VoicePreviewService,
     readonly history: GenerationHistoryService,
     readonly account: AccountService,
+    private readonly auth: AuthService,
+    private readonly upgradeModal: UpgradeModalService,
     private readonly router: Router,
     seo: SeoService
   ) {
@@ -170,6 +174,10 @@ export class TextToSpeechComponent {
     if (!this.text().trim() || this.ttsService.isSynthesizing()) {
       return;
     }
+    if (this.text().length > this.charactersRemaining()) {
+      this.upgradeModal.open();
+      return;
+    }
     const settings = {
       voiceId: this.voiceLibrary.selectedVoiceId(),
       modelId: this.selectedModelId(),
@@ -181,7 +189,14 @@ export class TextToSpeechComponent {
       outputFormat: this.outputFormat(),
     };
 
-    this.ttsService.synthesize({ text: this.text(), settings }).subscribe();
+    this.ttsService.synthesize({ text: this.text(), settings }).subscribe((result) => {
+      if (result) {
+        // Character usage only actually changes server-side on a real
+        // success (the browser-speech fallback path returns null and never
+        // touched the backend), so only re-sync the quota then.
+        this.auth.refreshCurrentUser().subscribe();
+      }
+    });
 
     const entry = this.history.add({
       text: this.text(),

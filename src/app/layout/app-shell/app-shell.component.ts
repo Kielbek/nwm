@@ -6,6 +6,7 @@ import { HeaderComponent } from '../header/header.component';
 import { AskPanelComponent } from '../ask-panel/ask-panel.component';
 import { CommandPaletteComponent } from '../../shared/components/command-palette/command-palette.component';
 import { InviteModalComponent } from '../../shared/components/invite-modal/invite-modal.component';
+import { UpgradeModalComponent } from '../../shared/components/upgrade-modal/upgrade-modal.component';
 import { SeoService } from '../../core/services/seo.service';
 
 const MOBILE_BREAKPOINT = 780;
@@ -20,6 +21,7 @@ const MOBILE_BREAKPOINT = 780;
     AskPanelComponent,
     CommandPaletteComponent,
     InviteModalComponent,
+    UpgradeModalComponent,
   ],
   templateUrl: './app-shell.component.html',
   styleUrl: './app-shell.component.scss',
