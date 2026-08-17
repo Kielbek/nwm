@@ -40,3 +40,9 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Spring Boot server (/server)
+server/target/
+server/.env
+*.class
+.mvn/wrapper/maven-wrapper.jar

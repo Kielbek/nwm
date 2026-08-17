@@ -1,0 +1,44 @@
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          # Dummy values so the OAuth2 client autoconfiguration is satisfied at
+          # boot — no test actually drives the Google redirect flow (that needs
+          # a real browser round trip to accounts.google.com).
+          google:
+            client-id: test-client-id
+            client-secret: test-client-secret
+
+  datasource:
+    url: jdbc:h2:mem:nwm-test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
+
+  flyway:
+    enabled: false
+
+app:
+  frontend-url: http://localhost:4200
+  cors:
+    allowed-origins: http://localhost:4200
+  jwt:
+    secret: test-only-secret-value-padded-to-at-least-32-bytes-long
+    access-token-ttl-minutes: 15
+    refresh-token-ttl-days: 30
+  messaging:
+    enabled: false
+  storage:
+    endpoint: http://localhost:9000
+    bucket: nwm-audio-test
+    access-key: test
+    secret-key: test-secret
+  rate-limit:
+    auth-capacity: 1000
+    auth-refill-per-minute: 1000
