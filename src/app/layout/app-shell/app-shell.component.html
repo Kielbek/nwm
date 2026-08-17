@@ -3,7 +3,7 @@
     <div class="app-shell__backdrop" (click)="closeSidebar(); closeAsk()"></div>
   }
   <app-sidebar [open]="sidebarOpen()" [overlay]="isMobile()" (closeRequested)="closeSidebar()" />
-  <div class="app-shell__main">
+  <div class="app-shell__main" [class.app-shell__main--framed]="askOpen() && !isMobile()">
     <app-header
       [askOpen]="askOpen()"
       (toggleSidebar)="toggleSidebar()"
