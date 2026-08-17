@@ -16,7 +16,7 @@
     justify-content: space-between;
     overflow: hidden;
     padding: 40px;
-    background: linear-gradient(160deg, var(--accent) 0%, #7a3c22 100%);
+    background: linear-gradient(160deg, #262626 0%, #000000 100%);
     color: #fff;
   }
 
@@ -32,7 +32,7 @@
       height: 260px;
       top: -60px;
       right: -60px;
-      background: radial-gradient(circle at 32% 28%, #f6cba7, transparent 72%);
+      background: radial-gradient(circle at 32% 28%, #ffffff, transparent 72%);
     }
 
     &--b {
@@ -40,7 +40,7 @@
       height: 220px;
       bottom: -50px;
       left: -40px;
-      background: radial-gradient(circle at 32% 28%, #f2a679, transparent 72%);
+      background: radial-gradient(circle at 32% 28%, #cfcfcf, transparent 72%);
       animation-duration: 13s;
     }
   }
