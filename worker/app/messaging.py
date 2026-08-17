@@ -28,8 +28,17 @@ def build_connection() -> pika.BlockingConnection:
         host=settings.rabbitmq_host,
         port=settings.rabbitmq_port,
         credentials=credentials,
-        heartbeat=30,
-        blocked_connection_timeout=30,
+        # This worker is single-threaded and synchronous: while
+        # synthesize() is running (which can legitimately take minutes on
+        # CPU), pika's BlockingConnection has no opportunity to send/reply
+        # to heartbeat frames. A short heartbeat (pika's own default is
+        # 60s) makes RabbitMQ kill the connection mid-job — the failure
+        # only surfaces later, confusingly, when publish_result() tries to
+        # use the now-dead connection. Set generously above the longest
+        # realistic job duration rather than disabling heartbeats
+        # entirely (0), which would stop detecting truly dead connections.
+        heartbeat=3600,
+        blocked_connection_timeout=300,
     )
     return pika.BlockingConnection(parameters)
 
