@@ -33,6 +33,7 @@ services:
       - "${RABBITMQ_MANAGEMENT_HOST_PORT:-15672}:15672" # management UI
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
+      - ./rabbitmq.conf:/etc/rabbitmq/conf.d/10-memory.conf:ro
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
       interval: 10s
