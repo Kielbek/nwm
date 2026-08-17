@@ -138,20 +138,20 @@
       height: 26px;
       flex-shrink: 0;
       border-radius: 9px;
-      background: var(--accent-soft);
-      color: var(--accent-deep);
+      background: var(--bg-active);
+      color: var(--text-secondary);
       transition: background 0.18s ease, color 0.18s ease;
     }
 
     &:hover {
       color: var(--text-primary);
-      border-color: var(--accent);
+      border-color: var(--border-strong);
       transform: translateY(-1px);
       box-shadow: 0 6px 16px -10px hsl(var(--shadow-color) / 0.6);
 
       app-icon {
-        background: var(--accent);
-        color: var(--accent-contrast);
+        background: var(--text-primary);
+        color: var(--bg-surface);
       }
     }
   }
