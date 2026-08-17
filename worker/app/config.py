@@ -11,10 +11,14 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-# Loads worker/.env into the process environment. Does nothing (silently)
-# if the file doesn't exist, e.g. in Docker where real env vars are passed
-# in directly via --env-file / docker-compose instead.
-load_dotenv()
+# Loads worker/.env into the process environment. Resolved explicitly
+# relative to this file (not left to load_dotenv()'s own cwd/call-stack
+# guessing, which has proven unreliable depending on how the process is
+# launched) — this file is worker/app/config.py, so its grandparent is
+# worker/, where .env actually lives. Does nothing (silently) if the file
+# doesn't exist, e.g. in Docker where real env vars are passed in directly
+# via --env-file / docker-compose instead.
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 
 def _env(name: str, default: str) -> str:
