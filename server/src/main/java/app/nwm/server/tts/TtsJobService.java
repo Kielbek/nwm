@@ -1,6 +1,8 @@
 package app.nwm.server.tts;
 
 import app.nwm.server.common.ApiException;
+import app.nwm.server.notification.NotificationService;
+import app.nwm.server.notification.NotificationType;
 import app.nwm.server.plan.PlanCatalog;
 import app.nwm.server.storage.S3StorageService;
 import app.nwm.server.tts.dto.JobResponse;
@@ -31,18 +33,21 @@ public class TtsJobService {
   private final S3StorageService s3StorageService;
   private final ObjectMapper objectMapper;
   private final Optional<TtsRequestProducer> requestProducer;
+  private final NotificationService notificationService;
 
   public TtsJobService(
       GenerationJobRepository generationJobRepository,
       UserRepository userRepository,
       S3StorageService s3StorageService,
       ObjectMapper objectMapper,
-      Optional<TtsRequestProducer> requestProducer) {
+      Optional<TtsRequestProducer> requestProducer,
+      NotificationService notificationService) {
     this.generationJobRepository = generationJobRepository;
     this.userRepository = userRepository;
     this.s3StorageService = s3StorageService;
     this.objectMapper = objectMapper;
     this.requestProducer = requestProducer;
+    this.notificationService = notificationService;
   }
 
   @Transactional
@@ -122,6 +127,12 @@ public class TtsJobService {
     } else {
       job.markFailed(errorMessage);
       refundCharacters(job);
+      notificationService.notify(
+          job.getUser(),
+          NotificationType.GENERATION_FAILED,
+          "Generowanie nie powiodło się",
+          "Nie udało się wygenerować mowy dla jednego z Twoich tekstów. Znaki zostały zwrócone na Twoje konto.",
+          "/app/history");
     }
     generationJobRepository.save(job);
   }

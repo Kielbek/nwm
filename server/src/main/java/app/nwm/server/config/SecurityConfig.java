@@ -95,6 +95,7 @@ public class SecurityConfig {
             auth ->
                 auth.requestMatchers(
                         "/api/auth/**",
+                        "/api/billing/webhook",
                         "/oauth2/**",
                         "/login/**",
                         "/actuator/health",

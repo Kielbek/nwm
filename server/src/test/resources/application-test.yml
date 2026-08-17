@@ -42,3 +42,8 @@ app:
   rate-limit:
     auth-capacity: 1000
     auth-refill-per-minute: 1000
+  lockout:
+    failure-threshold: 3
+    duration-minutes: 15
+  stripe:
+    enabled: false

@@ -114,4 +114,37 @@ class AuthControllerTest {
   void refreshWithoutCookieIsRejected() throws Exception {
     mockMvc.perform(post("/api/auth/refresh")).andExpect(status().isUnauthorized());
   }
+
+  @Test
+  void accountLocksAfterRepeatedFailedLoginsEvenWithCorrectPassword() throws Exception {
+    // application-test.yml sets app.lockout.failure-threshold to 3.
+    String email = uniqueEmail();
+    String password = "correct horse battery staple";
+
+    mockMvc
+        .perform(
+            post("/api/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    objectMapper.writeValueAsString(
+                        Map.of("email", email, "password", password, "name", "Test User"))))
+        .andExpect(status().isCreated());
+
+    for (int i = 0; i < 3; i++) {
+      mockMvc
+          .perform(
+              post("/api/auth/login")
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .content(objectMapper.writeValueAsString(Map.of("email", email, "password", "wrong"))))
+          .andExpect(status().isUnauthorized());
+    }
+
+    // The account is now locked — even the CORRECT password is rejected.
+    mockMvc
+        .perform(
+            post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(Map.of("email", email, "password", password))))
+        .andExpect(status().isLocked());
+  }
 }

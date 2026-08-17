@@ -92,6 +92,30 @@ app:
   rate-limit:
     auth-capacity: ${RATE_LIMIT_AUTH_CAPACITY:10}
     auth-refill-per-minute: ${RATE_LIMIT_AUTH_REFILL:10}
+  lockout:
+    failure-threshold: ${LOCKOUT_FAILURE_THRESHOLD:5}
+    duration-minutes: ${LOCKOUT_DURATION_MINUTES:15}
+  stripe:
+    enabled: ${STRIPE_ENABLED:true}
+    secret-key: ${STRIPE_SECRET_KEY:}
+    webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
+    success-url: ${STRIPE_SUCCESS_URL:${app.frontend-url}/app/checkout/success}
+    cancel-url: ${STRIPE_CANCEL_URL:${app.frontend-url}/pricing}
+    portal-return-url: ${STRIPE_PORTAL_RETURN_URL:${app.frontend-url}/app/profile}
+    price-ids:
+      starter-monthly: ${STRIPE_PRICE_STARTER_MONTHLY:}
+      starter-yearly: ${STRIPE_PRICE_STARTER_YEARLY:}
+      pro-monthly: ${STRIPE_PRICE_PRO_MONTHLY:}
+      pro-yearly: ${STRIPE_PRICE_PRO_YEARLY:}
+      creator-monthly: ${STRIPE_PRICE_CREATOR_MONTHLY:}
+      creator-yearly: ${STRIPE_PRICE_CREATOR_YEARLY:}
+      premium-monthly: ${STRIPE_PRICE_PREMIUM_MONTHLY:}
+      premium-yearly: ${STRIPE_PRICE_PREMIUM_YEARLY:}
+      business-monthly: ${STRIPE_PRICE_BUSINESS_MONTHLY:}
+      business-yearly: ${STRIPE_PRICE_BUSINESS_YEARLY:}
+      topup-small: ${STRIPE_PRICE_TOPUP_SMALL:}
+      topup-medium: ${STRIPE_PRICE_TOPUP_MEDIUM:}
+      topup-large: ${STRIPE_PRICE_TOPUP_LARGE:}
 
 logging:
   level:

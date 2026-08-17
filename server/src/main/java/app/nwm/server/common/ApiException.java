@@ -39,4 +39,8 @@ public class ApiException extends RuntimeException {
   public static ApiException quotaExceeded(String message) {
     return new ApiException(HttpStatus.PAYMENT_REQUIRED, message);
   }
+
+  public static ApiException locked(String message) {
+    return new ApiException(HttpStatus.LOCKED, message);
+  }
 }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <!-- Human-readable console output for local dev / test, with the request
+       correlation id (see RequestLoggingFilter) inline for easy grepping.
+       This is the fallback appender whenever the active profile isn't
+       docker/prod, so an unrecognized or missing profile still logs
+       something sane instead of failing to configure logging at all. -->
+  <appender name="CONSOLE_PLAIN" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} %-5level [%X{requestId:-none}] %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- Structured JSON logs for containerized/production environments, where
+       a log aggregator (CloudWatch, Loki, ELK, ...) parses each line as a
+       JSON object instead of a plain-text pattern. -->
+  <springProfile name="docker,prod">
+    <appender name="CONSOLE_JSON" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+        <includeMdcKeyName>requestId</includeMdcKeyName>
+        <customFields>{"service":"nwm-server"}</customFields>
+      </encoder>
+    </appender>
+  </springProfile>
+
+  <springProfile name="docker,prod">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE_JSON"/>
+    </root>
+  </springProfile>
+  <springProfile name="!docker &amp; !prod">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE_PLAIN"/>
+    </root>
+  </springProfile>
+</configuration>

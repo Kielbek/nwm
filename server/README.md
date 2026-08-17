@@ -2,10 +2,11 @@
 
 Backend API for the NWM text-to-speech app: authentication (email/password
 + Google OAuth2), quota-aware TTS job orchestration, S3-backed audio
-storage, and a RabbitMQ queue that hands actual synthesis off to a
+storage, Stripe billing (subscriptions + character top-ups), in-app
+notifications, and a RabbitMQ queue that hands actual synthesis off to a
 separate Python worker. This service does **not** synthesize speech
-itself — it authenticates users, enforces plan quotas, persists job state,
-and brokers work to the worker via RabbitMQ.
+itself — it authenticates users, enforces plan quotas, handles payments,
+persists job state, and brokers work to the worker via RabbitMQ.
 
 ## Stack
 
@@ -14,7 +15,12 @@ and brokers work to the worker via RabbitMQ.
 - Spring Data JPA + PostgreSQL + Flyway
 - Spring AMQP (RabbitMQ)
 - AWS SDK v2 for S3 (works against real AWS S3 or a self-hosted MinIO)
-- Bucket4j (per-IP rate limiting on auth endpoints)
+- Stripe (Checkout, Billing Portal, webhooks) for subscriptions and
+  one-time character top-ups
+- Bucket4j (per-IP rate limiting on auth endpoints) + account lockout
+  after repeated failed logins
+- Structured JSON logging (logstash encoder) with per-request correlation
+  IDs in `docker`/`prod` profiles
 - springdoc-openapi (Swagger UI at `/docs`)
 - Testcontainers + MockMvc for integration tests
 
@@ -133,19 +139,104 @@ wiring the frontend callback page is a separate piece of work.)
 - **CORS**: locked to `CORS_ALLOWED_ORIGINS` (comma-separated), not `*`.
 - Generic "Invalid email or password" on login failure either way, to
   avoid leaking which emails are registered.
+- **Account lockout**: after `LOCKOUT_FAILURE_THRESHOLD` (default 5)
+  consecutive failed login attempts, the account is locked for
+  `LOCKOUT_DURATION_MINUTES` (default 15) — further attempts return
+  `423 Locked` even with the correct password. A successful login resets
+  the counter. This is per-account state in the database (not per-IP like
+  the rate limiter above), so it survives across IPs/devices.
+
+## Billing (Stripe)
+
+Subscriptions and one-time character top-ups both go through Stripe
+Checkout; plan/cycle changes and cancellations that happen inside Stripe's
+own Billing Portal are synced back via webhook.
+
+- `POST /api/billing/checkout/subscription` `{ planId, billingCycle }` →
+  creates (or reuses) a Stripe Customer for the user, starts a
+  subscription-mode Checkout Session, returns `{ url }` to redirect the
+  browser to.
+- `POST /api/billing/checkout/topup` `{ topUpId }` → payment-mode Checkout
+  Session for a one-time character pack (`small`/`medium`/`large`, see
+  `TopUpCatalog`).
+- `POST /api/billing/portal` → Stripe Billing Portal session URL, for
+  managing/canceling a subscription or updating a payment method.
+- `POST /api/billing/subscription/cancel` → cancels at the end of the
+  current billing period (not immediately).
+- `POST /api/billing/webhook` (public, signature-verified) → Stripe calls
+  this on `checkout.session.completed`, `customer.subscription.updated`,
+  `customer.subscription.deleted`, and `invoice.payment_failed`. Every
+  event is verified against `STRIPE_WEBHOOK_SECRET`
+  (`Webhook.constructEvent`, 400 on a bad signature) and deduplicated by
+  Stripe event ID (`processed_stripe_events` table) so Stripe's automatic
+  redelivery-until-2xx behavior can never double-credit a top-up or
+  double-fire a notification.
+
+Plan and top-up definitions (`PlanCatalog`, `TopUpCatalog`) mirror the
+Angular frontend's hardcoded pricing data exactly, and the actual Stripe
+Price ID for each `(plan, billing cycle)` pair — or each top-up pack — is
+looked up from `STRIPE_PRICE_*` env vars via `StripePriceCatalog`. Leaving
+one blank means checkout for that specific combination fails with a clear
+error instead of silently charging the wrong amount.
+
+Set `STRIPE_ENABLED=false` (the `.env.example` default) to run everything
+else without Stripe configured — all billing beans and endpoints are
+conditionally disabled, and the app boots normally without a secret key.
+Flip it to `true` plus fill in `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`,
+and the price IDs once you're ready to test payments (Stripe CLI's
+`stripe listen --forward-to localhost:8080/api/billing/webhook` is the
+easiest way to get webhooks into local dev).
+
+## Notifications
+
+A minimal in-app notification feed — no email/push delivery, just rows in
+a table the frontend can poll or show a bell icon for.
+
+- `GET /api/notifications` (paginated, newest first)
+- `GET /api/notifications/unread-count`
+- `POST /api/notifications/{id}/read`
+- `POST /api/notifications/read-all`
+
+Events that currently create a notification: welcome message on
+registration, TTS generation failure (with a refund note), subscription
+activated/canceled, payment failed, and top-up purchased. Adding a new
+notification type is a one-line call to `NotificationService.notify(...)`
+from wherever the triggering event happens.
+
+## Logging
+
+Every request gets an `X-Request-Id` (reused if the client already sent
+one), attached to the SLF4J MDC so every log line for that request —
+across filters, services, and the access-log line `RequestLoggingFilter`
+emits — can be correlated. In the `docker`/`prod` Spring profiles, logs
+are emitted as JSON (`logstash-logback-encoder`) for shipping to a log
+aggregator; the default/`test` profile logs a human-readable line to the
+console instead. See `src/main/resources/logback-spring.xml`.
 
 ## What's deliberately out of scope for this pass
 
 - **Email verification / password reset emails**: the `email_verified`
   flag exists on the user and is exposed via the API, but no email is
   actually sent anywhere yet. Wiring real delivery (SES/SMTP) is a
-  follow-up.
+  follow-up. Notifications above are in-app only, not email/push.
 - **Admin/moderation endpoints**: the `Role` enum has `ADMIN` but nothing
   currently checks for it beyond `@PreAuthorize` being ready to.
-- **Distributed rate limiting**: see above — fine for one instance, needs
-  Redis behind a load balancer.
+- **Distributed rate limiting / lockout**: both are single-instance state
+  (in-memory bucket, DB row respectively) — the lockout is already safe
+  across nodes since it's DB-backed, but the IP rate limiter is not and
+  would need a Redis-backed Bucket4j bucket behind a load balancer.
+- **Metrics/tracing**: Actuator health/info is exposed, but there's no
+  Micrometer/Prometheus metrics registry or distributed tracing wired up
+  yet.
+- **CI/CD**: no pipeline configuration for this module yet (build/test is
+  manual — `mvn test`).
+- **Frontend integration**: the Angular app does not call this backend
+  yet — it still runs entirely on local mock services backed by
+  `localStorage`. Wiring it up (real HTTP calls, the `/auth/callback`
+  route for Google OAuth, Stripe Checkout redirects, the notification
+  bell) is a separate, not-yet-started piece of work.
 - **The Python worker itself**: this repo only defines the queue contract
-  it expects; the worker is a separate project.
+  it expects; the worker is a separate project that doesn't exist yet.
 
 ## Tests
 

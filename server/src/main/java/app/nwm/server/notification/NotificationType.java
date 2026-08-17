@@ -1,0 +1,11 @@
+package app.nwm.server.notification;
+
+public enum NotificationType {
+  WELCOME,
+  GENERATION_COMPLETED,
+  GENERATION_FAILED,
+  SUBSCRIPTION_ACTIVATED,
+  SUBSCRIPTION_CANCELED,
+  PAYMENT_FAILED,
+  TOPUP_PURCHASED
+}

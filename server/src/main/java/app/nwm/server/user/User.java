@@ -65,6 +65,22 @@ public class User {
   @Column(name = "plan_renews_at")
   private LocalDate planRenewsAt;
 
+  @Column(name = "stripe_customer_id")
+  private String stripeCustomerId;
+
+  @Column(name = "stripe_subscription_id")
+  private String stripeSubscriptionId;
+
+  @Enumerated(EnumType.STRING)
+  @Column(name = "subscription_status", nullable = false)
+  private SubscriptionStatus subscriptionStatus = SubscriptionStatus.NONE;
+
+  @Column(name = "failed_login_attempts", nullable = false)
+  private int failedLoginAttempts = 0;
+
+  @Column(name = "locked_until")
+  private Instant lockedUntil;
+
   @Column(name = "created_at", nullable = false, updatable = false)
   private Instant createdAt;
 
@@ -189,6 +205,54 @@ public class User {
 
   public void setPlanRenewsAt(LocalDate planRenewsAt) {
     this.planRenewsAt = planRenewsAt;
+  }
+
+  public String getStripeCustomerId() {
+    return stripeCustomerId;
+  }
+
+  public void setStripeCustomerId(String stripeCustomerId) {
+    this.stripeCustomerId = stripeCustomerId;
+  }
+
+  public String getStripeSubscriptionId() {
+    return stripeSubscriptionId;
+  }
+
+  public void setStripeSubscriptionId(String stripeSubscriptionId) {
+    this.stripeSubscriptionId = stripeSubscriptionId;
+  }
+
+  public SubscriptionStatus getSubscriptionStatus() {
+    return subscriptionStatus;
+  }
+
+  public void setSubscriptionStatus(SubscriptionStatus subscriptionStatus) {
+    this.subscriptionStatus = subscriptionStatus;
+  }
+
+  public boolean isLocked() {
+    return lockedUntil != null && lockedUntil.isAfter(Instant.now());
+  }
+
+  public void registerFailedLogin(int lockThreshold, java.time.Duration lockDuration) {
+    failedLoginAttempts++;
+    if (failedLoginAttempts >= lockThreshold) {
+      lockedUntil = Instant.now().plus(lockDuration);
+    }
+  }
+
+  public void resetFailedLogins() {
+    failedLoginAttempts = 0;
+    lockedUntil = null;
+  }
+
+  public int getFailedLoginAttempts() {
+    return failedLoginAttempts;
+  }
+
+  public Instant getLockedUntil() {
+    return lockedUntil;
   }
 
   public Instant getCreatedAt() {

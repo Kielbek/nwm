@@ -108,11 +108,25 @@
       <version>2.28.11</version>
     </dependency>
 
+    <!-- Billing -->
+    <dependency>
+      <groupId>com.stripe</groupId>
+      <artifactId>stripe-java</artifactId>
+      <version>33.3.0</version>
+    </dependency>
+
     <!-- API docs -->
     <dependency>
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
       <version>${springdoc.version}</version>
+    </dependency>
+
+    <!-- Structured (JSON) logging for the docker/prod profile -->
+    <dependency>
+      <groupId>net.logstash.logback</groupId>
+      <artifactId>logstash-logback-encoder</artifactId>
+      <version>8.0</version>
     </dependency>
 
     <!-- Dev -->
