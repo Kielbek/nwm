@@ -8,7 +8,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
@@ -35,7 +34,10 @@ public class GenerationJob {
   @Column(nullable = false)
   private JobStatus status = JobStatus.PENDING;
 
-  @Lob
+  // No @Lob: Postgres `text` has no practical size limit on its own, and
+  // @Lob makes Hibernate expect an `oid` large-object column instead of the
+  // plain `text` column Flyway creates — validation fails against the real
+  // database (H2's create-drop test schema doesn't catch this mismatch).
   @Column(nullable = false)
   private String text;
 
@@ -49,7 +51,6 @@ public class GenerationJob {
   private String outputFormat;
 
   /** JSON-encoded snapshot of the synthesis settings (speed, stability, ...). */
-  @Lob
   @Column(name = "settings_json", nullable = false)
   private String settingsJson;
 
