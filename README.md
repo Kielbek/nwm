@@ -44,4 +44,4 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 - Podłączyć prawdziwe API Gemini pod `/api/chat/gemini` (obecnie panel Zapytaj działa w trybie demo z szablonowymi odpowiedziami).
 - Prawdziwe próbki audio głosów zamiast podglądu opartego o `speechSynthesis` przeglądarki.
-- Właściwy worker Python do syntezy mowy — backend ma gotowy kontrakt kolejki RabbitMQ, ale worker jeszcze nie istnieje, więc joby TTS zostają w statusie `PENDING`.
+- Worker Python (`/worker`, Coqui XTTS v2) istnieje, ale wymaga realnych próbek referencyjnych głosów (`worker/voices/*.wav` — patrz `worker/voices/README.md`) zanim faktycznie coś wygeneruje, i ma na razie niekomercyjną licencję wag modelu — patrz ostrzeżenie w `worker/README.md` przed puszczeniem tego na produkcję z płatnościami.

@@ -1,0 +1,18 @@
+# coqui-tts is the community-maintained fork (github.com/idiap/coqui-ai-TTS)
+# of the original coqui-ai/TTS package, which has been unmaintained since
+# Coqui Inc. shut down in Jan 2024 and breaks on modern Python/PyTorch.
+# The fork keeps the same `from TTS.api import TTS` import path.
+#
+# NOTE ON LICENSING: this package (code) is MPL-2.0 and fine commercially.
+# The XTTS v2 MODEL WEIGHTS it downloads at first run are under the Coqui
+# Public Model License (CPML), which only permits non-commercial use, and
+# there is no longer a company to buy a commercial license from. See
+# worker/README.md before shipping this in a paid product.
+coqui-tts>=0.27,<0.28
+
+torch>=2.1
+pika>=1.3,<2
+boto3>=1.34
+pydub>=0.25
+langdetect>=1.0.9
+python-dotenv>=1.0

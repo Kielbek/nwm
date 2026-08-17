@@ -4,7 +4,7 @@ Backend API for the NWM text-to-speech app: authentication (email/password
 + Google OAuth2), quota-aware TTS job orchestration, S3-backed audio
 storage, Stripe billing (subscriptions + character top-ups), in-app
 notifications, and a RabbitMQ queue that hands actual synthesis off to a
-separate Python worker. This service does **not** synthesize speech
+Python worker (`../worker`). This service does **not** synthesize speech
 itself — it authenticates users, enforces plan quotas, handles payments,
 persists job state, and brokers work to the worker via RabbitMQ.
 
@@ -33,7 +33,8 @@ Angular frontend
 nwm-server (this service)
       │  publishes TtsJobMessage → tts.generate.requests
       ▼
-Python TTS worker (separate project, not in this repo)
+Python TTS worker (../worker — Coqui XTTS v2, see its README for setup
+      │  and an important licensing caveat before charging money for this)
       │  synthesizes audio, uploads to S3, publishes TtsResultMessage
       ▼
 tts.generate.results → nwm-server updates the job row, frontend polls it

@@ -46,3 +46,11 @@ server/target/
 server/.env
 *.class
 .mvn/wrapper/maven-wrapper.jar
+
+# Python TTS worker (/worker)
+worker/.venv/
+worker/__pycache__/
+worker/**/__pycache__/
+worker/.pytest_cache/
+worker/.env
+worker/voices/*.wav
