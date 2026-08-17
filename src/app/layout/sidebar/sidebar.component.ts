@@ -28,6 +28,7 @@ interface HistoryGroup {
 export class SidebarComponent {
   @Input() open = true;
   @Input() overlay = false;
+  @Input() framed = false;
   @Output() closeRequested = new EventEmitter<void>();
 
   readonly recentEntries = computed(() => this.history.entries().slice(0, RECENT_ENTRIES_LIMIT));

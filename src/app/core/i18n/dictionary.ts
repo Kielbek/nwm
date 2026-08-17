@@ -159,6 +159,8 @@ export interface Dictionary {
     send: string;
     close: string;
     clear: string;
+    copy: string;
+    copied: string;
     suggestions: string[];
   };
   feedbackPage: {

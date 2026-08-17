@@ -140,6 +140,8 @@ export const en: Dictionary = {
     send: 'Send',
     close: 'Close Ask panel',
     clear: 'Clear conversation',
+    copy: 'Copy response',
+    copied: 'Copied',
     suggestions: [
       'Write a 30-second ad script',
       'Suggest a strong hook for my opening line',

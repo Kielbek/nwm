@@ -28,9 +28,12 @@ export class AskPanelComponent implements AfterViewChecked {
   @Output() closeRequested = new EventEmitter<void>();
 
   @ViewChild('body') bodyRef?: ElementRef<HTMLElement>;
+  @ViewChild('textarea') textareaRef?: ElementRef<HTMLTextAreaElement>;
 
   readonly draft = signal('');
+  readonly copiedMessageId = signal<string | null>(null);
   private lastScrolledCount = 0;
+  private copiedTimeout?: ReturnType<typeof setTimeout>;
 
   constructor(readonly chat: ChatService, readonly translate: TranslateService) {}
 
@@ -41,6 +44,24 @@ export class AskPanelComponent implements AfterViewChecked {
     }
     this.chat.send(text);
     this.draft.set('');
+    if (this.textareaRef) {
+      this.textareaRef.nativeElement.style.height = 'auto';
+    }
+  }
+
+  autoResize(textarea: HTMLTextAreaElement): void {
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }
+
+  copyMessage(message: { id: string; text: string }): void {
+    navigator.clipboard?.writeText(message.text).then(() => {
+      this.copiedMessageId.set(message.id);
+      if (this.copiedTimeout) {
+        clearTimeout(this.copiedTimeout);
+      }
+      this.copiedTimeout = setTimeout(() => this.copiedMessageId.set(null), 1500);
+    });
   }
 
   sendSuggestion(text: string): void {

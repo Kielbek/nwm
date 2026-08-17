@@ -50,12 +50,33 @@
 
     @for (message of chat.messages(); track message.id) {
       <div class="ask__message" [class.ask__message--user]="message.role === 'user'">
-        <div class="ask__bubble">{{ message.text }}</div>
+        @if (message.role === 'assistant') {
+          <span class="ask__avatar">
+            <app-icon name="sparkle" [size]="11" />
+          </span>
+        }
+        <div class="ask__bubble-col">
+          <div class="ask__bubble">{{ message.text }}</div>
+          @if (message.role === 'assistant') {
+            <button
+              type="button"
+              class="ask__copy-btn"
+              [attr.aria-label]="translate.dict().ask.copy"
+              (click)="copyMessage(message)"
+            >
+              <app-icon [name]="copiedMessageId() === message.id ? 'check' : 'copy'" [size]="11" />
+              {{ copiedMessageId() === message.id ? translate.dict().ask.copied : translate.dict().ask.copy }}
+            </button>
+          }
+        </div>
       </div>
     }
 
     @if (chat.isSending()) {
       <div class="ask__message">
+        <span class="ask__avatar">
+          <app-icon name="sparkle" [size]="11" />
+        </span>
         <div class="ask__bubble ask__bubble--typing">
           <span></span><span></span><span></span>
         </div>
@@ -65,12 +86,14 @@
 
   <form class="ask__composer" (ngSubmit)="submit()">
     <textarea
+      #textarea
       class="ask__input"
       rows="1"
       [placeholder]="translate.dict().ask.placeholder"
       [ngModel]="draft()"
       name="draft"
       (ngModelChange)="draft.set($event)"
+      (input)="autoResize(textarea)"
       (keydown.enter)="onEnter($event)"
     ></textarea>
     <button
@@ -79,7 +102,7 @@
       [attr.aria-label]="translate.dict().ask.send"
       [disabled]="!draft().trim() || chat.isSending()"
     >
-      <app-icon name="send" [size]="16" />
+      <app-icon name="send" [size]="14" />
     </button>
   </form>
 </aside>

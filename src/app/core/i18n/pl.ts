@@ -143,6 +143,8 @@ export const pl: Dictionary = {
     send: 'Wyślij',
     close: 'Zamknij panel Zapytaj',
     clear: 'Wyczyść rozmowę',
+    copy: 'Kopiuj odpowiedź',
+    copied: 'Skopiowano',
     suggestions: [
       'Napisz scenariusz 30-sekundowej reklamy',
       'Zaproponuj mocny hook na pierwsze zdanie',

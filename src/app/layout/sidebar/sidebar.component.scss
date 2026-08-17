@@ -9,13 +9,25 @@
   background: var(--bg-sidebar);
   overflow-y: auto;
   overflow-x: hidden;
-  transition: width 0.2s ease, padding 0.2s ease, transform 0.2s ease;
+  transition: width 0.2s ease, padding 0.2s ease, transform 0.2s ease, margin 0.2s ease,
+    border-radius 0.2s ease, box-shadow 0.2s ease;
 
   &:not(.sidebar--open) {
     width: 0;
     padding-left: 0;
     padding-right: 0;
     border-right: none;
+  }
+
+  // Mirrors app-shell__main--framed: while the AI panel is open, the
+  // sidebar becomes its own rounded, inset card instead of sitting flush
+  // against the main content.
+  &--framed {
+    margin: 10px 8px 10px 10px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.06);
+    height: calc(100dvh - 20px);
   }
 
   &--overlay {
