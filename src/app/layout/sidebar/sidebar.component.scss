@@ -20,12 +20,13 @@
   }
 
   // Mirrors app-shell__main--framed: while the AI panel is open, the
-  // sidebar becomes its own rounded, inset card instead of sitting flush
-  // against the main content.
+  // sidebar and main content round off and inset together as one joined
+  // card (only the outer/left corners round — no gap against the main
+  // pane, which sits directly to the right).
   &--framed {
-    margin: 10px 8px 10px 10px;
+    margin: 10px 0 10px 10px;
     border: 1px solid var(--border);
-    border-radius: 16px;
+    border-radius: 16px 0 0 16px;
     box-shadow: 0 1px 3px rgb(0 0 0 / 0.06);
     height: calc(100dvh - 20px);
   }

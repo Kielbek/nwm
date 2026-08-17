@@ -20,12 +20,16 @@
     transition: margin 0.2s ease, border-radius 0.2s ease, box-shadow 0.2s ease;
 
     // Mirrors the ElevenLabs-style "inset card" look: once the AI panel
-    // slides out, the main content pulls back from the edges and rounds
-    // off instead of butting flush against the panel's divider line.
+    // slides out, the main content pulls back from the outer edges and
+    // rounds off — except on the left, which stays flush and square
+    // against the sidebar so the two read as one joined card, not two
+    // separate boxes with a gap between them.
     &--framed {
       margin: 10px 10px 10px 0;
-      border: 1px solid var(--border);
-      border-radius: 16px;
+      border-top: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      border-radius: 0 16px 16px 0;
       background: var(--bg-surface);
       box-shadow: 0 1px 3px rgb(0 0 0 / 0.06);
       overflow: hidden;
