@@ -249,7 +249,7 @@
     width: 36px;
     height: 36px;
     border-radius: 10px;
-    background: linear-gradient(135deg, var(--accent), #4f46e5);
+    background: linear-gradient(135deg, var(--accent), var(--accent-deep));
     color: #fff;
     flex-shrink: 0;
   }
