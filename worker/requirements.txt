@@ -10,7 +10,17 @@
 # worker/README.md before shipping this in a paid product.
 coqui-tts>=0.27,<0.28
 
+# coqui-tts 0.27.x's XTTS code imports a `transformers` internal that was
+# removed in transformers 5.x (pip resolves the latest by default, which
+# breaks the import) — pin to the 4.x line it was actually built against.
+transformers>=4.43,<5
+
+# torch>=2.9 requires the separate `torchcodec` package for audio IO or
+# `from TTS.api import TTS` raises ImportError on first use.
 torch>=2.1
+torchaudio
+torchcodec
+
 pika>=1.3,<2
 boto3>=1.34
 pydub>=0.25

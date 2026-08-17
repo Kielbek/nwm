@@ -148,3 +148,26 @@ pytest tests/
 The tests only cover the pure-Python pieces (chunking, language mapping)
 — they deliberately avoid importing `synthesis.py`'s XTTS path, since
 that requires the full torch/coqui-tts install and real model weights.
+
+### Manual integration test (no Spring needed)
+
+`tests/_setup_topology.py`, `_publish_fake_job.py`, and `_consume_result.py`
+are one-off scripts (not pytest tests — hence the leading underscore) that
+exercise the real RabbitMQ contract without needing the Spring server
+running at all. Useful to sanity-check the worker in isolation, or to
+narrow down whether a bug is in this worker or in the Spring side:
+
+```bash
+# with RabbitMQ running and RABBITMQ_* env vars exported to match it
+python tests/_setup_topology.py          # declares tts.exchange/queues, same as RabbitMqConfig.java
+python tests/_publish_fake_job.py "some text to synthesize"
+python -m app.main                       # in another terminal — processes the job
+python tests/_consume_result.py          # prints whatever landed on tts.generate.results
+```
+
+This is exactly how the worker's RabbitMQ wiring (exchange, routing keys,
+message shapes) was verified while building it — including that a
+synthesis failure correctly round-trips a `FAILED` result back through
+the same exchange, not just success. It does *not* verify the S3 upload
+target is real (point `S3_ENDPOINT` at an actual MinIO/S3 for that) or
+that XTTS itself produces audio (needs the real model weights).
