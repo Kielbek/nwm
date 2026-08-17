@@ -24,5 +24,11 @@ torchcodec
 pika>=1.3,<2
 boto3>=1.34
 pydub>=0.25
+# pydub imports the stdlib `audioop` module, which was removed in Python
+# 3.13 (PEP 594) — this is the official CPython-team backport that
+# restores it under the same module name, so pydub's own `import audioop`
+# just works again. Harmless/unneeded (and thus skipped) on Python <3.13,
+# where the real stdlib module still exists.
+audioop-lts>=0.2.1; python_version>="3.13"
 langdetect>=1.0.9
 python-dotenv>=1.0
