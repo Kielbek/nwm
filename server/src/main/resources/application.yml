@@ -80,6 +80,15 @@ management:
       # (e.g. temporarily, while debugging a DOWN status) to see which
       # dependency (db/s3/rabbit/diskSpace) is actually failing.
       show-details: ${MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS:when-authorized}
+  health:
+    # Spring Boot auto-registers a mail health indicator whenever
+    # spring-boot-starter-mail is on the classpath, and it checks SMTP
+    # connectivity regardless of app.mail.enabled — so with mail
+    # intentionally off (MAIL_ENABLED=false, the default), it fails to
+    # connect to the placeholder SMTP host and drags the whole app's
+    # /actuator/health to DOWN even though nothing is actually broken.
+    mail:
+      enabled: false
 
 springdoc:
   swagger-ui:
