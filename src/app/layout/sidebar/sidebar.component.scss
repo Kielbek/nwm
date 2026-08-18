@@ -7,8 +7,10 @@
   padding: 16px 12px;
   border-right: 1px solid var(--border);
   background: var(--bg-sidebar);
-  overflow-y: auto;
-  overflow-x: hidden;
+  // The sidebar itself no longer scrolls — only .sidebar__history does
+  // (below), so the top nav and the bottom "Settings" link always stay
+  // put instead of scrolling away with a long history list.
+  overflow: hidden;
   transition: width 0.2s ease, padding 0.2s ease, transform 0.2s ease, margin 0.2s ease,
     border-radius 0.2s ease, box-shadow 0.2s ease;
 
@@ -106,8 +108,12 @@
     display: flex;
     flex-direction: column;
     gap: 1px;
+    flex: 1;
+    min-height: 0;
     margin-top: 10px;
     padding-top: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
     border-top: 1px solid var(--border);
   }
 

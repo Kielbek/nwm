@@ -3,7 +3,6 @@
   [class.sidebar--open]="open"
   [class.sidebar--overlay]="overlay"
   [class.sidebar--framed]="framed"
-  (scroll)="onScroll($event)"
 >
   <div class="sidebar__brand">
     <span class="sidebar__brand-mark">
@@ -43,7 +42,7 @@
   </nav>
 
   @if (history.entries().length) {
-    <div class="sidebar__history">
+    <div class="sidebar__history" (scroll)="onScroll($event)">
       @for (group of historyGroups(); track group.label) {
         <span class="sidebar__history-date">{{ group.label }}</span>
         @for (entry of group.entries; track entry.id) {

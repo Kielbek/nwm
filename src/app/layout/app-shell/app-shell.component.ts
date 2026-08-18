@@ -1,4 +1,4 @@
-import { Component, HostListener, signal } from '@angular/core';
+import { Component, HostListener, computed, signal } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs';
 import { SidebarComponent } from '../sidebar/sidebar.component';
@@ -13,6 +13,8 @@ import { GenerationHistoryService } from '../../core/services/generation-history
 import { SeoService } from '../../core/services/seo.service';
 
 const MOBILE_BREAKPOINT = 780;
+// Mirrors .sidebar's width in sidebar.component.scss.
+const SIDEBAR_WIDTH_PX = 248;
 
 @Component({
   selector: 'app-shell',
@@ -36,6 +38,13 @@ export class AppShellComponent {
   readonly sidebarOpen = signal(!this.matchesMobile());
   readonly askOpen = signal(false);
   readonly playerCollapsed = signal(false);
+  // On mobile the sidebar overlays content rather than pushing it, so the
+  // persistent player should still span the full width there — only on
+  // desktop, with the sidebar actually reserving space, does it need to
+  // start after it (see the player's :host, which reads --sidebar-width).
+  readonly sidebarWidthPx = computed(() =>
+    !this.isMobile() && this.sidebarOpen() ? SIDEBAR_WIDTH_PX : 0
+  );
 
   constructor(router: Router, seo: SeoService, readonly history: GenerationHistoryService) {
     seo.removeJsonLd('ld-organization');

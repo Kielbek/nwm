@@ -26,15 +26,17 @@
     &--with-player {
       padding-bottom: 64px;
 
+      // Collapsed shows the small floating pill (see .player-mini in
+      // generation-player.component.scss) instead of the full-width bar.
       &.app-shell__main--player-collapsed {
-        padding-bottom: 44px;
+        padding-bottom: 60px;
       }
 
       @media (max-width: 780px) {
         padding-bottom: 108px;
 
         &.app-shell__main--player-collapsed {
-          padding-bottom: 44px;
+          padding-bottom: 60px;
         }
       }
     }

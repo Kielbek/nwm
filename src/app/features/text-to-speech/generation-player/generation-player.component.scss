@@ -4,12 +4,19 @@
   // (see app-shell.component.scss's max-width:900px block) where a plain
   // flex/block child just sits wherever it falls, not glued to the
   // viewport edge. Fixed positioning works the same in both layouts.
+  //
+  // left tracks --sidebar-width (set by AppShellComponent on .app-shell)
+  // so the bar sits below the editor/main content only, not on top of the
+  // sidebar. This also makes :host the containing block for .player-mini's
+  // absolute positioning below, so the collapsed pill centers within the
+  // same main-content width instead of the full viewport.
   position: fixed;
-  left: 0;
+  left: var(--sidebar-width, 0px);
   right: 0;
   bottom: 0;
   z-index: 70;
   display: block;
+  transition: left 0.2s ease;
 }
 
 .player {
@@ -23,8 +30,8 @@
   box-shadow: 0 -2px 12px rgb(0 0 0 / 0.06);
   transition: padding 0.15s ease;
 
-  &--collapsed {
-    padding: 6px 20px;
+  &--generating {
+    padding: 7px 20px;
   }
 
   &__info {
@@ -221,21 +228,90 @@
     }
   }
 
-  &__collapse-toggle {
-    app-icon {
-      transition: transform 0.15s ease;
-    }
-
-    &--collapsed app-icon {
-      transform: rotate(180deg);
-    }
-  }
-
   &__close {
     margin-left: 6px;
     padding-left: 6px;
     border-left: 1px solid var(--border);
     border-radius: 0 8px 8px 0;
+  }
+}
+
+.player__spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgb(255 255 255 / 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: player-spin 0.7s linear infinite;
+}
+
+.player__icon-btn .player__spinner {
+  border-color: var(--border);
+  border-top-color: var(--text-secondary);
+}
+
+// Floating pill shown instead of the full bar while collapsed — deliberately
+// minimal (no title/controls, just a play/pause + progress indicator) so
+// tapping it reads as "reopen the player" rather than another control surface.
+.player-mini {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 220px;
+  padding: 6px 14px 6px 6px;
+  border: none;
+  border-radius: 999px;
+  background: rgb(20 20 20 / 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 8px 24px -8px rgb(0 0 0 / 0.4);
+  cursor: pointer;
+
+  &:hover {
+    background: rgb(20 20 20 / 0.72);
+  }
+
+  &__knob {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #fff;
+    color: #111;
+
+    app-icon {
+      transform: translateX(1px);
+    }
+  }
+
+  &__track {
+    position: relative;
+    flex: 1;
+    height: 3px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.25);
+    overflow: hidden;
+  }
+
+  &__fill {
+    position: absolute;
+    inset: 0 auto 0 0;
+    border-radius: 999px;
+    background: #fff;
+    transition: width 0.15s linear;
+  }
+}
+
+@keyframes player-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 

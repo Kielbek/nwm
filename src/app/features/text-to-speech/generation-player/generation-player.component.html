@@ -1,32 +1,50 @@
-<div class="player" [class.player--collapsed]="collapsed()">
-  <div class="player__info">
-    <span class="player__avatar">
-      <app-icon name="voices" [size]="14" />
+@if (collapsed()) {
+  <button
+    type="button"
+    class="player-mini"
+    [attr.aria-label]="translate.dict().player.expand"
+    (click)="toggleCollapsed()"
+  >
+    <span class="player-mini__knob">
+      @if (isConnecting()) {
+        <span class="player__spinner"></span>
+      } @else {
+        <app-icon [name]="isPlaying() ? 'pause' : 'play'" [size]="12" />
+      }
     </span>
-    <div class="player__info-text">
-      <p class="player__title">{{ entry.text.length > 60 ? (entry.text.slice(0, 60) + '…') : entry.text }}</p>
-      @if (!collapsed()) {
+    <span class="player-mini__track">
+      <span class="player-mini__fill" [style.width.%]="miniProgressPercent()"></span>
+    </span>
+  </button>
+} @else {
+  <div class="player" [class.player--generating]="isGenerating()">
+    <div class="player__info">
+      <span class="player__avatar">
+        <app-icon name="voices" [size]="14" />
+      </span>
+      <div class="player__info-text">
+        <p class="player__title">{{ entry.text.length > 60 ? (entry.text.slice(0, 60) + '…') : entry.text }}</p>
         <div class="player__meta">
           <span>{{ entry.voiceName }}</span>
           <span class="player__meta-dot">·</span>
           <span>{{ relativeTime() }}</span>
         </div>
-      }
+      </div>
     </div>
-  </div>
 
-  <div class="player__center">
-    @if (!collapsed()) {
+    <div class="player__center">
       @if (isGenerating()) {
-        <div class="player__generating">
-          <span class="player__generating-label">{{ generationProgressLabel() }}</span>
-          <div class="player__track player__track--slim">
-            <div
-              class="player__track-fill player__track-fill--generating"
-              [style.width.%]="generationProgressPercent()"
-            ></div>
+        @if (!isConnecting()) {
+          <div class="player__generating">
+            <span class="player__generating-label">{{ generationProgressLabel() }}</span>
+            <div class="player__track player__track--slim">
+              <div
+                class="player__track-fill player__track-fill--generating"
+                [style.width.%]="generationProgressPercent()"
+              ></div>
+            </div>
           </div>
-        </div>
+        }
       } @else {
         <div class="player__transport">
           <button
@@ -69,72 +87,70 @@
           <span class="player__time">{{ formatTime(duration()) }}</span>
         </div>
       }
-    }
-  </div>
+    </div>
 
-  <div class="player__side">
-    @if (collapsed()) {
+    <div class="player__side">
+      @if (isConnecting()) {
+        <button
+          type="button"
+          class="player__icon-btn"
+          disabled
+          [attr.aria-label]="translate.dict().player.play"
+        >
+          <span class="player__spinner"></span>
+        </button>
+      } @else {
+        <button
+          type="button"
+          class="player__icon-btn"
+          [class.player__icon-btn--active]="entry.feedback === 'up'"
+          [attr.aria-label]="translate.dict().player.thumbUp"
+          (click)="setFeedback('up')"
+        >
+          <app-icon name="thumb-up" [size]="14" />
+        </button>
+        <button
+          type="button"
+          class="player__icon-btn"
+          [class.player__icon-btn--active]="entry.feedback === 'down'"
+          [attr.aria-label]="translate.dict().player.thumbDown"
+          (click)="setFeedback('down')"
+        >
+          <app-icon name="thumb-down" [size]="14" />
+        </button>
+        <button
+          type="button"
+          class="player__icon-btn"
+          [attr.aria-label]="justCopied() ? translate.dict().player.shareCopied : translate.dict().player.share"
+          (click)="share()"
+        >
+          <app-icon name="share" [size]="14" />
+        </button>
+        <button
+          type="button"
+          class="player__icon-btn"
+          [attr.aria-label]="translate.dict().player.download"
+          (click)="download()"
+        >
+          <app-icon name="download" [size]="14" />
+        </button>
+      }
       <button
         type="button"
-        class="player__icon-btn"
-        [disabled]="!hasPlayableAudio()"
-        [attr.aria-label]="isPlaying() ? translate.dict().player.pause : translate.dict().player.play"
-        (click)="togglePlay()"
+        class="player__icon-btn player__collapse-toggle"
+        [attr.aria-label]="translate.dict().player.collapse"
+        (click)="toggleCollapsed()"
       >
-        <app-icon [name]="isPlaying() ? 'pause' : 'play'" [size]="14" />
-      </button>
-    } @else {
-      <button
-        type="button"
-        class="player__icon-btn"
-        [class.player__icon-btn--active]="entry.feedback === 'up'"
-        [attr.aria-label]="translate.dict().player.thumbUp"
-        (click)="setFeedback('up')"
-      >
-        <app-icon name="thumb-up" [size]="14" />
+        <app-icon name="chevron-down" [size]="14" />
       </button>
       <button
         type="button"
-        class="player__icon-btn"
-        [class.player__icon-btn--active]="entry.feedback === 'down'"
-        [attr.aria-label]="translate.dict().player.thumbDown"
-        (click)="setFeedback('down')"
+        class="player__icon-btn player__close"
+        [attr.aria-label]="translate.dict().player.close"
+        (click)="close()"
       >
-        <app-icon name="thumb-down" [size]="14" />
+        <app-icon name="close" [size]="14" />
       </button>
-      <button
-        type="button"
-        class="player__icon-btn"
-        [attr.aria-label]="justCopied() ? translate.dict().player.shareCopied : translate.dict().player.share"
-        (click)="share()"
-      >
-        <app-icon name="share" [size]="14" />
-      </button>
-      <button
-        type="button"
-        class="player__icon-btn"
-        [attr.aria-label]="translate.dict().player.download"
-        (click)="download()"
-      >
-        <app-icon name="download" [size]="14" />
-      </button>
-    }
-    <button
-      type="button"
-      class="player__icon-btn player__collapse-toggle"
-      [class.player__collapse-toggle--collapsed]="collapsed()"
-      [attr.aria-label]="collapsed() ? translate.dict().player.expand : translate.dict().player.collapse"
-      (click)="toggleCollapsed()"
-    >
-      <app-icon name="chevron-down" [size]="14" />
-    </button>
-    <button
-      type="button"
-      class="player__icon-btn player__close"
-      [attr.aria-label]="translate.dict().player.close"
-      (click)="close()"
-    >
-      <app-icon name="close" [size]="14" />
-    </button>
+    </div>
   </div>
-</div>
+}

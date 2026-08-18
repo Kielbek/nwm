@@ -86,6 +86,11 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
         this.collapsed.set(false);
         this.collapsedChange.emit(false);
       }
+      // Auto-play: whether this is a freshly started generation (plays as
+      // soon as the first chunk streams in) or a "replay" of an already-
+      // finished one (plays immediately) — either way, activating an entry
+      // means the user wants to hear it now, not press play a second time.
+      this.resume();
       return;
     }
 
@@ -121,6 +126,11 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
     return this.entry.status === 'PENDING' || this.entry.status === 'PROCESSING';
   }
 
+  /** Nothing synthesized yet at all — shown as a spinner on the play button instead of a text label. */
+  isConnecting(): boolean {
+    return this.isGenerating() && this.entry.chunks.length === 0;
+  }
+
   generationProgressPercent(): number {
     const total = this.entry.chunks[0]?.total ?? 0;
     if (!total) {
@@ -130,11 +140,17 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   }
 
   generationProgressLabel(): string {
-    const total = this.entry.chunks[0]?.total;
-    if (!total) {
-      return this.translate.dict().player.connecting;
-    }
+    const total = this.entry.chunks[0]?.total ?? 0;
     return `${this.translate.dict().player.generating} — ${this.entry.chunks.length}/${total}`;
+  }
+
+  /** Progress fraction (0-100) shown on the collapsed mini-player's track/knob position. */
+  miniProgressPercent(): number {
+    return this.isGenerating()
+      ? this.generationProgressPercent()
+      : this.duration()
+        ? Math.min(100, (this.elapsed() / this.duration()) * 100)
+        : 0;
   }
 
   close(): void {
@@ -192,10 +208,13 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   }
 
   private resume(): void {
+    // Set intent-to-play unconditionally, even with zero chunks so far —
+    // ngOnChanges's "same generation" branch checks isPlaying() to decide
+    // whether to auto-start playback the moment the first chunk lands.
+    this.isPlaying.set(true);
     if (!this.hasPlayableAudio()) {
       return;
     }
-    this.isPlaying.set(true);
 
     if (this.pendingSeek) {
       const { index, seconds } = this.pendingSeek;
