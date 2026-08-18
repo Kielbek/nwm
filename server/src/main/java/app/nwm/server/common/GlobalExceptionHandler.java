@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -57,6 +58,16 @@ public class GlobalExceptionHandler {
     HttpStatus status = authenticated ? HttpStatus.FORBIDDEN : HttpStatus.UNAUTHORIZED;
     String message = authenticated ? "Access denied" : "Authentication required";
     return ResponseEntity.status(status).body(ApiError.of(status.value(), message));
+  }
+
+  // Thrown when a request matches no @RequestMapping and falls through to
+  // the static-resource handler (e.g. a stale client/build hitting a route
+  // that doesn't exist yet, or a typo'd path) — a plain 404, not a server
+  // bug, so it shouldn't be logged as one or reported as a 500.
+  @ExceptionHandler(NoResourceFoundException.class)
+  public ResponseEntity<ApiError> handleNoResourceFound(NoResourceFoundException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        .body(ApiError.of(HttpStatus.NOT_FOUND.value(), "Not found"));
   }
 
   @ExceptionHandler(Exception.class)
