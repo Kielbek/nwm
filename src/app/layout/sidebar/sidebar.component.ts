@@ -9,8 +9,10 @@ import {
 import { HistoryDetailModalService } from '../../core/services/history-detail-modal.service';
 import { formatRelativeTime } from '../../core/utils/relative-time';
 
-const RECENT_ENTRIES_LIMIT = 6;
 const SNIPPET_LENGTH = 34;
+// Trigger loadMore() this many pixels before the sidebar's own scroll
+// (the whole <aside> scrolls, not a nested container — see the scss) hits bottom.
+const LOAD_MORE_THRESHOLD_PX = 120;
 
 interface HistoryGroup {
   label: string;
@@ -31,8 +33,6 @@ export class SidebarComponent {
   @Input() framed = false;
   @Output() closeRequested = new EventEmitter<void>();
 
-  readonly recentEntries = computed(() => this.history.entries().slice(0, RECENT_ENTRIES_LIMIT));
-
   readonly historyGroups = computed<HistoryGroup[]>(() => {
     const dict = this.translate.dict();
     const locale = this.translate.lang() === 'pl' ? 'pl-PL' : 'en-US';
@@ -41,7 +41,7 @@ export class SidebarComponent {
     yesterday.setDate(now.getDate() - 1);
 
     const groups: HistoryGroup[] = [];
-    for (const entry of this.recentEntries()) {
+    for (const entry of this.history.entries()) {
       const date = new Date(entry.createdAt);
       const label = this.isSameDay(date, now)
         ? dict.sidebar.historyToday
@@ -87,6 +87,14 @@ export class SidebarComponent {
 
   remove(id: string): void {
     this.history.remove(id);
+  }
+
+  onScroll(event: Event): void {
+    const el = event.target as HTMLElement;
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    if (distanceFromBottom < LOAD_MORE_THRESHOLD_PX) {
+      this.history.loadMore();
+    }
   }
 
   private isSameDay(a: Date, b: Date): boolean {

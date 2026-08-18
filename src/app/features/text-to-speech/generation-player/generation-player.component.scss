@@ -1,4 +1,14 @@
 :host {
+  // Fixed rather than relying on the app shell's flex layout to pin it in
+  // place — on narrow viewports the shell switches to normal document flow
+  // (see app-shell.component.scss's max-width:900px block) where a plain
+  // flex/block child just sits wherever it falls, not glued to the
+  // viewport edge. Fixed positioning works the same in both layouts.
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 70;
   display: block;
 }
 
@@ -10,7 +20,12 @@
   padding: 10px 20px;
   border-top: 1px solid var(--border);
   background: var(--bg-surface);
-  flex-shrink: 0;
+  box-shadow: 0 -2px 12px rgb(0 0 0 / 0.06);
+  transition: padding 0.15s ease;
+
+  &--collapsed {
+    padding: 6px 20px;
+  }
 
   &__info {
     display: flex;
@@ -203,6 +218,16 @@
     &--active {
       color: var(--accent);
       background: var(--accent-soft);
+    }
+  }
+
+  &__collapse-toggle {
+    app-icon {
+      transition: transform 0.15s ease;
+    }
+
+    &--collapsed app-icon {
+      transform: rotate(180deg);
     }
   }
 

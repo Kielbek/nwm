@@ -35,6 +35,7 @@ export class AppShellComponent {
   readonly isMobile = signal(this.matchesMobile());
   readonly sidebarOpen = signal(!this.matchesMobile());
   readonly askOpen = signal(false);
+  readonly playerCollapsed = signal(false);
 
   constructor(router: Router, seo: SeoService, readonly history: GenerationHistoryService) {
     seo.removeJsonLd('ld-organization');

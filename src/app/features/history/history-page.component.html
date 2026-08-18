@@ -89,6 +89,17 @@
         </li>
       }
     </ul>
+
+    @if (history.hasMore()) {
+      <button
+        type="button"
+        class="history__load-more"
+        [disabled]="history.loadingMore()"
+        (click)="history.loadMore()"
+      >
+        {{ history.loadingMore() ? translate.dict().historyPage.loading : translate.dict().historyPage.loadMore }}
+      </button>
+    }
   } @else {
     <div class="history__empty">
       <app-icon name="folder" [size]="22" />

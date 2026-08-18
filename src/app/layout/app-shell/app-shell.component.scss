@@ -19,6 +19,26 @@
     min-height: 0;
     transition: margin 0.2s ease, border-radius 0.2s ease, box-shadow 0.2s ease;
 
+    // The player is position:fixed (see generation-player.component.scss)
+    // so it doesn't take up flex space on its own — this reserves room at
+    // the bottom of the page content so the fixed bar doesn't cover it.
+    // Heights mirror the player's own breakpoints/collapsed state.
+    &--with-player {
+      padding-bottom: 64px;
+
+      &.app-shell__main--player-collapsed {
+        padding-bottom: 44px;
+      }
+
+      @media (max-width: 780px) {
+        padding-bottom: 108px;
+
+        &.app-shell__main--player-collapsed {
+          padding-bottom: 44px;
+        }
+      }
+    }
+
     // Mirrors the ElevenLabs-style "inset card" look: once the AI panel
     // slides out, the main content pulls back from the outer edges and
     // rounds off — except on the left, which stays flush and square

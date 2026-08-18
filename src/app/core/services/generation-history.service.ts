@@ -43,7 +43,16 @@ export interface StartEntryInput {
   settings: TtsSettings;
 }
 
-const MAX_ENTRIES = 50;
+interface HistoryPage {
+  content: JobResponse[];
+  last: boolean;
+}
+
+const PAGE_SIZE = 20;
+// A generous ceiling so a very long session can't accumulate unbounded
+// entries in memory — real pagination (loadMore) is what actually lets you
+// reach older history beyond this, one page at a time.
+const MAX_LOADED_ENTRIES = 500;
 
 /**
  * Tracks generations backed by the real GenerationJob rows on the server
@@ -72,6 +81,12 @@ export class GenerationHistoryService {
     () => this.entries().find((entry) => entry.id === this.activeEntryId()) ?? null
   );
 
+  /** True while a page (initial load or loadMore()) is in flight — drives loading skeletons. */
+  readonly loadingMore = signal(false);
+  /** False once the last page from the server has been loaded. */
+  readonly hasMore = signal(true);
+  private nextPage = 0;
+
   constructor(
     private readonly http: HttpClient,
     private readonly translate: TranslateService,
@@ -80,14 +95,42 @@ export class GenerationHistoryService {
     this.loadFromServer();
   }
 
+  /** Resets to the first page — e.g. after login, when the previous list (if any) is stale. */
   loadFromServer(): void {
+    this.nextPage = 0;
+    this.hasMore.set(true);
+    this.fetchPage(false);
+  }
+
+  /** Appends the next page of older history — no-ops while already loading or once exhausted. */
+  loadMore(): void {
+    if (this.loadingMore() || !this.hasMore()) {
+      return;
+    }
+    this.fetchPage(true);
+  }
+
+  private fetchPage(append: boolean): void {
+    this.loadingMore.set(true);
     this.http
-      .get<{ content: JobResponse[] }>('/api/tts/history', { params: { size: String(MAX_ENTRIES) } })
+      .get<HistoryPage>('/api/tts/history', {
+        params: { page: String(this.nextPage), size: String(PAGE_SIZE) },
+      })
       .subscribe({
-        next: (page) => this.entries.set(page.content.map((job) => this.fromJobResponse(job))),
+        next: (page) => {
+          const mapped = page.content.map((job) => this.fromJobResponse(job));
+          const next = append ? [...this.entries(), ...mapped] : mapped;
+          this.entries.set(next.slice(0, MAX_LOADED_ENTRIES));
+          this.nextPage += 1;
+          this.hasMore.set(!page.last && next.length < MAX_LOADED_ENTRIES);
+          this.loadingMore.set(false);
+        },
         error: () => {
-          // Not logged in yet, or the backend is briefly unreachable — the
-          // list just stays empty rather than breaking the page.
+          // Not logged in yet, a briefly unreachable backend, or the last
+          // page failed to load — the list just stays as it was rather
+          // than breaking the page. hasMore stays true so a later
+          // loadMore() (e.g. user scrolls again) can retry.
+          this.loadingMore.set(false);
         },
       });
   }
@@ -112,7 +155,7 @@ export class GenerationHistoryService {
       downloadUrl: null,
       errorMessage: null,
     };
-    this.entries.set([entry, ...this.entries()].slice(0, MAX_ENTRIES));
+    this.entries.set([entry, ...this.entries()].slice(0, MAX_LOADED_ENTRIES));
     this.activeEntryId.set(entry.id);
     return entry;
   }

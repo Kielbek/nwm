@@ -48,11 +48,13 @@ interface PendingSeek {
 export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) entry!: GenerationEntry;
   @Output() closeRequested = new EventEmitter<void>();
+  @Output() collapsedChange = new EventEmitter<boolean>();
 
   readonly isPlaying = signal(false);
   readonly elapsed = signal(0);
   readonly duration = signal(1);
   readonly justCopied = signal(false);
+  readonly collapsed = signal(false);
 
   private audio: HTMLAudioElement | null = null;
   private currentChunkIndex: number | null = null;
@@ -80,6 +82,10 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
       this.pendingSeek = null;
       this.elapsed.set(0);
       this.duration.set(this.computeDuration());
+      if (this.collapsed()) {
+        this.collapsed.set(false);
+        this.collapsedChange.emit(false);
+      }
       return;
     }
 
@@ -134,6 +140,11 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   close(): void {
     this.stopPlayback();
     this.closeRequested.emit();
+  }
+
+  toggleCollapsed(): void {
+    this.collapsed.update((value) => !value);
+    this.collapsedChange.emit(this.collapsed());
   }
 
   togglePlay(): void {

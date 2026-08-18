@@ -8,17 +8,26 @@
     [framed]="askOpen() && !isMobile()"
     (closeRequested)="closeSidebar()"
   />
-  <div class="app-shell__main" [class.app-shell__main--framed]="askOpen() && !isMobile()">
+  <div
+    class="app-shell__main"
+    [class.app-shell__main--framed]="askOpen() && !isMobile()"
+    [class.app-shell__main--with-player]="history.activeEntry()"
+    [class.app-shell__main--player-collapsed]="playerCollapsed()"
+  >
     <app-header
       [askOpen]="askOpen()"
       (toggleSidebar)="toggleSidebar()"
       (toggleAsk)="toggleAsk()"
     />
     <router-outlet></router-outlet>
-    @if (history.activeEntry(); as entry) {
-      <app-generation-player [entry]="entry" (closeRequested)="history.activeEntryId.set(null)" />
-    }
   </div>
+  @if (history.activeEntry(); as entry) {
+    <app-generation-player
+      [entry]="entry"
+      (closeRequested)="history.activeEntryId.set(null)"
+      (collapsedChange)="playerCollapsed.set($event)"
+    />
+  }
   <app-ask-panel [open]="askOpen()" [overlay]="isMobile()" (closeRequested)="closeAsk()" />
   <app-command-palette />
   <app-invite-modal />

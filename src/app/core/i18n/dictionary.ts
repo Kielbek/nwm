@@ -103,6 +103,8 @@ export interface Dictionary {
     generating: string;
     connecting: string;
     close: string;
+    collapse: string;
+    expand: string;
   };
   voiceDropdown: {
     searchPlaceholder: string;
@@ -346,6 +348,8 @@ export interface Dictionary {
     confirmDeleteBody: string;
     confirmDeleteAction: string;
     genericError: string;
+    loadMore: string;
+    loading: string;
     voiceLabel: string;
     modelLabel: string;
     justNow: string;
