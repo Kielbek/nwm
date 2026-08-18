@@ -52,7 +52,9 @@
                 <span class="sidebar__history-title-row">
                   <span class="sidebar__history-text">{{ snippet(entry.text) }}</span>
                   <span class="sidebar__history-spinner"></span>
-                  <span class="sidebar__history-percent">{{ progressPercent(entry) }}%</span>
+                  @if (progressPercent(entry); as percent) {
+                    <span class="sidebar__history-percent">{{ percent }}%</span>
+                  }
                 </span>
               } @else {
                 <span class="sidebar__history-text">{{ snippet(entry.text) }}</span>

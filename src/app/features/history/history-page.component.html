@@ -49,7 +49,9 @@
               @if (isGenerating(entry)) {
                 <span class="history__progress">
                   <span class="history__spinner"></span>
-                  {{ progressPercent(entry) }}%
+                  @if (progressPercent(entry); as percent) {
+                    {{ percent }}%
+                  }
                 </span>
               }
             </div>
