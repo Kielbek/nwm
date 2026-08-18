@@ -415,12 +415,18 @@ export interface Dictionary {
     voicesTitle: string;
     voicesSubtitle: string;
     voicesCta: string;
+    useCasesEyebrow: string;
+    useCasesTitle: string;
+    useCasesSubtitle: string;
     testimonialsTitle: string;
     testimonialsSubtitle: string;
     pricingTitle: string;
     pricingSubtitle: string;
     pricingCta: string;
     pricingMostPopular: string;
+    faqEyebrow: string;
+    faqTitle: string;
+    faqSubtitle: string;
     finalCtaTitle: string;
     finalCtaSubtitle: string;
     finalCtaButton: string;
@@ -433,6 +439,8 @@ export interface Dictionary {
   landingStats: StatCopy[];
   landingFeatures: FeatureCopy[];
   landingSteps: StepCopy[];
+  landingUseCases: FeatureCopy[];
+  landingFaq: FaqCopy[];
   pricingPage: {
     title: string;
     subtitle: string;

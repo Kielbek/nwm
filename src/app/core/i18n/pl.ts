@@ -539,12 +539,18 @@ export const pl: Dictionary = {
     voicesTitle: 'Głosy, które brzmią jak prawdziwi ludzie',
     voicesSubtitle: 'Odsłuchaj próbki poniżej i wybierz ten, który pasuje do Twojego projektu.',
     voicesCta: 'Zobacz wszystkie głosy',
+    useCasesEyebrow: 'Zastosowania',
+    useCasesTitle: 'Jeden głos. Nieskończone możliwości.',
+    useCasesSubtitle: 'Dobry głos nie tylko czyta tekst — nadaje mu miejsce, w którym może wybrzmieć.',
     testimonialsTitle: 'Zaufali nam twórcy treści',
     testimonialsSubtitle: 'Prawdziwe opinie osób, które używają NWM na co dzień.',
     pricingTitle: 'Plany dopasowane do skali Twojej pracy',
     pricingSubtitle: 'Zacznij za darmo i skaluj w miarę potrzeb — bez ukrytych kosztów.',
     pricingCta: 'Zobacz wszystkie plany i cennik',
     pricingMostPopular: 'Najpopularniejszy',
+    faqEyebrow: 'Warto wiedzieć',
+    faqTitle: 'Pytania i odpowiedzi',
+    faqSubtitle: 'Jeśli czegoś tu nie ma, napisz do nas — chętnie pomożemy.',
     finalCtaTitle: 'Gotowy, by usłyszeć swój tekst?',
     finalCtaSubtitle: 'Dołącz za darmo i wygeneruj swoje pierwsze nagranie w mniej niż minutę.',
     finalCtaButton: 'Zacznij za darmo',
@@ -604,6 +610,60 @@ export const pl: Dictionary = {
     {
       title: 'Wygeneruj i pobierz',
       description: 'Kliknij „Generuj mowę” i pobierz gotowe nagranie w wybranym formacie.',
+    },
+  ],
+  landingUseCases: [
+    {
+      icon: 'image-video',
+      title: 'YouTube i TikTok',
+      description: 'Nadaj każdemu hookowi głos, który zatrzymuje kciuk na scrollu.',
+    },
+    {
+      icon: 'book',
+      title: 'Audiobooki i e-learning',
+      description: 'Zmień długie treści w słuchanie, które wciąga od pierwszego zdania.',
+    },
+    {
+      icon: 'music',
+      title: 'Podcasty i lektorzy',
+      description: 'Nagraj zapowiedzi, wstawki i całe odcinki bez studia i mikrofonu.',
+    },
+    {
+      icon: 'briefcase',
+      title: 'Biznes i szkolenia',
+      description: 'Ożyw materiały produktowe, szkoleniowe i obsługę klienta ludzkim głosem.',
+    },
+  ],
+  landingFaq: [
+    {
+      question: 'Czym jest synteza mowy AI?',
+      answer:
+        'Synteza mowy AI zamienia pisany tekst na naturalnie brzmiącą wypowiedź przy użyciu modeli neuronowych. NWM jest dostrojone pod kątem naturalnego tempa, wymowy i tych drobnych detali, które sprawiają, że głos brzmi żywo.',
+    },
+    {
+      question: 'Jakie języki są obsługiwane?',
+      answer:
+        'NWM obsługuje polski jako język główny oraz pozwala nadpisać język wypowiedzi dla wybranych treści wielojęzycznych — model dobiera wymowę odpowiednią dla wskazanego języka.',
+    },
+    {
+      question: 'Czy mogę używać wygenerowanego audio komercyjnie?',
+      answer:
+        'Tak, w planach płatnych możesz wykorzystywać nagrania komercyjnie — w filmach, reklamach, produktach czy materiałach dla klientów. Szczegóły znajdziesz w regulaminie każdego planu.',
+    },
+    {
+      question: 'Czy jest dostępny plan darmowy?',
+      answer:
+        'Tak — plan Darmowy daje Ci 10 000 znaków miesięcznie oraz dostęp do podstawowych głosów, bez karty kredytowej i bez limitu czasowego.',
+    },
+    {
+      question: 'W jakich formatach mogę pobrać nagranie?',
+      answer:
+        'Nagrania możesz eksportować w formatach MP3 (128 lub 192 kbps), WAV oraz OGG — wybierasz format bezpośrednio w edytorze przed wygenerowaniem.',
+    },
+    {
+      question: 'Czy oferujecie publiczne API?',
+      answer:
+        'Obecnie NWM działa jako aplikacja webowa — publiczne API do integracji z własnymi produktami jest w planach na przyszłość.',
     },
   ],
   pricingPage: {

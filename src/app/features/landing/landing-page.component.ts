@@ -7,6 +7,7 @@ import {
   QueryList,
   ViewChildren,
   effect,
+  signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
@@ -45,6 +46,7 @@ export class LandingPageComponent implements AfterViewInit, OnDestroy {
   >;
 
   readonly waveformBars = Array.from({ length: 28 }, (_, i) => i);
+  readonly openFaqIndex = signal<number | null>(null);
 
   private revealObserver?: IntersectionObserver;
   private statsAnimated = false;
@@ -58,7 +60,6 @@ export class LandingPageComponent implements AfterViewInit, OnDestroy {
     readonly feedback: FeedbackService,
     private readonly seo: SeoService
   ) {
-    this.seo.removeJsonLd('ld-faq');
     this.seo.setJsonLd('ld-organization', {
       '@context': 'https://schema.org',
       '@type': 'Organization',
@@ -67,14 +68,30 @@ export class LandingPageComponent implements AfterViewInit, OnDestroy {
       logo: 'https://nwm.app/og-image.png',
     });
     effect(() => {
-      const dict = this.translate.dict().seo;
+      const dict = this.translate.dict();
       this.seo.update({
-        title: dict.landingTitle,
-        description: dict.landingDescription,
+        title: dict.seo.landingTitle,
+        description: dict.seo.landingDescription,
         path: '/',
-        locale: dict.ogLocale,
+        locale: dict.seo.ogLocale,
+      });
+      this.seo.setJsonLd('ld-faq', {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: dict.landingFaq.map((faq) => ({
+          '@type': 'Question',
+          name: faq.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: faq.answer,
+          },
+        })),
       });
     });
+  }
+
+  toggleFaq(index: number): void {
+    this.openFaqIndex.set(this.openFaqIndex() === index ? null : index);
   }
 
   get featuredPlans() {

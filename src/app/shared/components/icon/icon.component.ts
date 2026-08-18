@@ -10,7 +10,7 @@ export type IconName =
   | 'sun' | 'moon' | 'monitor' | 'globe' | 'check' | 'pause' | 'send' | 'trash'
   | 'help' | 'link' | 'book' | 'logout' | 'edit' | 'settings' | 'cookie' | 'calendar' | 'star'
   | 'upload' | 'thumb-up' | 'thumb-down' | 'share' | 'skip-back' | 'skip-forward'
-  | 'google' | 'eye' | 'eye-off' | 'mail' | 'copy' | 'plus';
+  | 'google' | 'eye' | 'eye-off' | 'mail' | 'copy' | 'plus' | 'briefcase';
 
 @Component({
   selector: 'app-icon',
@@ -220,6 +220,11 @@ export type IconName =
         </ng-container>
         <ng-container *ngSwitchCase="'plus'">
           <path d="M10 4v12" /><path d="M4 10h12" />
+        </ng-container>
+        <ng-container *ngSwitchCase="'briefcase'">
+          <rect x="3" y="7" width="14" height="9.5" rx="1.5" />
+          <path d="M7.5 7V5.5a1.5 1.5 0 0 1 1.5-1.5h2a1.5 1.5 0 0 1 1.5 1.5V7" />
+          <path d="M3 11h14" />
         </ng-container>
       </ng-container>
     </svg>

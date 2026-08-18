@@ -1,26 +1,11 @@
 <div class="landing">
+  <div class="landing__grid-bg" aria-hidden="true"></div>
   <app-public-nav />
 
   <section class="landing__hero">
-    <div class="landing__hero-3d" aria-hidden="true">
-      <div class="landing__orb landing__orb--a"></div>
-      <div class="landing__orb landing__orb--b"></div>
-      <div class="landing__orb landing__orb--c"></div>
-      <div class="landing__cube-scene">
-        <div class="landing__cube">
-          <span class="landing__cube-face landing__cube-face--front"></span>
-          <span class="landing__cube-face landing__cube-face--back"></span>
-          <span class="landing__cube-face landing__cube-face--right"></span>
-          <span class="landing__cube-face landing__cube-face--left"></span>
-          <span class="landing__cube-face landing__cube-face--top"></span>
-          <span class="landing__cube-face landing__cube-face--bottom"></span>
-        </div>
-      </div>
-    </div>
-
     <div class="landing__hero-content">
-      <span class="landing__badge">
-        <app-icon name="sparkle" [size]="12" />
+      <span class="landing__eyebrow">
+        <span class="landing__status-dot"></span>
         {{ translate.dict().landing.heroBadge }}
       </span>
       <h1 class="landing__hero-title">
@@ -37,19 +22,22 @@
           {{ translate.dict().landing.heroCtaSecondary }}
         </a>
       </div>
-      <span class="landing__hero-trust">{{ translate.dict().landing.heroTrust }}</span>
+      <span class="landing__hero-trust">
+        <app-icon name="check" [size]="13" />
+        {{ translate.dict().landing.heroTrust }}
+      </span>
     </div>
 
     <div class="landing__hero-visual">
       <div class="landing__mock">
         <div class="landing__mock-head">
-          <span class="landing__mock-dot"></span>
-          <span class="landing__mock-dot"></span>
-          <span class="landing__mock-dot"></span>
-          <span class="landing__mock-title">{{ translate.dict().header.pageTitle }}</span>
+          <span class="landing__mock-tag">
+            <span class="landing__status-dot"></span>
+            {{ translate.dict().header.pageTitle }}
+          </span>
         </div>
         <div class="landing__mock-voice">
-          <span class="landing__mock-avatar"></span>
+          <span class="landing__mock-avatar" [style.background]="voiceLibrary.voices()[0].avatarColor"></span>
           <div class="landing__mock-voice-info">
             <span class="landing__mock-voice-name">{{ voiceLibrary.voices()[0].name }}</span>
             <span class="landing__mock-voice-desc">{{ voiceLibrary.voices()[0].description }}</span>
@@ -63,9 +51,15 @@
             <span class="landing__mock-wave-bar" [style.--i]="bar"></span>
           }
         </div>
-        <div class="landing__mock-btn">
-          <app-icon name="play" [size]="12" />
-          {{ translate.dict().editor.generate }}
+        <div class="landing__mock-foot">
+          <div class="landing__mock-foot-icons">
+            <app-icon name="play" [size]="13" />
+            <app-icon name="download" [size]="13" />
+          </div>
+          <div class="landing__mock-btn">
+            <app-icon name="sparkle" [size]="12" />
+            {{ translate.dict().editor.generate }}
+          </div>
         </div>
       </div>
     </div>
@@ -84,7 +78,8 @@
   </section>
 
   <section class="landing__features" id="features">
-    <header class="landing__section-head" #reveal>
+    <header class="landing__section-head landing__section-head--left" #reveal>
+      <span class="landing__eyebrow">{{ translate.dict().landing.navFeatures }} / 01</span>
       <h2>{{ translate.dict().landing.featuresTitle }}</h2>
       <p>{{ translate.dict().landing.featuresSubtitle }}</p>
     </header>
@@ -101,8 +96,9 @@
     </div>
   </section>
 
-  <section class="landing__how" id="how-it-works">
-    <header class="landing__section-head" #reveal>
+  <section class="landing__how landing__band" id="how-it-works">
+    <header class="landing__section-head landing__section-head--left" #reveal>
+      <span class="landing__eyebrow">{{ translate.dict().landing.navHowItWorks }} / 02</span>
       <h2>{{ translate.dict().landing.howItWorksTitle }}</h2>
       <p>{{ translate.dict().landing.howItWorksSubtitle }}</p>
     </header>
@@ -117,8 +113,26 @@
     </div>
   </section>
 
-  <section class="landing__voices" id="voices">
-    <header class="landing__section-head" #reveal>
+  <section class="landing__use-cases">
+    <header class="landing__section-head landing__section-head--left" #reveal>
+      <span class="landing__eyebrow">{{ translate.dict().landing.useCasesEyebrow }} / 03</span>
+      <h2>{{ translate.dict().landing.useCasesTitle }}</h2>
+      <p>{{ translate.dict().landing.useCasesSubtitle }}</p>
+    </header>
+    <div class="landing__use-cases-grid">
+      @for (useCase of translate.dict().landingUseCases; track useCase.title) {
+        <div class="landing__use-case-card" #reveal>
+          <app-icon [name]="useCase.icon" [size]="20" />
+          <strong>{{ useCase.title }}</strong>
+          <p>{{ useCase.description }}</p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="landing__voices landing__band" id="voices">
+    <header class="landing__section-head landing__section-head--left" #reveal>
+      <span class="landing__eyebrow">{{ translate.dict().landing.navVoices }} / 04</span>
       <h2>{{ translate.dict().landing.voicesTitle }}</h2>
       <p>{{ translate.dict().landing.voicesSubtitle }}</p>
     </header>
@@ -126,17 +140,28 @@
     <app-carousel class="landing__carousel" #reveal>
       @for (voice of voiceLibrary.voices(); track voice.id) {
         <div class="landing__voice-card" #carouselItem>
-          <span class="landing__voice-avatar" [style.background]="voice.avatarColor"></span>
-          <strong>{{ voice.name }}</strong>
-          <p>{{ voice.description }}</p>
-          <button type="button" class="landing__voice-play" (click)="togglePreview(voice, $event)">
-            <app-icon [name]="voicePreview.playingVoiceId() === voice.id ? 'pause' : 'play'" [size]="13" />
-            {{
-              voicePreview.playingVoiceId() === voice.id
-                ? translate.dict().voiceDropdown.stopPreview
-                : translate.dict().voiceDropdown.preview
-            }}
-          </button>
+          <div class="landing__voice-head">
+            <span class="landing__voice-avatar" [style.background]="voice.avatarColor">
+              {{ voice.name[0] }}
+            </span>
+            <div class="landing__voice-info">
+              <strong>{{ voice.name }}</strong>
+              <p>{{ voice.description }}</p>
+            </div>
+            <button
+              type="button"
+              class="landing__voice-play"
+              [attr.aria-label]="voice.name"
+              (click)="togglePreview(voice, $event)"
+            >
+              <app-icon [name]="voicePreview.playingVoiceId() === voice.id ? 'pause' : 'play'" [size]="13" />
+            </button>
+          </div>
+          <div class="landing__voice-wave" [class.landing__voice-wave--active]="voicePreview.playingVoiceId() === voice.id">
+            @for (bar of waveformBars; track bar) {
+              <span class="landing__voice-wave-bar" [style.--i]="bar"></span>
+            }
+          </div>
         </div>
       }
     </app-carousel>
@@ -148,7 +173,8 @@
   </section>
 
   <section class="landing__testimonials" id="reviews">
-    <header class="landing__section-head" #reveal>
+    <header class="landing__section-head landing__section-head--left" #reveal>
+      <span class="landing__eyebrow">{{ translate.dict().landing.navReviews }} / 05</span>
       <h2>{{ translate.dict().landing.testimonialsTitle }}</h2>
       <p>{{ translate.dict().landing.testimonialsSubtitle }}</p>
     </header>
@@ -170,8 +196,9 @@
     </app-carousel>
   </section>
 
-  <section class="landing__pricing" id="pricing">
-    <header class="landing__section-head" #reveal>
+  <section class="landing__pricing landing__band" id="pricing">
+    <header class="landing__section-head landing__section-head--left" #reveal>
+      <span class="landing__eyebrow">{{ translate.dict().landing.navPricing }} / 06</span>
       <h2>{{ translate.dict().landing.pricingTitle }}</h2>
       <p>{{ translate.dict().landing.pricingSubtitle }}</p>
     </header>
@@ -182,16 +209,20 @@
           @if (i === 1) {
             <span class="landing__plan-badge">{{ translate.dict().landing.pricingMostPopular }}</span>
           }
-          <strong class="landing__plan-name">{{ plan.name }}</strong>
+          <span class="landing__eyebrow">{{ plan.name }}</span>
           <span class="landing__plan-tagline">{{ plan.tagline }}</span>
           <div class="landing__plan-price">
             @if (plan.monthlyPrice === 0) {
               <strong>{{ translate.dict().profilePage.free }}</strong>
             } @else {
-              <strong>{{ plan.monthlyPrice }} zł</strong>
-              <span>{{ translate.dict().profilePage.perMonth }}</span>
+              <strong>{{ plan.monthlyPrice }}</strong>
+              <span>zł{{ translate.dict().profilePage.perMonth }}</span>
             }
           </div>
+          <a class="landing__btn landing__btn--primary" routerLink="/pricing">
+            {{ translate.dict().profilePage.choosePlan }}
+            <app-icon name="chevron-right" [size]="14" />
+          </a>
           <ul class="landing__plan-features">
             @for (feature of plan.features.slice(0, 4); track feature) {
               <li>
@@ -200,9 +231,6 @@
               </li>
             }
           </ul>
-          <a class="landing__btn landing__btn--primary" routerLink="/pricing">
-            {{ translate.dict().profilePage.choosePlan }}
-          </a>
         </div>
       }
     </div>
@@ -213,12 +241,38 @@
     </a>
   </section>
 
-  <section class="landing__final-cta" #reveal>
-    <h2>{{ translate.dict().landing.finalCtaTitle }}</h2>
-    <p>{{ translate.dict().landing.finalCtaSubtitle }}</p>
-    <a class="landing__btn landing__btn--primary landing__btn--large" routerLink="/app">
-      {{ translate.dict().landing.finalCtaButton }}
-    </a>
+  <section class="landing__faq" id="faq">
+    <div class="landing__faq-head" #reveal>
+      <span class="landing__eyebrow">{{ translate.dict().landing.faqEyebrow }} / 07</span>
+      <h2>{{ translate.dict().landing.faqTitle }}</h2>
+      <p>{{ translate.dict().landing.faqSubtitle }}</p>
+    </div>
+
+    <div class="landing__faq-list" #reveal>
+      @for (item of translate.dict().landingFaq; track item.question; let i = $index) {
+        <div class="landing__faq-item" [class.landing__faq-item--open]="openFaqIndex() === i">
+          <button type="button" class="landing__faq-question" (click)="toggleFaq(i)">
+            <span>{{ item.question }}</span>
+            <app-icon name="chevron-down" [size]="16" class="landing__faq-chevron" />
+          </button>
+          @if (openFaqIndex() === i) {
+            <p class="landing__faq-answer">{{ item.answer }}</p>
+          }
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="landing__final-cta-wrap">
+    <div class="landing__final-cta" #reveal>
+      <span class="landing__final-cta-strip" aria-hidden="true"></span>
+      <h2>{{ translate.dict().landing.finalCtaTitle }}</h2>
+      <p>{{ translate.dict().landing.finalCtaSubtitle }}</p>
+      <a class="landing__btn landing__btn--primary landing__btn--large" routerLink="/app">
+        {{ translate.dict().landing.finalCtaButton }}
+        <app-icon name="chevron-right" [size]="15" />
+      </a>
+    </div>
   </section>
 
   <app-public-footer />

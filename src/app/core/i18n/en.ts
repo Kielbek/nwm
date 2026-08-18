@@ -536,12 +536,18 @@ export const en: Dictionary = {
     voicesTitle: 'Voices that sound like real people',
     voicesSubtitle: 'Preview samples below and pick the one that fits your project.',
     voicesCta: 'See all voices',
+    useCasesEyebrow: 'Use cases',
+    useCasesTitle: 'One voice. Endless possibilities.',
+    useCasesSubtitle: 'A good voice does not just read the words — it gives them somewhere to land.',
     testimonialsTitle: 'Trusted by content creators',
     testimonialsSubtitle: 'Real feedback from people who use NWM every day.',
     pricingTitle: 'Plans that scale with your work',
     pricingSubtitle: 'Start for free and scale as you grow — no hidden costs.',
     pricingCta: 'See all plans and pricing',
     pricingMostPopular: 'Most popular',
+    faqEyebrow: 'Good to know',
+    faqTitle: 'Questions, answered',
+    faqSubtitle: "If yours isn't here, send it our way — we're happy to help.",
     finalCtaTitle: 'Ready to hear your text out loud?',
     finalCtaSubtitle: 'Join for free and generate your first recording in under a minute.',
     finalCtaButton: 'Start for free',
@@ -601,6 +607,60 @@ export const en: Dictionary = {
     {
       title: 'Generate and download',
       description: 'Click "Generate speech" and download the finished recording in your chosen format.',
+    },
+  ],
+  landingUseCases: [
+    {
+      icon: 'image-video',
+      title: 'YouTube & TikTok',
+      description: 'Give every hook a voice that earns the pause on scroll.',
+    },
+    {
+      icon: 'book',
+      title: 'Audiobooks & e-learning',
+      description: 'Turn long-form content into listening that pulls people in from the first line.',
+    },
+    {
+      icon: 'music',
+      title: 'Podcasts & voiceover',
+      description: 'Record intros, inserts, and full episodes without a studio or a microphone.',
+    },
+    {
+      icon: 'briefcase',
+      title: 'Business & training',
+      description: 'Bring product, training, and customer-service materials to life with a human voice.',
+    },
+  ],
+  landingFaq: [
+    {
+      question: 'What is AI voice generation?',
+      answer:
+        'AI voice generation turns written text into natural-sounding speech using neural audio models. NWM is tuned for natural pacing, pronunciation, and the small details that make a voice feel present.',
+    },
+    {
+      question: 'What languages are supported?',
+      answer:
+        'NWM supports Polish as its primary language and lets you override the spoken language for select multilingual content — the model adapts pronunciation to whichever language you choose.',
+    },
+    {
+      question: 'Can I use the generated audio commercially?',
+      answer:
+        'Yes, paid plans let you use generated recordings commercially — in videos, ads, products, or client work. See each plan for the exact terms.',
+    },
+    {
+      question: 'Is there a free plan?',
+      answer:
+        'Yes — the Free plan gives you 10,000 characters a month and access to the basic voices, no credit card and no time limit.',
+    },
+    {
+      question: 'What formats can I download?',
+      answer:
+        'You can export recordings as MP3 (128 or 192 kbps), WAV, or OGG — pick the format directly in the editor before generating.',
+    },
+    {
+      question: 'Do you offer a public API?',
+      answer:
+        'NWM currently runs as a web app — a public API for integrating with your own products is on our roadmap.',
     },
   ],
   pricingPage: {
