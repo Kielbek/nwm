@@ -1,21 +1,29 @@
 @if (collapsed()) {
-  <button
-    type="button"
-    class="player-mini"
-    [attr.aria-label]="translate.dict().player.expand"
-    (click)="toggleCollapsed()"
-  >
-    <span class="player-mini__knob">
-      @if (isConnecting()) {
+  <div class="player-mini">
+    <button
+      type="button"
+      class="player-mini__knob"
+      [disabled]="!hasPlayableAudio() && !isGenerating()"
+      [attr.aria-label]="isPlaying() ? translate.dict().player.pause : translate.dict().player.play"
+      (click)="togglePlay()"
+    >
+      @if (isConnecting() || isBuffering()) {
         <span class="player__spinner"></span>
       } @else {
         <app-icon [name]="isPlaying() ? 'pause' : 'play'" [size]="12" />
       }
-    </span>
-    <span class="player-mini__track">
-      <span class="player-mini__fill" [style.width.%]="miniProgressPercent()"></span>
-    </span>
-  </button>
+    </button>
+    <button
+      type="button"
+      class="player-mini__body"
+      [attr.aria-label]="translate.dict().player.expand"
+      (click)="toggleCollapsed()"
+    >
+      <span class="player-mini__track">
+        <span class="player-mini__fill" [style.width.%]="miniProgressPercent()"></span>
+      </span>
+    </button>
+  </div>
 } @else {
   <div class="player">
     <div class="player__info">

@@ -233,9 +233,19 @@
   border-top-color: var(--bg-surface);
 }
 
+// Same problem in the mini pill's knob — it's always solid white
+// regardless of theme, so the default white-on-transparent spinner is
+// invisible on it without this override.
+.player-mini__knob .player__spinner {
+  border-color: rgb(0 0 0 / 0.25);
+  border-top-color: #111;
+}
+
 // Floating pill shown instead of the full bar while collapsed — deliberately
-// minimal (no title/controls, just a play/pause + progress indicator) so
-// tapping it reads as "reopen the player" rather than another control surface.
+// minimal (no title, just a play/pause knob + progress indicator). Two
+// separate buttons rather than one: the knob toggles play/pause, the rest
+// of the pill (the track) reopens the full player — each needs its own hit
+// target rather than one click doing double duty.
 .player-mini {
   position: absolute;
   left: 50%;
@@ -246,13 +256,12 @@
   gap: 10px;
   width: 220px;
   padding: 6px 14px 6px 6px;
-  border: none;
   border-radius: 999px;
   background: rgb(20 20 20 / 0.6);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 8px 24px -8px rgb(0 0 0 / 0.4);
-  cursor: pointer;
+  transition: background-color 0.15s ease;
 
   &:hover {
     background: rgb(20 20 20 / 0.72);
@@ -265,18 +274,34 @@
     flex-shrink: 0;
     width: 26px;
     height: 26px;
+    border: none;
     border-radius: 50%;
     background: #fff;
     color: #111;
+    cursor: pointer;
 
     app-icon {
       transform: translateX(1px);
     }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__body {
+    flex: 1;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
   }
 
   &__track {
     position: relative;
-    flex: 1;
+    display: block;
+    width: 100%;
     height: 3px;
     border-radius: 999px;
     background: rgb(255 255 255 / 0.25);
