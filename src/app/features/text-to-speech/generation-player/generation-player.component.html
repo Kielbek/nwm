@@ -34,17 +34,15 @@
 
     <div class="player__center">
       @if (isGenerating()) {
-        @if (!isConnecting()) {
-          <div class="player__generating">
-            <span class="player__generating-label">{{ generationProgressLabel() }}</span>
-            <div class="player__track player__track--slim">
-              <div
-                class="player__track-fill player__track-fill--generating"
-                [style.width.%]="generationProgressPercent()"
-              ></div>
-            </div>
+        <div class="player__generating">
+          <span class="player__generating-label">{{ generationProgressLabel() }}</span>
+          <div class="player__track player__track--slim">
+            <div
+              class="player__track-fill player__track-fill--generating"
+              [style.width.%]="generationProgressPercent()"
+            ></div>
           </div>
-        }
+        </div>
       } @else {
         <div class="player__transport">
           <button

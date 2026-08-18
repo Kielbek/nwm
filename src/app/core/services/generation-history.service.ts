@@ -54,6 +54,12 @@ const PAGE_SIZE = 20;
 // entries in memory — real pagination (loadMore) is what actually lets you
 // reach older history beyond this, one page at a time.
 const MAX_LOADED_ENTRIES = 500;
+// While waiting for the very first chunk (total step count still unknown —
+// the whole wait, for a single-chunk job), the progress bar eases toward
+// this cap instead of sitting at a static 0%; real data always overrides it
+// the instant it arrives. Decay controls how quickly it approaches the cap.
+const CONNECTING_CREEP_CAP = 92;
+const CONNECTING_CREEP_DECAY_MS = 3500;
 
 /**
  * Tracks generations backed by the real GenerationJob rows on the server
@@ -173,15 +179,35 @@ export class GenerationHistoryService {
       return null;
     }
     const timeline = this.progressTimelines.get(entry.id);
-    if (!timeline || timeline.length < 2) {
+    if (!timeline || timeline.length === 0) {
       return real;
     }
     this.clockTick(); // subscribe so this recomputes on every tick
 
+    if (timeline.length === 1) {
+      // Still waiting on the very first chunk, so the total step count
+      // (and therefore any real percentage) is unknown — including for
+      // single-chunk jobs, where this is the *entire* wait. Ease a
+      // fake-but-honest number up towards a cap instead of sitting at a
+      // static 0 the whole time; real data takes over instantly once the
+      // first chunk actually lands.
+      const start = timeline[0];
+      const elapsedMs = Date.now() - start.atMs;
+      const creep =
+        CONNECTING_CREEP_CAP * (1 - Math.exp(-elapsedMs / CONNECTING_CREEP_DECAY_MS));
+      return Math.max(real, Math.round(creep));
+    }
+
+    const last = timeline[timeline.length - 1];
+    if (last.percent >= 100) {
+      // The only remaining chunk just landed — nothing left to project,
+      // `real` already reflects it (status flips to done momentarily).
+      return real;
+    }
+
     // Pace the next step using how long the previous one actually took —
     // real chunk-synthesis time varies a lot, but "about as long as the
     // last chunk" is a much better guess than a fixed constant.
-    const last = timeline[timeline.length - 1];
     const prev = timeline[timeline.length - 2];
     const stepDurationMs = Math.max(last.atMs - prev.atMs, 1);
     const stepSize = Math.max(last.percent - prev.percent, 0);

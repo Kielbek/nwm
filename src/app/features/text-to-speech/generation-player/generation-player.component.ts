@@ -139,6 +139,11 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
 
   generationProgressLabel(): string {
     const total = this.entry.chunks[0]?.total ?? 0;
+    if (!total) {
+      // Waiting on the first chunk — the step count isn't known yet, so
+      // there's nothing meaningful to put a "x/y" fraction on.
+      return this.translate.dict().player.generating;
+    }
     return `${this.translate.dict().player.generating} — ${this.entry.chunks.length}/${total}`;
   }
 
