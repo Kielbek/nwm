@@ -14,7 +14,6 @@ import { AuthService } from '../../core/services/auth.service';
 import { UpgradeModalService } from '../../core/services/upgrade-modal.service';
 import { SeoService } from '../../core/services/seo.service';
 import { OutputFormat } from '../../core/models/tts.models';
-import { generationProgressPercent } from '../../core/utils/generation-progress';
 
 const MAX_CHARACTERS = 5000;
 const RING_RADIUS = 9;
@@ -94,7 +93,7 @@ export class TextToSpeechComponent {
     if (!entry) {
       return null;
     }
-    return generationProgressPercent(entry.status, entry.chunks);
+    return this.history.smoothedProgressPercent(entry);
   });
 
   readonly filteredVoices = computed(() => {

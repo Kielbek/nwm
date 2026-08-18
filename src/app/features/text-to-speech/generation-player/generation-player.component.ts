@@ -134,11 +134,7 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   }
 
   generationProgressPercent(): number {
-    const total = this.entry.chunks[0]?.total ?? 0;
-    if (!total) {
-      return 0;
-    }
-    return Math.min(100, Math.round((this.entry.chunks.length / total) * 100));
+    return this.history.smoothedProgressPercent(this.entry) ?? 0;
   }
 
   generationProgressLabel(): string {

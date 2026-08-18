@@ -9,7 +9,7 @@ import { TranslateService } from '../../core/services/translate.service';
 import { HistoryDetailModalService } from '../../core/services/history-detail-modal.service';
 import { SeoService } from '../../core/services/seo.service';
 import { formatRelativeTime } from '../../core/utils/relative-time';
-import { generationProgressPercent, isGenerating } from '../../core/utils/generation-progress';
+import { isGenerating } from '../../core/utils/generation-progress';
 
 const SNIPPET_LENGTH = 220;
 
@@ -83,6 +83,6 @@ export class HistoryPageComponent {
   }
 
   progressPercent(entry: GenerationEntry): number | null {
-    return generationProgressPercent(entry.status, entry.chunks);
+    return this.history.smoothedProgressPercent(entry);
   }
 }

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { JobChunk, JobResponse, JobStatus, OutputFormat, TtsSettings } from '../models/tts.models';
 import { TranslateService } from './translate.service';
 import { VoiceLibraryService } from './voice-library.service';
+import { generationProgressPercent, isGenerating } from '../utils/generation-progress';
 
 export type GenerationFeedback = 'up' | 'down' | null;
 
@@ -87,6 +88,19 @@ export class GenerationHistoryService {
   readonly hasMore = signal(true);
   private nextPage = 0;
 
+  // --- Smoothed progress ------------------------------------------------
+  // Real progress only advances in discrete jumps (one step per finished
+  // chunk), which reads as "stuck, then a sudden jump" for multi-chunk
+  // generations. To make it feel alive without lying about completion, we
+  // track when each real milestone landed and — while waiting for the next
+  // one — extrapolate a fake-but-honest position between them, paced by how
+  // long the *previous* step actually took. `clockTick` is bumped on an
+  // interval purely so `smoothedProgressPercent` (read from a template) is
+  // re-evaluated between real data changes.
+  private readonly progressTimelines = new Map<string, { percent: number; atMs: number }[]>();
+  private readonly clockTick = signal(0);
+  private tickTimer: ReturnType<typeof setInterval> | null = null;
+
   constructor(
     private readonly http: HttpClient,
     private readonly translate: TranslateService,
@@ -124,6 +138,17 @@ export class GenerationHistoryService {
           this.nextPage += 1;
           this.hasMore.set(!page.last && next.length < MAX_LOADED_ENTRIES);
           this.loadingMore.set(false);
+
+          // A page can land mid-generation (e.g. a refresh) — seed a
+          // starting milestone for those so smoothing has something to
+          // extrapolate from once their next chunk lands.
+          for (const entry of mapped) {
+            if (isGenerating(entry.status) && !this.progressTimelines.has(entry.id)) {
+              const real = generationProgressPercent(entry.status, entry.chunks);
+              this.progressTimelines.set(entry.id, []);
+              this.recordMilestone(entry.id, real ?? 0);
+            }
+          }
         },
         error: () => {
           // Not logged in yet, a briefly unreachable backend, or the last
@@ -133,6 +158,64 @@ export class GenerationHistoryService {
           this.loadingMore.set(false);
         },
       });
+  }
+
+  /**
+   * Real progress (chunks.length / total) for `entry`, smoothed so it eases
+   * toward the next real milestone instead of sitting flat and then
+   * jumping. Never reports a value the real data hasn't earned yet — it
+   * only interpolates *up to* the last confirmed milestone plus a
+   * projected step, capped below 100 until the job is actually done.
+   */
+  smoothedProgressPercent(entry: GenerationEntry): number | null {
+    const real = generationProgressPercent(entry.status, entry.chunks);
+    if (real === null) {
+      return null;
+    }
+    const timeline = this.progressTimelines.get(entry.id);
+    if (!timeline || timeline.length < 2) {
+      return real;
+    }
+    this.clockTick(); // subscribe so this recomputes on every tick
+
+    // Pace the next step using how long the previous one actually took —
+    // real chunk-synthesis time varies a lot, but "about as long as the
+    // last chunk" is a much better guess than a fixed constant.
+    const last = timeline[timeline.length - 1];
+    const prev = timeline[timeline.length - 2];
+    const stepDurationMs = Math.max(last.atMs - prev.atMs, 1);
+    const stepSize = Math.max(last.percent - prev.percent, 0);
+    const fraction = Math.min(1, (Date.now() - last.atMs) / stepDurationMs);
+    const projected = last.percent + fraction * stepSize;
+    // Capped below 100 so the bar never claims "done" before the real
+    // status flips — actual completion always comes from `real`, not this.
+    return Math.round(Math.min(projected, 99));
+  }
+
+  private recordMilestone(jobId: string, percent: number): void {
+    const timeline = this.progressTimelines.get(jobId) ?? [];
+    const lastPercent = timeline.length ? timeline[timeline.length - 1].percent : -1;
+    if (percent === lastPercent) {
+      return;
+    }
+    timeline.push({ percent, atMs: Date.now() });
+    this.progressTimelines.set(jobId, timeline);
+    this.ensureTicking();
+  }
+
+  private ensureTicking(): void {
+    if (this.tickTimer) {
+      return;
+    }
+    this.tickTimer = setInterval(() => this.clockTick.update((n) => n + 1), 300);
+  }
+
+  private stopTickingIfIdle(): void {
+    const stillGenerating = this.entries().some((entry) => isGenerating(entry.status));
+    if (!stillGenerating && this.tickTimer) {
+      clearInterval(this.tickTimer);
+      this.tickTimer = null;
+    }
   }
 
   /** Called right after POST /api/tts/synthesize returns its initial (PENDING) job. */
@@ -157,6 +240,8 @@ export class GenerationHistoryService {
     };
     this.entries.set([entry, ...this.entries()].slice(0, MAX_LOADED_ENTRIES));
     this.activeEntryId.set(entry.id);
+    this.progressTimelines.set(entry.id, []);
+    this.recordMilestone(entry.id, 0);
     return entry;
   }
 
@@ -167,7 +252,12 @@ export class GenerationHistoryService {
         return entry;
       }
       const chunks = [...entry.chunks, chunk].sort((a, b) => a.index - b.index);
-      return { ...entry, chunks, status: entry.status === 'PENDING' ? 'PROCESSING' : entry.status };
+      const status: JobStatus = entry.status === 'PENDING' ? 'PROCESSING' : entry.status;
+      const real = generationProgressPercent(status, chunks);
+      if (real !== null) {
+        this.recordMilestone(jobId, real);
+      }
+      return { ...entry, chunks, status };
     });
   }
 
@@ -181,6 +271,10 @@ export class GenerationHistoryService {
       downloadUrl: job.downloadUrl,
       errorMessage: job.errorMessage,
     }));
+    if (!isGenerating(job.status)) {
+      this.progressTimelines.delete(job.id);
+      this.stopTickingIfIdle();
+    }
   }
 
   setFeedback(id: string, feedback: GenerationFeedback): void {
@@ -195,11 +289,15 @@ export class GenerationHistoryService {
     if (this.activeEntryId() === id) {
       this.activeEntryId.set(null);
     }
+    this.progressTimelines.delete(id);
+    this.stopTickingIfIdle();
   }
 
   clear(): void {
     this.entries.set([]);
     this.activeEntryId.set(null);
+    this.progressTimelines.clear();
+    this.stopTickingIfIdle();
   }
 
   /** Loads the entry's text + voice back into the editor for a fresh generation. */
