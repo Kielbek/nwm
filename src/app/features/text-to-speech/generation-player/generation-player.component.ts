@@ -15,6 +15,7 @@ import {
   GenerationHistoryService,
 } from '../../../core/services/generation-history.service';
 import { TranslateService } from '../../../core/services/translate.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { formatRelativeTime } from '../../../core/utils/relative-time';
 import { downloadEntry } from '../../../core/utils/download-entry';
 
@@ -64,7 +65,8 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
 
   constructor(
     readonly translate: TranslateService,
-    private readonly history: GenerationHistoryService
+    private readonly history: GenerationHistoryService,
+    private readonly auth: AuthService
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -204,7 +206,7 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   }
 
   download(): void {
-    downloadEntry(this.entry);
+    downloadEntry(this.entry, this.auth.getAccessToken());
   }
 
   private resume(): void {

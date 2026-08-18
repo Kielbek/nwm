@@ -188,6 +188,40 @@ public class TtsJobService {
     streamRegistry.completeAll(jobId, toJobResponse(job));
   }
 
+  /** Proxied download — see S3StorageService.downloadBytes for why this isn't just a presigned URL. */
+  @Transactional(readOnly = true)
+  public AudioDownload downloadAudio(UUID userId, UUID jobId) {
+    GenerationJob job =
+        generationJobRepository
+            .findByIdAndUserId(jobId, userId)
+            .orElseThrow(() -> ApiException.notFound("Job not found"));
+    if (job.getAudioS3Key() == null) {
+      throw ApiException.notFound("Audio not available yet");
+    }
+    byte[] bytes = s3StorageService.downloadBytes(job.getAudioS3Key());
+    String extension = extensionFor(job.getOutputFormat());
+    String filename = job.getVoiceId() + "-" + job.getId() + "." + extension;
+    return new AudioDownload(bytes, filename, contentTypeFor(extension));
+  }
+
+  public record AudioDownload(byte[] bytes, String filename, String contentType) {}
+
+  private static String extensionFor(String outputFormat) {
+    return switch (outputFormat) {
+      case "wav" -> "wav";
+      case "ogg" -> "ogg";
+      default -> "mp3"; // mp3-128, mp3-192
+    };
+  }
+
+  private static String contentTypeFor(String extension) {
+    return switch (extension) {
+      case "wav" -> "audio/wav";
+      case "ogg" -> "audio/ogg";
+      default -> "audio/mpeg";
+    };
+  }
+
   private void refundCharacters(GenerationJob job) {
     User user = job.getUser();
     user.setCharactersUsed(Math.max(0, user.getCharactersUsed() - job.getCharacterCount()));

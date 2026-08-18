@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,22 @@ public class TtsController {
   @GetMapping(path = "/jobs/{id}/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
   public SseEmitter streamJob(@AuthenticationPrincipal SecurityUser principal, @PathVariable UUID id) {
     return ttsJobService.streamJob(principal.getId(), id);
+  }
+
+  /**
+   * Streams the generated audio through this API (not a presigned S3 URL)
+   * so the browser's {@code download} attribute actually triggers a save —
+   * browsers silently ignore it on cross-origin resources, which a
+   * presigned storage URL always is.
+   */
+  @GetMapping("/jobs/{id}/download")
+  public ResponseEntity<byte[]> downloadAudio(
+      @AuthenticationPrincipal SecurityUser principal, @PathVariable UUID id) {
+    TtsJobService.AudioDownload download = ttsJobService.downloadAudio(principal.getId(), id);
+    return ResponseEntity.ok()
+        .contentType(MediaType.parseMediaType(download.contentType()))
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + download.filename() + "\"")
+        .body(download.bytes());
   }
 
   @GetMapping("/history")

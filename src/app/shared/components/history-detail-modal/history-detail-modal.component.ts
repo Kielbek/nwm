@@ -4,6 +4,7 @@ import { IconComponent } from '../icon/icon.component';
 import { HistoryDetailModalService } from '../../../core/services/history-detail-modal.service';
 import { GenerationHistoryService } from '../../../core/services/generation-history.service';
 import { TranslateService } from '../../../core/services/translate.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { formatRelativeTime } from '../../../core/utils/relative-time';
 import { downloadEntry } from '../../../core/utils/download-entry';
 
@@ -33,7 +34,8 @@ export class HistoryDetailModalComponent {
     readonly modal: HistoryDetailModalService,
     readonly history: GenerationHistoryService,
     readonly translate: TranslateService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly auth: AuthService
   ) {}
 
   @HostListener('document:keydown.escape')
@@ -74,7 +76,7 @@ export class HistoryDetailModalComponent {
   download(): void {
     const entry = this.entry();
     if (entry) {
-      downloadEntry(entry);
+      downloadEntry(entry, this.auth.getAccessToken());
     }
   }
 

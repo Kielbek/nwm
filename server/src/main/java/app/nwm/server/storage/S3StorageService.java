@@ -11,6 +11,8 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.core.ResponseBytes;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
 @Service
 public class S3StorageService {
@@ -37,6 +39,21 @@ public class S3StorageService {
             .build();
 
     return s3Presigner.presignGetObject(presignRequest).url();
+  }
+
+  /**
+   * Fetches an object's bytes directly (server-to-server, no CORS
+   * involved) — used to proxy downloads through this API instead of
+   * handing the browser a presigned URL. A presigned URL's {@code
+   * download} attribute is silently ignored by browsers for cross-origin
+   * resources (which the storage endpoint always is, e.g. the
+   * Docker-internal "minio" host), so clicking "download" just opened/
+   * streamed the file in place of actually saving it.
+   */
+  public byte[] downloadBytes(String objectKey) {
+    GetObjectRequest request = GetObjectRequest.builder().bucket(storage.bucket()).key(objectKey).build();
+    ResponseBytes<GetObjectResponse> response = s3Client.getObjectAsBytes(request);
+    return response.asByteArray();
   }
 
   public boolean exists(String objectKey) {
