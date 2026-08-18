@@ -1,6 +1,7 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, effect, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { JobChunk, JobResponse, JobStatus, OutputFormat, TtsSettings } from '../models/tts.models';
+import { AuthService } from './auth.service';
 import { TranslateService } from './translate.service';
 import { VoiceLibraryService } from './voice-library.service';
 import { generationProgressPercent, isGenerating } from '../utils/generation-progress';
@@ -107,12 +108,43 @@ export class GenerationHistoryService {
   private readonly clockTick = signal(0);
   private tickTimer: ReturnType<typeof setInterval> | null = null;
 
+  // This service is a root singleton, so it outlives any single login
+  // session — without this, switching accounts in the same tab (logout,
+  // then log in as someone else) left the previous account's history
+  // sitting in `entries` since nothing ever re-fetched or cleared it.
+  // `undefined` means "not initialized yet"; comparing against it makes
+  // the very first real user (or anonymous state) also count as a change.
+  private lastUserId: string | null | undefined = undefined;
+
   constructor(
     private readonly http: HttpClient,
     private readonly translate: TranslateService,
-    private readonly voiceLibrary: VoiceLibraryService
+    private readonly voiceLibrary: VoiceLibraryService,
+    private readonly auth: AuthService
   ) {
-    this.loadFromServer();
+    effect(() => {
+      const userId = this.auth.currentUser()?.id ?? null;
+      if (userId === this.lastUserId) {
+        return;
+      }
+      this.lastUserId = userId;
+      this.resetForAccountChange(userId !== null);
+    }, { allowSignalWrites: true });
+  }
+
+  /** Drops everything belonging to whoever was previously signed in, then reloads for the new one (if any). */
+  private resetForAccountChange(isAuthenticated: boolean): void {
+    this.entries.set([]);
+    this.activeEntryId.set(null);
+    this.pendingReuse.set(null);
+    this.progressTimelines.clear();
+    this.stopTickingIfIdle();
+    if (isAuthenticated) {
+      this.loadFromServer();
+    } else {
+      this.nextPage = 0;
+      this.hasMore.set(true);
+    }
   }
 
   /** Resets to the first page — e.g. after login, when the previous list (if any) is stale. */
