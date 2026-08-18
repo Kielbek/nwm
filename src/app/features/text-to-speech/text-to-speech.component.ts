@@ -127,12 +127,15 @@ export class TextToSpeechComponent {
     effect(() => seo.setPrivateTitle(this.translate.dict().seo.generatorTitle));
     // Kicked off by TtsService.synthesize() as soon as the backend accepts
     // the job — jumps the player straight to the (still-streaming) entry.
-    effect(() => {
-      const id = this.ttsService.lastStartedEntryId();
-      if (id) {
-        this.lastEntryId.set(id);
-      }
-    });
+    effect(
+      () => {
+        const id = this.ttsService.lastStartedEntryId();
+        if (id) {
+          this.lastEntryId.set(id);
+        }
+      },
+      { allowSignalWrites: true }
+    );
 
     const pending = this.history.consumePendingReuse();
     if (pending) {
