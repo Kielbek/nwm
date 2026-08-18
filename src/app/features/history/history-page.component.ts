@@ -6,6 +6,7 @@ import {
   GenerationHistoryService,
 } from '../../core/services/generation-history.service';
 import { TranslateService } from '../../core/services/translate.service';
+import { HistoryDetailModalService } from '../../core/services/history-detail-modal.service';
 import { SeoService } from '../../core/services/seo.service';
 import { formatRelativeTime } from '../../core/utils/relative-time';
 
@@ -25,6 +26,7 @@ export class HistoryPageComponent {
   constructor(
     readonly history: GenerationHistoryService,
     readonly translate: TranslateService,
+    readonly historyModal: HistoryDetailModalService,
     private readonly router: Router,
     seo: SeoService
   ) {
@@ -35,9 +37,14 @@ export class HistoryPageComponent {
     return text.length > SNIPPET_LENGTH ? `${text.slice(0, SNIPPET_LENGTH)}…` : text;
   }
 
+  openDetail(entry: GenerationEntry): void {
+    this.historyModal.open(entry.id);
+  }
+
   replay(entry: GenerationEntry): void {
+    // No navigation needed — the player is a persistent bar visible on
+    // every /app/* page, so playback starts right where you are.
     this.history.replay(entry);
-    this.router.navigateByUrl('/app');
   }
 
   reuse(entry: GenerationEntry): void {

@@ -102,6 +102,7 @@ export interface Dictionary {
     pause: string;
     generating: string;
     connecting: string;
+    close: string;
   };
   voiceDropdown: {
     searchPlaceholder: string;
@@ -342,6 +343,9 @@ export interface Dictionary {
     confirmClearBody: string;
     confirmClearAction: string;
     confirmCancelAction: string;
+    confirmDeleteBody: string;
+    confirmDeleteAction: string;
+    genericError: string;
     voiceLabel: string;
     modelLabel: string;
     justNow: string;

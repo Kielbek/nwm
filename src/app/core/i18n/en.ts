@@ -49,6 +49,7 @@ export const en: Dictionary = {
     pause: 'Pause',
     generating: 'Generating audio',
     connecting: 'Connecting to the server…',
+    close: 'Close player',
   },
   voiceDropdown: {
     searchPlaceholder: 'Search voices...',
@@ -463,6 +464,9 @@ export const en: Dictionary = {
     confirmClearBody: 'This removes every saved generation stored in this browser.',
     confirmClearAction: 'Yes, clear it',
     confirmCancelAction: 'Cancel',
+    confirmDeleteBody: 'This will remove this recording from your history.',
+    confirmDeleteAction: 'Yes, delete it',
+    genericError: 'Generation failed.',
     voiceLabel: 'Voice',
     modelLabel: 'Model',
     justNow: 'Just now',

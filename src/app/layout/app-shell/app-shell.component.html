@@ -15,9 +15,13 @@
       (toggleAsk)="toggleAsk()"
     />
     <router-outlet></router-outlet>
+    @if (history.activeEntry(); as entry) {
+      <app-generation-player [entry]="entry" (closeRequested)="history.activeEntryId.set(null)" />
+    }
   </div>
   <app-ask-panel [open]="askOpen()" [overlay]="isMobile()" (closeRequested)="closeAsk()" />
   <app-command-palette />
   <app-invite-modal />
   <app-upgrade-modal />
+  <app-history-detail-modal />
 </div>

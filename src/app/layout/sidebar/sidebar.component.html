@@ -47,7 +47,7 @@
         <span class="sidebar__history-date">{{ group.label }}</span>
         @for (entry of group.entries; track entry.id) {
           <div class="sidebar__history-item">
-            <button type="button" class="sidebar__history-main" (click)="reuse(entry)">
+            <button type="button" class="sidebar__history-main" (click)="historyModal.open(entry.id)">
               <span class="sidebar__history-text">{{ snippet(entry.text) }}</span>
               <span class="sidebar__history-time">{{ relativeTime(entry.createdAt) }}</span>
             </button>

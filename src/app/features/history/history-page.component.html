@@ -34,16 +34,18 @@
     <ul class="history__list">
       @for (entry of history.entries(); track entry.id) {
         <li class="history__item">
-          <div class="history__item-head">
-            <span class="history__tag">
-              <app-icon name="voices" [size]="12" />
-              {{ entry.voiceName }}
-            </span>
-            <span class="history__tag">{{ entry.modelName }}</span>
-            <span class="history__time">{{ relativeTime(entry.createdAt) }}</span>
-          </div>
+          <button type="button" class="history__item-open" (click)="openDetail(entry)">
+            <div class="history__item-head">
+              <span class="history__tag">
+                <app-icon name="voices" [size]="12" />
+                {{ entry.voiceName }}
+              </span>
+              <span class="history__tag">{{ entry.modelName }}</span>
+              <span class="history__time">{{ relativeTime(entry.createdAt) }}</span>
+            </div>
 
-          <p class="history__text">{{ snippet(entry.text) }}</p>
+            <p class="history__text">{{ snippet(entry.text) }}</p>
+          </button>
 
           <div class="history__item-foot">
             <span class="history__chars">{{ entry.text.length }} {{ translate.dict().historyPage.characters }}</span>

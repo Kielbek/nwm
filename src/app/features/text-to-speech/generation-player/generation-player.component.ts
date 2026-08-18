@@ -16,18 +16,12 @@ import {
 } from '../../../core/services/generation-history.service';
 import { TranslateService } from '../../../core/services/translate.service';
 import { formatRelativeTime } from '../../../core/utils/relative-time';
+import { downloadEntry } from '../../../core/utils/download-entry';
 
 const AVG_CHARS_PER_SECOND = 14;
 const SKIP_SECONDS = 10;
 const TICK_MS = 200;
 const SHARE_FEEDBACK_MS = 2000;
-
-const EXTENSION_BY_FORMAT: Record<string, string> = {
-  'mp3-128': 'mp3',
-  'mp3-192': 'mp3',
-  wav: 'wav',
-  ogg: 'ogg',
-};
 
 interface PendingSeek {
   index: number;
@@ -53,7 +47,7 @@ interface PendingSeek {
 })
 export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   @Input({ required: true }) entry!: GenerationEntry;
-  @Output() regenerate = new EventEmitter<void>();
+  @Output() closeRequested = new EventEmitter<void>();
 
   readonly isPlaying = signal(false);
   readonly elapsed = signal(0);
@@ -137,6 +131,11 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
     return `${this.translate.dict().player.generating} — ${this.entry.chunks.length}/${total}`;
   }
 
+  close(): void {
+    this.stopPlayback();
+    this.closeRequested.emit();
+  }
+
   togglePlay(): void {
     if (this.isPlaying()) {
       this.pause();
@@ -178,30 +177,7 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   }
 
   download(): void {
-    if (this.entry.downloadUrl) {
-      const extension = EXTENSION_BY_FORMAT[this.entry.outputFormat] ?? 'mp3';
-      const link = document.createElement('a');
-      link.href = this.entry.downloadUrl;
-      link.download = `${this.entry.voiceName.toLowerCase()}-${this.entry.id}.${extension}`;
-      link.click();
-      return;
-    }
-
-    // Audio isn't ready yet (still streaming, or generation failed) — fall
-    // back to downloading the text so the button still does something.
-    const lines = [
-      `${this.entry.voiceName} — ${this.entry.modelName}`,
-      new Date(this.entry.createdAt).toLocaleString(),
-      '',
-      this.entry.text,
-    ];
-    const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${this.entry.voiceName.toLowerCase()}-${this.entry.id}.txt`;
-    link.click();
-    URL.revokeObjectURL(url);
+    downloadEntry(this.entry);
   }
 
   private resume(): void {

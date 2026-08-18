@@ -77,7 +77,7 @@
         {{
           ttsService.isSynthesizing()
             ? translate.dict().editor.generating
-            : lastEntry()
+            : history.activeEntry()
               ? translate.dict().editor.regenerate
               : translate.dict().editor.generate
         }}
@@ -86,10 +86,6 @@
 
     @if (ttsService.lastError()) {
       <p class="tts__error">{{ ttsService.lastError() }}</p>
-    }
-
-    @if (lastEntry(); as entry) {
-      <app-generation-player [entry]="entry" />
     }
   </section>
 

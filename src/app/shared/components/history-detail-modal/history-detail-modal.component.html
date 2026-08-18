@@ -1,0 +1,97 @@
+@if (entry(); as e) {
+  <div class="history-modal">
+    <div class="history-modal__backdrop" (click)="close()"></div>
+    <div class="history-modal__panel" role="dialog" aria-modal="true">
+      <button
+        type="button"
+        class="history-modal__close"
+        [attr.aria-label]="translate.dict().player.close"
+        (click)="close()"
+      >
+        <app-icon name="close" [size]="16" />
+      </button>
+
+      <div class="history-modal__head">
+        <span class="history-modal__tag">
+          <app-icon name="voices" [size]="12" />
+          {{ e.voiceName }}
+        </span>
+        <span class="history-modal__tag">{{ e.modelName }}</span>
+        <span class="history-modal__time">{{ relativeTime(e.createdAt) }}</span>
+      </div>
+
+      <p class="history-modal__text">{{ e.text }}</p>
+
+      @if (e.status === 'FAILED') {
+        <p class="history-modal__error">
+          {{ e.errorMessage || translate.dict().historyPage.genericError }}
+        </p>
+      }
+
+      <div class="history-modal__foot">
+        <span class="history-modal__chars">{{ e.text.length }} {{ translate.dict().historyPage.characters }}</span>
+
+        <div class="history-modal__actions">
+          <button
+            type="button"
+            class="history-modal__btn history-modal__btn--icon"
+            [class.history-modal__btn--active]="e.feedback === 'up'"
+            [attr.aria-label]="translate.dict().player.thumbUp"
+            (click)="setFeedback('up')"
+          >
+            <app-icon name="thumb-up" [size]="13" />
+          </button>
+          <button
+            type="button"
+            class="history-modal__btn history-modal__btn--icon"
+            [class.history-modal__btn--active]="e.feedback === 'down'"
+            [attr.aria-label]="translate.dict().player.thumbDown"
+            (click)="setFeedback('down')"
+          >
+            <app-icon name="thumb-down" [size]="13" />
+          </button>
+          <button type="button" class="history-modal__btn" (click)="download()">
+            <app-icon name="download" [size]="13" />
+            {{ translate.dict().player.download }}
+          </button>
+          <button type="button" class="history-modal__btn" (click)="reuse()">
+            <app-icon name="edit" [size]="13" />
+            {{ translate.dict().historyPage.reuse }}
+          </button>
+          <button
+            type="button"
+            class="history-modal__btn history-modal__btn--primary"
+            [disabled]="!e.chunks.length"
+            (click)="play()"
+          >
+            <app-icon name="play" [size]="13" />
+            {{ translate.dict().historyPage.replay }}
+          </button>
+        </div>
+      </div>
+
+      @if (!deleteConfirmOpen()) {
+        <button type="button" class="history-modal__delete-link" (click)="startDelete()">
+          <app-icon name="trash" [size]="12" />
+          {{ translate.dict().historyPage.delete }}
+        </button>
+      } @else {
+        <div class="history-modal__delete-confirm">
+          <span>{{ translate.dict().historyPage.confirmDeleteBody }}</span>
+          <div class="history-modal__delete-confirm-actions">
+            <button type="button" class="history-modal__btn" (click)="cancelDelete()">
+              {{ translate.dict().historyPage.confirmCancelAction }}
+            </button>
+            <button
+              type="button"
+              class="history-modal__btn history-modal__btn--danger"
+              (click)="confirmDelete()"
+            >
+              {{ translate.dict().historyPage.confirmDeleteAction }}
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+}

@@ -4,15 +4,11 @@ import { Router } from '@angular/router';
 import { IconComponent, IconName } from '../../shared/components/icon/icon.component';
 import { SliderComponent } from '../../shared/components/slider/slider.component';
 import { DropdownComponent } from '../../shared/components/dropdown/dropdown.component';
-import { GenerationPlayerComponent } from './generation-player/generation-player.component';
 import { TtsService } from '../../core/services/tts.service';
 import { TranslateService } from '../../core/services/translate.service';
 import { VoiceLibraryService } from '../../core/services/voice-library.service';
 import { VoicePreviewService, PreviewableVoice } from '../../core/services/voice-preview.service';
-import {
-  GenerationEntry,
-  GenerationHistoryService,
-} from '../../core/services/generation-history.service';
+import { GenerationHistoryService } from '../../core/services/generation-history.service';
 import { AccountService } from '../../core/services/account.service';
 import { AuthService } from '../../core/services/auth.service';
 import { UpgradeModalService } from '../../core/services/upgrade-modal.service';
@@ -47,7 +43,7 @@ const STARTER_ICONS: IconName[] = [
   selector: 'app-text-to-speech',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, IconComponent, SliderComponent, DropdownComponent, GenerationPlayerComponent],
+  imports: [FormsModule, IconComponent, SliderComponent, DropdownComponent],
   templateUrl: './text-to-speech.component.html',
   styleUrl: './text-to-speech.component.scss',
 })
@@ -78,10 +74,6 @@ export class TextToSpeechComponent {
   readonly characterCount = computed(() => this.text().length);
   readonly maxCharacters = MAX_CHARACTERS;
 
-  readonly lastEntryId = signal<string | null>(null);
-  readonly lastEntry = computed<GenerationEntry | null>(
-    () => this.history.entries().find((entry) => entry.id === this.lastEntryId()) ?? null
-  );
   readonly fileImportError = signal<string | null>(null);
 
   readonly ringCircumference = RING_CIRCUMFERENCE;
@@ -125,38 +117,18 @@ export class TextToSpeechComponent {
     seo: SeoService
   ) {
     effect(() => seo.setPrivateTitle(this.translate.dict().seo.generatorTitle));
-    // Kicked off by TtsService.synthesize() as soon as the backend accepts
-    // the job — jumps the player straight to the (still-streaming) entry.
-    effect(
-      () => {
-        const id = this.ttsService.lastStartedEntryId();
-        if (id) {
-          this.lastEntryId.set(id);
-        }
-      },
-      { allowSignalWrites: true }
-    );
 
     // Reactive, not just read-once in the constructor: the sidebar's
-    // "reuse"/"replay" buttons navigate to '/app', but if you're already
-    // there (the usual case — the sidebar is visible on this very page)
-    // Angular doesn't re-create the component for a same-route navigation,
-    // so a constructor-only check would silently do nothing.
+    // "reuse" button navigates to '/app', but if you're already there (the
+    // usual case — the sidebar is visible on this very page) Angular
+    // doesn't re-create the component for a same-route navigation, so a
+    // constructor-only check would silently do nothing.
     effect(
       () => {
         const pending = this.history.consumePendingReuse();
         if (pending) {
           this.text.set(pending.text);
           this.voiceLibrary.selectVoice(pending.voiceId);
-        }
-      },
-      { allowSignalWrites: true }
-    );
-    effect(
-      () => {
-        const id = this.history.consumePendingPlaybackId();
-        if (id) {
-          this.lastEntryId.set(id);
         }
       },
       { allowSignalWrites: true }
@@ -231,9 +203,9 @@ export class TextToSpeechComponent {
       settings,
     };
 
-    // lastEntryId is set reactively (see the effect in the constructor) as
-    // soon as the backend accepts the job — synthesize() registers it with
-    // GenerationHistoryService itself once the POST resolves.
+    // synthesize() registers the job with GenerationHistoryService (and
+    // makes it the active entry for the persistent player) as soon as the
+    // POST resolves — no local player state to manage here.
     this.ttsService.synthesize({ text: this.text(), settings }, meta).subscribe((result) => {
       if (result) {
         // Character usage only actually changes server-side on a real

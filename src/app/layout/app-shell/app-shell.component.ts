@@ -7,6 +7,9 @@ import { AskPanelComponent } from '../ask-panel/ask-panel.component';
 import { CommandPaletteComponent } from '../../shared/components/command-palette/command-palette.component';
 import { InviteModalComponent } from '../../shared/components/invite-modal/invite-modal.component';
 import { UpgradeModalComponent } from '../../shared/components/upgrade-modal/upgrade-modal.component';
+import { GenerationPlayerComponent } from '../../features/text-to-speech/generation-player/generation-player.component';
+import { HistoryDetailModalComponent } from '../../shared/components/history-detail-modal/history-detail-modal.component';
+import { GenerationHistoryService } from '../../core/services/generation-history.service';
 import { SeoService } from '../../core/services/seo.service';
 
 const MOBILE_BREAKPOINT = 780;
@@ -22,6 +25,8 @@ const MOBILE_BREAKPOINT = 780;
     CommandPaletteComponent,
     InviteModalComponent,
     UpgradeModalComponent,
+    GenerationPlayerComponent,
+    HistoryDetailModalComponent,
   ],
   templateUrl: './app-shell.component.html',
   styleUrl: './app-shell.component.scss',
@@ -31,7 +36,7 @@ export class AppShellComponent {
   readonly sidebarOpen = signal(!this.matchesMobile());
   readonly askOpen = signal(false);
 
-  constructor(router: Router, seo: SeoService) {
+  constructor(router: Router, seo: SeoService, readonly history: GenerationHistoryService) {
     seo.removeJsonLd('ld-organization');
     seo.removeJsonLd('ld-faq');
     seo.setNoIndex();

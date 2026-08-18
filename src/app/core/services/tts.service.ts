@@ -32,8 +32,6 @@ export class TtsService {
 
   readonly isSynthesizing = signal(false);
   readonly lastError = signal<string | null>(null);
-  /** Set as soon as POST /synthesize resolves, so callers can jump straight to the live entry. */
-  readonly lastStartedEntryId = signal<string | null>(null);
 
   constructor(
     private readonly http: HttpClient,
@@ -61,10 +59,9 @@ export class TtsService {
     };
 
     return this.http.post<JobResponse>(this.synthesizeUrl, body).pipe(
-      tap((job) => {
-        this.history.startEntry(job, meta);
-        this.lastStartedEntryId.set(job.id);
-      }),
+      // startEntry() both registers the job in history and makes it the
+      // active entry for the persistent player, mounted once in AppShellComponent.
+      tap((job) => this.history.startEntry(job, meta)),
       switchMap((job) => this.trackJob(job.id)),
       switchMap((job) =>
         job.status === 'FAILED'

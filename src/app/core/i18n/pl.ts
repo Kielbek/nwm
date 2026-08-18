@@ -50,6 +50,7 @@ export const pl: Dictionary = {
     pause: 'Wstrzymaj',
     generating: 'Generowanie dźwięku',
     connecting: 'Łączenie z serwerem…',
+    close: 'Zamknij odtwarzacz',
   },
   voiceDropdown: {
     searchPlaceholder: 'Szukaj głosu...',
@@ -466,6 +467,9 @@ export const pl: Dictionary = {
     confirmClearBody: 'Ta operacja usunie wszystkie zapisane generowania z tej przeglądarki.',
     confirmClearAction: 'Tak, wyczyść',
     confirmCancelAction: 'Anuluj',
+    confirmDeleteBody: 'Ta operacja usunie to nagranie z historii.',
+    confirmDeleteAction: 'Tak, usuń',
+    genericError: 'Generowanie nie powiodło się.',
     voiceLabel: 'Głos',
     modelLabel: 'Model',
     justNow: 'Przed chwilą',

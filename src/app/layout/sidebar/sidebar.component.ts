@@ -6,6 +6,7 @@ import {
   GenerationEntry,
   GenerationHistoryService,
 } from '../../core/services/generation-history.service';
+import { HistoryDetailModalService } from '../../core/services/history-detail-modal.service';
 import { formatRelativeTime } from '../../core/utils/relative-time';
 
 const RECENT_ENTRIES_LIMIT = 6;
@@ -61,6 +62,7 @@ export class SidebarComponent {
   constructor(
     readonly translate: TranslateService,
     readonly history: GenerationHistoryService,
+    readonly historyModal: HistoryDetailModalService,
     private readonly router: Router
   ) {}
 
@@ -73,8 +75,9 @@ export class SidebarComponent {
   }
 
   replay(entry: GenerationEntry): void {
+    // No navigation needed — the player is a persistent bar visible on
+    // every /app/* page, so playback starts right where you are.
     this.history.replay(entry);
-    this.router.navigateByUrl('/app');
   }
 
   reuse(entry: GenerationEntry): void {

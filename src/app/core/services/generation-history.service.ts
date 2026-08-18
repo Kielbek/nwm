@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, computed, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { JobChunk, JobResponse, JobStatus, OutputFormat, TtsSettings } from '../models/tts.models';
 import { TranslateService } from './translate.service';
@@ -56,12 +56,21 @@ const MAX_ENTRIES = 50;
  * `startEntry`/`applyChunk`/`applyJobUpdate` are called by TtsService as a
  * generation progresses, so the sidebar/history list and the player update
  * live while a job is still streaming in.
+ *
+ * `activeEntryId` is the single source of truth for which entry the
+ * persistent player (mounted once in AppShellComponent) shows — starting a
+ * new generation or calling `replay()` on a history entry both just point
+ * this at a different id, no navigation required, since the player is
+ * visible on every /app/* page.
  */
 @Injectable({ providedIn: 'root' })
 export class GenerationHistoryService {
   readonly entries = signal<GenerationEntry[]>([]);
   readonly pendingReuse = signal<PendingReuse | null>(null);
-  readonly pendingPlaybackId = signal<string | null>(null);
+  readonly activeEntryId = signal<string | null>(null);
+  readonly activeEntry = computed(
+    () => this.entries().find((entry) => entry.id === this.activeEntryId()) ?? null
+  );
 
   constructor(
     private readonly http: HttpClient,
@@ -104,6 +113,7 @@ export class GenerationHistoryService {
       errorMessage: null,
     };
     this.entries.set([entry, ...this.entries()].slice(0, MAX_ENTRIES));
+    this.activeEntryId.set(entry.id);
     return entry;
   }
 
@@ -139,10 +149,14 @@ export class GenerationHistoryService {
 
   remove(id: string): void {
     this.entries.set(this.entries().filter((entry) => entry.id !== id));
+    if (this.activeEntryId() === id) {
+      this.activeEntryId.set(null);
+    }
   }
 
   clear(): void {
     this.entries.set([]);
+    this.activeEntryId.set(null);
   }
 
   /** Loads the entry's text + voice back into the editor for a fresh generation. */
@@ -150,9 +164,9 @@ export class GenerationHistoryService {
     this.pendingReuse.set({ text: entry.text, voiceId: entry.voiceId });
   }
 
-  /** Opens the entry's already-generated audio in the player — no re-synthesis. */
+  /** Opens the entry's already-generated audio in the persistent player — no re-synthesis. */
   replay(entry: GenerationEntry): void {
-    this.pendingPlaybackId.set(entry.id);
+    this.activeEntryId.set(entry.id);
   }
 
   consumePendingReuse(): PendingReuse | null {
@@ -161,14 +175,6 @@ export class GenerationHistoryService {
       this.pendingReuse.set(null);
     }
     return pending;
-  }
-
-  consumePendingPlaybackId(): string | null {
-    const id = this.pendingPlaybackId();
-    if (id) {
-      this.pendingPlaybackId.set(null);
-    }
-    return id;
   }
 
   private updateEntry(id: string, update: (entry: GenerationEntry) => GenerationEntry): void {
