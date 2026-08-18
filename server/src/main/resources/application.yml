@@ -115,6 +115,13 @@ app:
     tts-dlq: tts.generate.dlq
   storage:
     endpoint: ${S3_ENDPOINT:http://localhost:9000}
+    # Used only for presigning download URLs handed to the browser — must be
+    # reachable from the user's machine, unlike `endpoint` above (which the
+    # app/worker use internally, e.g. the Docker-network hostname "minio").
+    # Defaults to `endpoint` for a single-endpoint deployment (real AWS S3,
+    # or dev without Docker); override when they genuinely differ, as in
+    # docker-compose (S3_PUBLIC_ENDPOINT=http://localhost:${S3_HOST_PORT}).
+    public-endpoint: ${S3_PUBLIC_ENDPOINT:${S3_ENDPOINT:http://localhost:9000}}
     region: ${S3_REGION:us-east-1}
     bucket: ${S3_BUCKET:nwm-audio}
     access-key: ${S3_ACCESS_KEY:nwm}

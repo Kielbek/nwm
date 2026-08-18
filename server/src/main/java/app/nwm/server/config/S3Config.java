@@ -43,8 +43,14 @@ public class S3Config {
   @Bean
   public S3Presigner s3Presigner(AppProperties properties) {
     AppProperties.Storage storage = properties.storage();
+    // Presigned URLs are handed straight to the browser, so they must point
+    // at an endpoint the browser can actually reach — publicEndpoint, not
+    // the (possibly Docker-internal, e.g. "minio") endpoint the app/worker
+    // use for their own S3 calls. The signature itself is still computed
+    // against the real bucket/region/credentials, so this only changes the
+    // host in the URL, not what it's allowed to access.
     return S3Presigner.builder()
-        .endpointOverride(URI.create(storage.endpoint()))
+        .endpointOverride(URI.create(storage.publicEndpoint()))
         .region(Region.of(storage.region()))
         .credentialsProvider(credentialsProvider(storage))
         .serviceConfiguration(

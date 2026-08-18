@@ -92,6 +92,10 @@ services:
       RABBITMQ_USERNAME: ${RABBITMQ_USERNAME:-nwm}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:-nwm}
       S3_ENDPOINT: http://minio:9000
+      # The internal Docker-network endpoint above ("minio") only resolves
+      # from inside this compose network — the browser can't reach it, so
+      # presigned download URLs need a separate, host-reachable endpoint.
+      S3_PUBLIC_ENDPOINT: http://localhost:${S3_HOST_PORT:-9000}
       S3_REGION: ${S3_REGION:-us-east-1}
       S3_BUCKET: ${S3_BUCKET:-nwm-audio}
       S3_ACCESS_KEY: ${S3_ACCESS_KEY:-nwm}
