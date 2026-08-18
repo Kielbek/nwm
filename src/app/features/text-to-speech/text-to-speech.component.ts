@@ -137,15 +137,30 @@ export class TextToSpeechComponent {
       { allowSignalWrites: true }
     );
 
-    const pending = this.history.consumePendingReuse();
-    if (pending) {
-      this.text.set(pending.text);
-      this.voiceLibrary.selectVoice(pending.voiceId);
-    }
-    const pendingPlaybackId = this.history.consumePendingPlaybackId();
-    if (pendingPlaybackId) {
-      this.lastEntryId.set(pendingPlaybackId);
-    }
+    // Reactive, not just read-once in the constructor: the sidebar's
+    // "reuse"/"replay" buttons navigate to '/app', but if you're already
+    // there (the usual case — the sidebar is visible on this very page)
+    // Angular doesn't re-create the component for a same-route navigation,
+    // so a constructor-only check would silently do nothing.
+    effect(
+      () => {
+        const pending = this.history.consumePendingReuse();
+        if (pending) {
+          this.text.set(pending.text);
+          this.voiceLibrary.selectVoice(pending.voiceId);
+        }
+      },
+      { allowSignalWrites: true }
+    );
+    effect(
+      () => {
+        const id = this.history.consumePendingPlaybackId();
+        if (id) {
+          this.lastEntryId.set(id);
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   applyStarterPrompt(prompt: { text: string }): void {

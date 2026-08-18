@@ -117,6 +117,26 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
     return this.entry.chunks.length > 0;
   }
 
+  isGenerating(): boolean {
+    return this.entry.status === 'PENDING' || this.entry.status === 'PROCESSING';
+  }
+
+  generationProgressPercent(): number {
+    const total = this.entry.chunks[0]?.total ?? 0;
+    if (!total) {
+      return 0;
+    }
+    return Math.min(100, Math.round((this.entry.chunks.length / total) * 100));
+  }
+
+  generationProgressLabel(): string {
+    const total = this.entry.chunks[0]?.total;
+    if (!total) {
+      return this.translate.dict().player.connecting;
+    }
+    return `${this.translate.dict().player.generating} — ${this.entry.chunks.length}/${total}`;
+  }
+
   togglePlay(): void {
     if (this.isPlaying()) {
       this.pause();

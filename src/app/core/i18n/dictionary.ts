@@ -100,6 +100,8 @@ export interface Dictionary {
     skipForward: string;
     play: string;
     pause: string;
+    generating: string;
+    connecting: string;
   };
   voiceDropdown: {
     searchPlaceholder: string;

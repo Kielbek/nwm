@@ -179,6 +179,10 @@
     border-radius: 999px;
     background: var(--border);
     overflow: hidden;
+
+    &--slim {
+      height: 3px;
+    }
   }
 
   &__track-fill {
@@ -187,6 +191,23 @@
     border-radius: 999px;
     background: var(--accent);
     transition: width 0.15s linear;
+
+    &--generating {
+      transition: width 0.4s ease;
+    }
+  }
+
+  &__generating {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__generating-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
   }
 }
 
