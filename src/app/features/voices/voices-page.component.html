@@ -89,7 +89,7 @@
           [class.voices__card--active]="voice.id === voiceLibrary.selectedVoiceId()"
         >
           <div class="voices__card-top">
-            <span class="voices__card-avatar" [style.background]="voice.avatarColor">
+            <span class="voices__card-avatar" [style.background]="avatarGradient(voice.avatarColor)">
               {{ initials(voice.name) }}
             </span>
             <div class="voices__card-top-right">

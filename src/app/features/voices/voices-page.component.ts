@@ -17,6 +17,7 @@ import {
 } from '../../core/services/voice-library.service';
 import { VoicePreviewService, PreviewableVoice } from '../../core/services/voice-preview.service';
 import { SeoService } from '../../core/services/seo.service';
+import { voiceAvatarGradient } from '../../core/utils/voice-avatar';
 
 type GenderFilter = 'all' | VoiceGender;
 type ToneFilter = 'all' | VoiceTone;
@@ -100,6 +101,10 @@ export class VoicesPageComponent implements OnDestroy {
 
   initials(name: string): string {
     return name.slice(0, 1).toUpperCase();
+  }
+
+  avatarGradient(hex: string): string {
+    return voiceAvatarGradient(hex);
   }
 
   ngOnDestroy(): void {

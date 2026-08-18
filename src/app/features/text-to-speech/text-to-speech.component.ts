@@ -14,6 +14,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { UpgradeModalService } from '../../core/services/upgrade-modal.service';
 import { SeoService } from '../../core/services/seo.service';
 import { OutputFormat } from '../../core/models/tts.models';
+import { voiceAvatarGradient, voiceInitial } from '../../core/utils/voice-avatar';
 
 const MAX_CHARACTERS = 5000;
 const RING_RADIUS = 9;
@@ -156,6 +157,14 @@ export class TextToSpeechComponent {
     this.voicePreview.stop();
     dropdown.close();
     this.router.navigateByUrl('/app/voices');
+  }
+
+  avatarGradient(hex: string): string {
+    return voiceAvatarGradient(hex);
+  }
+
+  avatarInitial(name: string): string {
+    return voiceInitial(name);
   }
 
   selectFormat(format: OutputFormat, dropdown: DropdownComponent): void {

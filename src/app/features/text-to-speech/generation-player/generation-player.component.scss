@@ -48,9 +48,13 @@
     flex-shrink: 0;
     width: 34px;
     height: 34px;
-    border-radius: 9px;
-    background: var(--bg-hover);
-    color: var(--text-secondary);
+    border-radius: 10px;
+    color: rgb(0 0 0 / 0.6);
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow:
+      inset 0 0 0 1px rgb(0 0 0 / 0.06),
+      0 4px 10px -4px rgb(0 0 0 / 0.35);
   }
 
   &__info-text {
@@ -157,36 +161,46 @@
     font-variant-numeric: tabular-nums;
   }
 
-  &__track {
-    position: relative;
+  // Decorative waveform-style meter — not a real per-sample amplitude
+  // rendering (the client has no decoded audio data to draw from), just a
+  // fixed pseudo-random bar shape that reads far more "alive" than a flat
+  // line while still encoding real progress via how many bars are --active.
+  &__waveform {
+    display: flex;
+    align-items: center;
+    gap: 2px;
     flex: 1;
-    height: 4px;
-    border-radius: 999px;
-    background: var(--border);
-    overflow: hidden;
+    height: 22px;
 
-    &--slim {
-      height: 3px;
+    &--generating {
+      width: 100%;
+      max-width: 320px;
+      height: 18px;
     }
   }
 
-  &__track-fill {
-    position: absolute;
-    inset: 0 auto 0 0;
+  &__bar {
+    flex: 1;
+    min-width: 2px;
     border-radius: 999px;
-    background: var(--accent);
-    transition: width 0.15s linear;
+    background: var(--border);
+    transition: background-color 0.2s ease, height 0.2s ease;
 
-    &--generating {
-      transition: width 0.4s ease;
+    &--active {
+      background: var(--accent);
     }
+  }
+
+  &__waveform--generating &__bar--active {
+    animation: player-bar-pulse 1s ease-in-out infinite;
+    animation-delay: var(--bar-delay, 0ms);
   }
 
   &__generating {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
     width: 100%;
     max-width: 320px;
   }
@@ -312,6 +326,17 @@
 @keyframes player-spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes player-bar-pulse {
+  0%, 100% {
+    opacity: 0.55;
+    transform: scaleY(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(1);
   }
 }
 

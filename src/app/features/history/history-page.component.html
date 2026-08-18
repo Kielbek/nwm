@@ -111,7 +111,9 @@
     }
   } @else {
     <div class="history__empty">
-      <app-icon name="folder" [size]="22" />
+      <span class="history__empty-icon">
+        <app-icon name="folder" [size]="24" />
+      </span>
       <strong>{{ translate.dict().historyPage.empty }}</strong>
       <span>{{ translate.dict().historyPage.emptyHint }}</span>
     </div>

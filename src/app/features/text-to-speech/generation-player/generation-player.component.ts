@@ -16,13 +16,20 @@ import {
 } from '../../../core/services/generation-history.service';
 import { TranslateService } from '../../../core/services/translate.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { VoiceLibraryService } from '../../../core/services/voice-library.service';
 import { formatRelativeTime } from '../../../core/utils/relative-time';
 import { downloadEntry } from '../../../core/utils/download-entry';
+import { voiceAvatarGradient, voiceInitial } from '../../../core/utils/voice-avatar';
+import { pseudoWaveformHeights } from '../../../core/utils/waveform';
+
+const FALLBACK_AVATAR_COLOR = '#d4d4d4';
 
 const AVG_CHARS_PER_SECOND = 14;
 const SKIP_SECONDS = 10;
 const TICK_MS = 200;
 const SHARE_FEEDBACK_MS = 2000;
+const PLAYBACK_BAR_COUNT = 48;
+const GENERATING_BAR_COUNT = 28;
 
 interface PendingSeek {
   index: number;
@@ -57,6 +64,12 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   readonly justCopied = signal(false);
   readonly collapsed = signal(false);
 
+  // Decorative bar heights for the waveform-style scrubber/progress meter —
+  // there's no real per-sample amplitude data on the client, so these are a
+  // fixed pseudo-random shape rather than a flat line or literal noise.
+  readonly playbackBars = pseudoWaveformHeights(PLAYBACK_BAR_COUNT);
+  readonly generatingBars = pseudoWaveformHeights(GENERATING_BAR_COUNT, 45);
+
   private audio: HTMLAudioElement | null = null;
   private currentChunkIndex: number | null = null;
   private pendingSeek: PendingSeek | null = null;
@@ -66,8 +79,32 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   constructor(
     readonly translate: TranslateService,
     private readonly history: GenerationHistoryService,
-    private readonly auth: AuthService
+    private readonly auth: AuthService,
+    private readonly voiceLibrary: VoiceLibraryService
   ) {}
+
+  avatarGradient(): string {
+    const voice = this.voiceLibrary.voices().find((v) => v.id === this.entry.voiceId);
+    return voiceAvatarGradient(voice?.avatarColor ?? FALLBACK_AVATAR_COLOR);
+  }
+
+  avatarInitial(): string {
+    return voiceInitial(this.entry.voiceName);
+  }
+
+  /** Whether playback has passed bar `i`'s position — colors it as "played". */
+  isPlaybackBarActive(i: number): boolean {
+    if (!this.duration()) {
+      return false;
+    }
+    return i / this.playbackBars.length <= this.elapsed() / this.duration();
+  }
+
+  /** Whether generation progress has passed bar `i`'s position — colors it as "done". */
+  isGeneratingBarActive(i: number): boolean {
+    const percent = this.generationProgressPercent();
+    return i / this.generatingBars.length <= percent / 100;
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     const change = changes['entry'];

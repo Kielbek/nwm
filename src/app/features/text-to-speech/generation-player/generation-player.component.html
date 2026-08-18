@@ -19,9 +19,7 @@
 } @else {
   <div class="player" [class.player--generating]="isGenerating()">
     <div class="player__info">
-      <span class="player__avatar">
-        <app-icon name="voices" [size]="14" />
-      </span>
+      <span class="player__avatar" [style.background]="avatarGradient()">{{ avatarInitial() }}</span>
       <div class="player__info-text">
         <p class="player__title">{{ entry.text.length > 60 ? (entry.text.slice(0, 60) + '…') : entry.text }}</p>
         <div class="player__meta">
@@ -36,11 +34,15 @@
       @if (isGenerating()) {
         <div class="player__generating">
           <span class="player__generating-label">{{ generationProgressLabel() }}</span>
-          <div class="player__track player__track--slim">
-            <div
-              class="player__track-fill player__track-fill--generating"
-              [style.width.%]="generationProgressPercent()"
-            ></div>
+          <div class="player__waveform player__waveform--generating">
+            @for (height of generatingBars; track $index) {
+              <span
+                class="player__bar"
+                [class.player__bar--active]="isGeneratingBarActive($index)"
+                [style.height.%]="height"
+                [style.--bar-delay.ms]="$index * 40"
+              ></span>
+            }
           </div>
         </div>
       } @else {
@@ -76,11 +78,14 @@
 
         <div class="player__scrubber">
           <span class="player__time">{{ formatTime(elapsed()) }}</span>
-          <div class="player__track">
-            <div
-              class="player__track-fill"
-              [style.width.%]="duration() ? (elapsed() / duration()) * 100 : 0"
-            ></div>
+          <div class="player__waveform">
+            @for (height of playbackBars; track $index) {
+              <span
+                class="player__bar"
+                [class.player__bar--active]="isPlaybackBarActive($index)"
+                [style.height.%]="height"
+              ></span>
+            }
           </div>
           <span class="player__time">{{ formatTime(duration()) }}</span>
         </div>
