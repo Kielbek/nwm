@@ -36,24 +36,19 @@ logger = logging.getLogger(__name__)
 
 _model = None
 
-# modelId from the frontend's picker (natural/dynamic/calm/excited/serious)
-# is really a speaking-style preset, not a different engine — XTTS v2 is the
-# only model here. temperature and top_p both drive prosody variety (higher
-# = more expressive/varied, lower = flatter/more deterministic) —
-# deliberately spread wide apart across styles so the difference in
-# delivery is actually audible, not just a fraction of a percent.
-_MODEL_TUNING = {
-    "natural": {"temperature": 0.55, "repetition_penalty": 1.8, "top_p": 0.8},
-    "dynamic": {"temperature": 0.8, "repetition_penalty": 2.2, "top_p": 0.9},
-    "calm": {"temperature": 0.3, "repetition_penalty": 1.3, "top_p": 0.65},
-    "excited": {"temperature": 0.95, "repetition_penalty": 2.5, "top_p": 0.95},
-    "serious": {"temperature": 0.4, "repetition_penalty": 1.6, "top_p": 0.7},
-}
+# There's only one voice model (XTTS v2) and no style/model picker in the
+# UI — an earlier speaking-style preset selector didn't produce a clear
+# enough difference in practice to justify keeping it, so `model_id` from
+# the job message is currently ignored and every job uses this one baseline
+# tuning. Real differentiation between voices should come from the quality
+# of each voice's reference sample (see voices.py), not from these knobs.
+_BASE_TEMPERATURE = 0.55
+_BASE_REPETITION_PENALTY = 1.8
+_BASE_TOP_P = 0.8
 
 # Frontend settings sliders (stability/similarity/styleExaggeration), 0-1,
-# mapped onto real XTTS inference knobs — nudging around whatever the
-# selected model tier already set above, rather than replacing it, so both
-# the model choice and these sliders visibly affect the result together:
+# mapped onto real XTTS inference knobs — nudging around the baseline above
+# rather than replacing it:
 #
 # - stability: ElevenLabs-style semantics (low = more variable/expressive,
 #   high = more consistent/monotone) — nudges `temperature` down as
@@ -121,19 +116,18 @@ class ChunkSynthesizer:
         model = _load_model()
         voice = get_voice_profile(self._job.voice_id)
         language = detect_language(self._job.text, default=settings.default_language)
-        tuning = _MODEL_TUNING.get(self._job.model_id, _MODEL_TUNING["natural"])
         speed = max(0.5, min(2.0, self._job.settings.speed))
 
         stability = _clamp(self._job.settings.stability, 0.0, 1.0)
         style_exaggeration = _clamp(self._job.settings.style_exaggeration, 0.0, 1.0)
         similarity = _clamp(self._job.settings.similarity, 0.0, 1.0)
 
-        # stability=0 -> +swing/2 (more variable than the model's baseline),
+        # stability=0 -> +swing/2 (more variable than the baseline),
         # stability=1 -> -swing/2 (more consistent than the baseline).
         temperature = _clamp(
-            tuning["temperature"] + (0.5 - stability) * _STABILITY_TEMPERATURE_SWING, 0.05, 1.0
+            _BASE_TEMPERATURE + (0.5 - stability) * _STABILITY_TEMPERATURE_SWING, 0.05, 1.0
         )
-        top_p = _clamp(tuning["top_p"] + (style_exaggeration - 0.5) * _STYLE_TOP_P_SWING, 0.3, 1.0)
+        top_p = _clamp(_BASE_TOP_P + (style_exaggeration - 0.5) * _STYLE_TOP_P_SWING, 0.3, 1.0)
         gpt_cond_len = round(
             _MIN_GPT_COND_LEN_SECONDS
             + similarity * (_MAX_GPT_COND_LEN_SECONDS - _MIN_GPT_COND_LEN_SECONDS)
@@ -154,7 +148,7 @@ class ChunkSynthesizer:
                     language=language,
                     speed=speed,
                     temperature=temperature,
-                    repetition_penalty=tuning["repetition_penalty"],
+                    repetition_penalty=_BASE_REPETITION_PENALTY,
                     top_p=top_p,
                     gpt_cond_len=gpt_cond_len,
                     file_path=str(chunk_path),

@@ -181,31 +181,6 @@
       </app-dropdown>
     </div>
 
-    <div class="tts__field">
-      <span class="tts__field-label">{{ translate.dict().settings.model }}</span>
-      <app-dropdown #modelDropdown>
-        <button type="button" class="tts__select" dropdownTrigger>
-          <span class="tts__model-badge">{{ selectedModel().badge }}</span>
-          <span class="tts__select-copy">
-            <strong>{{ selectedModel().name }}</strong>
-            <small>{{ selectedModel().description }}</small>
-          </span>
-          <app-icon name="chevron-down" [size]="16" />
-        </button>
-        <div dropdownPanel>
-          @for (model of models(); track model.id) {
-            <button type="button" class="tts__option" (click)="selectModel(model, modelDropdown)">
-              <span class="tts__model-badge">{{ model.badge }}</span>
-              <span class="tts__select-copy">
-                <strong>{{ model.name }}</strong>
-                <small>{{ model.description }}</small>
-              </span>
-            </button>
-          }
-        </div>
-      </app-dropdown>
-    </div>
-
     <app-slider
       [label]="translate.dict().settings.speed"
       [minLabel]="translate.dict().settings.speedSlower"

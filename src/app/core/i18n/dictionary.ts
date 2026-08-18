@@ -10,11 +10,6 @@ export interface VoiceCopy {
   description: string;
 }
 
-export interface ModelCopy {
-  name: string;
-  description: string;
-}
-
 export interface TestimonialCopy {
   name: string;
   role: string;
@@ -139,7 +134,6 @@ export interface Dictionary {
   };
   settings: {
     voice: string;
-    model: string;
     speed: string;
     speedSlower: string;
     speedFaster: string;
@@ -564,7 +558,6 @@ export interface Dictionary {
   };
   starters: StarterCopy[];
   voices: VoiceCopy[];
-  models: ModelCopy[];
   formats: string[];
   testimonials: TestimonialCopy[];
   plans: PlanCopy[];

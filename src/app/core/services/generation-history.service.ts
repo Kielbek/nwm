@@ -2,13 +2,10 @@ import { Injectable, computed, effect, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { JobChunk, JobResponse, JobStatus, OutputFormat, TtsSettings } from '../models/tts.models';
 import { AuthService } from './auth.service';
-import { TranslateService } from './translate.service';
 import { VoiceLibraryService } from './voice-library.service';
 import { generationProgressPercent, isGenerating } from '../utils/generation-progress';
 
 export type GenerationFeedback = 'up' | 'down' | null;
-
-const MODEL_IDS = ['natural', 'dynamic', 'calm', 'excited', 'serious'];
 
 export interface GenerationEntry {
   id: string; // the backend's GenerationJob id — real audio lives at /api/tts/jobs/{id}
@@ -17,7 +14,6 @@ export interface GenerationEntry {
   voiceName: string;
   voiceDescription: string;
   modelId: string;
-  modelName: string;
   outputFormat: OutputFormat;
   settings: TtsSettings;
   createdAt: string;
@@ -40,7 +36,6 @@ export interface StartEntryInput {
   voiceName: string;
   voiceDescription: string;
   modelId: string;
-  modelName: string;
   outputFormat: OutputFormat;
   settings: TtsSettings;
 }
@@ -118,7 +113,6 @@ export class GenerationHistoryService {
 
   constructor(
     private readonly http: HttpClient,
-    private readonly translate: TranslateService,
     private readonly voiceLibrary: VoiceLibraryService,
     private readonly auth: AuthService
   ) {
@@ -285,7 +279,6 @@ export class GenerationHistoryService {
       voiceName: input.voiceName,
       voiceDescription: input.voiceDescription,
       modelId: input.modelId,
-      modelName: input.modelName,
       outputFormat: input.outputFormat,
       settings: input.settings,
       createdAt: job.createdAt,
@@ -383,8 +376,6 @@ export class GenerationHistoryService {
 
   private fromJobResponse(job: JobResponse): GenerationEntry {
     const voice = this.voiceLibrary.voices().find((v) => v.id === job.voiceId);
-    const modelIndex = MODEL_IDS.indexOf(job.modelId);
-    const modelMeta = modelIndex >= 0 ? this.translate.dict().models[modelIndex] : null;
     return {
       id: job.id,
       text: job.text,
@@ -392,7 +383,6 @@ export class GenerationHistoryService {
       voiceName: voice?.name ?? job.voiceId,
       voiceDescription: voice?.description ?? '',
       modelId: job.modelId,
-      modelName: modelMeta?.name ?? job.modelId,
       outputFormat: job.outputFormat as OutputFormat,
       settings: {
         voiceId: job.voiceId,

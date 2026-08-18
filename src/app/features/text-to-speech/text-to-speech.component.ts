@@ -19,17 +19,11 @@ const MAX_CHARACTERS = 5000;
 const RING_RADIUS = 9;
 const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 
-// There's only one underlying voice model (XTTS v2) — these aren't different
-// "AI models" to pick between, they're speaking-style presets (different
-// temperature/top_p/repetition_penalty combinations, see worker/README.md)
-// framed as tone-of-voice choices instead of a fake model-quality tier list.
-const MODEL_META = [
-  { id: 'natural', badge: '🙂' },
-  { id: 'dynamic', badge: '⚡' },
-  { id: 'calm', badge: '🌙' },
-  { id: 'excited', badge: '🎉' },
-  { id: 'serious', badge: '🎓' },
-];
+// There's only one underlying voice model (XTTS v2) and no picker for it —
+// an earlier speaking-style selector here didn't produce a clear enough
+// difference to be worth the UI. `modelId` is still a required field on the
+// synthesize request, so a fixed value is sent along either way.
+const DEFAULT_MODEL_ID = 'natural';
 
 const FORMAT_META: OutputFormat[] = ['mp3-128', 'mp3-192', 'wav', 'ogg'];
 
@@ -53,10 +47,6 @@ const STARTER_ICONS: IconName[] = [
   styleUrl: './text-to-speech.component.scss',
 })
 export class TextToSpeechComponent {
-  readonly models = computed(() =>
-    MODEL_META.map((meta, i) => ({ ...meta, ...this.translate.dict().models[i] }))
-  );
-
   readonly outputFormats = computed(() =>
     FORMAT_META.map((id, i) => ({ id, label: this.translate.dict().formats[i] }))
   );
@@ -68,7 +58,6 @@ export class TextToSpeechComponent {
   readonly text = signal('');
   readonly tipDismissed = signal(false);
   readonly voiceSearch = signal('');
-  readonly selectedModelId = signal(MODEL_META[0].id);
   readonly outputFormat = signal<OutputFormat>('mp3-128');
   readonly speed = signal(1);
   readonly stability = signal(0.5);
@@ -112,9 +101,6 @@ export class TextToSpeechComponent {
     );
   });
 
-  readonly selectedModel = computed(
-    () => this.models().find((m) => m.id === this.selectedModelId()) ?? this.models()[0]
-  );
   readonly selectedFormat = computed(
     () =>
       this.outputFormats().find((f) => f.id === this.outputFormat()) ?? this.outputFormats()[0]
@@ -172,11 +158,6 @@ export class TextToSpeechComponent {
     this.router.navigateByUrl('/app/voices');
   }
 
-  selectModel(model: { id: string }, dropdown: DropdownComponent): void {
-    this.selectedModelId.set(model.id);
-    dropdown.close();
-  }
-
   selectFormat(format: OutputFormat, dropdown: DropdownComponent): void {
     this.outputFormat.set(format);
     dropdown.close();
@@ -199,7 +180,7 @@ export class TextToSpeechComponent {
     }
     const settings = {
       voiceId: this.voiceLibrary.selectedVoiceId(),
-      modelId: this.selectedModelId(),
+      modelId: DEFAULT_MODEL_ID,
       speed: this.speed(),
       stability: this.stability(),
       similarity: this.similarity(),
@@ -213,8 +194,7 @@ export class TextToSpeechComponent {
       voiceId: this.voiceLibrary.selectedVoice().id,
       voiceName: this.voiceLibrary.selectedVoice().name,
       voiceDescription: this.voiceLibrary.selectedVoice().description,
-      modelId: this.selectedModel().id,
-      modelName: this.selectedModel().name,
+      modelId: DEFAULT_MODEL_ID,
       outputFormat: this.outputFormat(),
       settings,
     };

@@ -103,17 +103,17 @@ publish is silently dropped).
 
 ### Voice/model settings
 
-`modelId` (natural/dynamic/calm/excited/serious) selects a preset of XTTS
-inference knobs (`temperature`, `repetition_penalty`, `top_p`) — same
-model, different sampling behavior. It's presented to the user as a
-speaking-style choice, not a model picker, since there's only one voice
-model (XTTS v2); the presets are deliberately spread apart so the styles
-are audibly distinct rather than a rounding error apart.
+There's only one voice model (XTTS v2) and no model/style picker in the UI
+— an earlier speaking-style preset selector (`modelId`) didn't produce a
+clear enough difference to be worth keeping, so `modelId` is still sent on
+every job (a fixed `"natural"` value, `@NotBlank` on the backend) but
+ignored by the worker; every job uses one baseline tuning
+(`_BASE_TEMPERATURE`/`_BASE_REPETITION_PENALTY`/`_BASE_TOP_P` in
+`synthesis.py`).
 
 The frontend's `stability`/`similarity`/`styleExaggeration` sliders (0-1,
-ElevenLabs-style naming since the UI predates picking XTTS) nudge those
-same knobs on top of whatever the model preset already set, rather than
-replacing it:
+ElevenLabs-style naming since the UI predates picking XTTS) nudge XTTS
+inference knobs on top of that baseline:
 
 - **stability** → `temperature` (low stability = more variable/expressive,
   high = more consistent/monotone, same direction ElevenLabs uses it).

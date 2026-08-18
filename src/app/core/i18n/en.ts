@@ -86,7 +86,6 @@ export const en: Dictionary = {
   },
   settings: {
     voice: 'Voice',
-    model: 'Speaking style',
     speed: 'Speed',
     speedSlower: 'Slower',
     speedFaster: 'Faster',
@@ -160,13 +159,6 @@ export const en: Dictionary = {
     { name: 'Kuba', description: 'Energetic, confident' },
     { name: 'Zosia', description: 'Warm, friendly' },
     { name: 'Tomasz', description: 'Neutral, all-purpose' },
-  ],
-  models: [
-    { name: 'Natural', description: 'Plain, everyday speech' },
-    { name: 'Dynamic', description: 'Lively, energetic delivery' },
-    { name: 'Calm', description: 'Slower, subdued tone' },
-    { name: 'Excited', description: 'High energy and enthusiasm' },
-    { name: 'Serious', description: 'Matter-of-fact, formal tone' },
   ],
   formats: [
     'MP3 44.1 kHz (128kbps)',

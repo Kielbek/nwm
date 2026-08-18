@@ -7,12 +7,6 @@ export interface Voice {
   avatarColor: string;
 }
 
-export interface TtsModel {
-  id: string;
-  badge: string;
-  name: string;
-}
-
 export type OutputFormat = 'mp3-128' | 'mp3-192' | 'wav' | 'ogg';
 
 export interface TtsSettings {

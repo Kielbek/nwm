@@ -88,7 +88,6 @@ export const pl: Dictionary = {
   },
   settings: {
     voice: 'Głos',
-    model: 'Styl mówienia',
     speed: 'Prędkość',
     speedSlower: 'Wolniej',
     speedFaster: 'Szybciej',
@@ -163,13 +162,6 @@ export const pl: Dictionary = {
     { name: 'Kuba', description: 'Energiczny, pewny siebie' },
     { name: 'Zosia', description: 'Ciepła, przyjazna' },
     { name: 'Tomasz', description: 'Neutralny, uniwersalny' },
-  ],
-  models: [
-    { name: 'Naturalny', description: 'Zwykła, codzienna mowa' },
-    { name: 'Dynamiczny', description: 'Żywy, energiczny sposób mówienia' },
-    { name: 'Spokojny', description: 'Wolniejszy, wyciszony ton' },
-    { name: 'Podekscytowany', description: 'Duża energia i entuzjazm' },
-    { name: 'Poważny', description: 'Rzeczowy, formalny ton' },
   ],
   formats: [
     'MP3 44,1 kHz (128kbps)',

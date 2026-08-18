@@ -43,7 +43,7 @@ export async function downloadEntry(entry: GenerationEntry, accessToken: string 
   }
 
   const lines = [
-    `${entry.voiceName} — ${entry.modelName}`,
+    entry.voiceName,
     new Date(entry.createdAt).toLocaleString(),
     '',
     entry.text,
