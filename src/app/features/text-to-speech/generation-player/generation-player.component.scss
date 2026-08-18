@@ -94,17 +94,6 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    // Fixed height so swapping in the connecting spinner doesn't shift the
-    // scrubber below it.
-    height: 32px;
-  }
-
-  &__transport-loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
   }
 
   &__skip {
@@ -122,6 +111,12 @@
     &:hover {
       background: var(--bg-hover);
       color: var(--text-primary);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      background: transparent;
     }
   }
 
@@ -229,12 +224,6 @@
   border-top-color: #fff;
   border-radius: 50%;
   animation: player-spin 0.7s linear infinite;
-}
-
-.player__icon-btn .player__spinner,
-.player__transport-loading .player__spinner {
-  border-color: var(--border);
-  border-top-color: var(--text-secondary);
 }
 
 // Sits inside the dark, filled play button rather than on the page

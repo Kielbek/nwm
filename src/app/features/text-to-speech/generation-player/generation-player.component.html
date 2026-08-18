@@ -36,43 +36,39 @@
 
     <div class="player__center">
       <div class="player__transport">
-        @if (isConnecting()) {
-          <span class="player__transport-loading">
-            <span class="player__spinner"></span>
-          </span>
-        } @else {
-          <button
-            type="button"
-            class="player__skip"
-            [attr.aria-label]="translate.dict().player.skipBack"
-            (click)="skip(-10)"
-          >
-            <app-icon name="skip-back" [size]="16" />
-          </button>
+        <button
+          type="button"
+          class="player__skip"
+          [disabled]="!hasPlayableAudio()"
+          [attr.aria-label]="translate.dict().player.skipBack"
+          (click)="skip(-10)"
+        >
+          <app-icon name="skip-back" [size]="16" />
+        </button>
 
-          <button
-            type="button"
-            class="player__play"
-            [disabled]="!hasPlayableAudio()"
-            [attr.aria-label]="isPlaying() ? translate.dict().player.pause : translate.dict().player.play"
-            (click)="togglePlay()"
-          >
-            @if (isBuffering()) {
-              <span class="player__spinner player__spinner--on-play"></span>
-            } @else {
-              <app-icon [name]="isPlaying() ? 'pause' : 'play'" [size]="16" />
-            }
-          </button>
+        <button
+          type="button"
+          class="player__play"
+          [disabled]="!hasPlayableAudio() && !isGenerating()"
+          [attr.aria-label]="isPlaying() ? translate.dict().player.pause : translate.dict().player.play"
+          (click)="togglePlay()"
+        >
+          @if (isConnecting() || isBuffering()) {
+            <span class="player__spinner player__spinner--on-play"></span>
+          } @else {
+            <app-icon [name]="isPlaying() ? 'pause' : 'play'" [size]="16" />
+          }
+        </button>
 
-          <button
-            type="button"
-            class="player__skip"
-            [attr.aria-label]="translate.dict().player.skipForward"
-            (click)="skip(10)"
-          >
-            <app-icon name="skip-forward" [size]="16" />
-          </button>
-        }
+        <button
+          type="button"
+          class="player__skip"
+          [disabled]="!hasPlayableAudio()"
+          [attr.aria-label]="translate.dict().player.skipForward"
+          (click)="skip(10)"
+        >
+          <app-icon name="skip-forward" [size]="16" />
+        </button>
       </div>
 
       <div class="player__scrubber">
@@ -88,51 +84,40 @@
     </div>
 
     <div class="player__side">
-      @if (isConnecting()) {
-        <button
-          type="button"
-          class="player__icon-btn"
-          disabled
-          [attr.aria-label]="translate.dict().player.play"
-        >
-          <span class="player__spinner"></span>
-        </button>
-      } @else {
-        <button
-          type="button"
-          class="player__icon-btn"
-          [class.player__icon-btn--active]="entry.feedback === 'up'"
-          [attr.aria-label]="translate.dict().player.thumbUp"
-          (click)="setFeedback('up')"
-        >
-          <app-icon name="thumb-up" [size]="14" />
-        </button>
-        <button
-          type="button"
-          class="player__icon-btn"
-          [class.player__icon-btn--active]="entry.feedback === 'down'"
-          [attr.aria-label]="translate.dict().player.thumbDown"
-          (click)="setFeedback('down')"
-        >
-          <app-icon name="thumb-down" [size]="14" />
-        </button>
-        <button
-          type="button"
-          class="player__icon-btn"
-          [attr.aria-label]="justCopied() ? translate.dict().player.shareCopied : translate.dict().player.share"
-          (click)="share()"
-        >
-          <app-icon name="share" [size]="14" />
-        </button>
-        <button
-          type="button"
-          class="player__icon-btn"
-          [attr.aria-label]="translate.dict().player.download"
-          (click)="download()"
-        >
-          <app-icon name="download" [size]="14" />
-        </button>
-      }
+      <button
+        type="button"
+        class="player__icon-btn"
+        [class.player__icon-btn--active]="entry.feedback === 'up'"
+        [attr.aria-label]="translate.dict().player.thumbUp"
+        (click)="setFeedback('up')"
+      >
+        <app-icon name="thumb-up" [size]="14" />
+      </button>
+      <button
+        type="button"
+        class="player__icon-btn"
+        [class.player__icon-btn--active]="entry.feedback === 'down'"
+        [attr.aria-label]="translate.dict().player.thumbDown"
+        (click)="setFeedback('down')"
+      >
+        <app-icon name="thumb-down" [size]="14" />
+      </button>
+      <button
+        type="button"
+        class="player__icon-btn"
+        [attr.aria-label]="justCopied() ? translate.dict().player.shareCopied : translate.dict().player.share"
+        (click)="share()"
+      >
+        <app-icon name="share" [size]="14" />
+      </button>
+      <button
+        type="button"
+        class="player__icon-btn"
+        [attr.aria-label]="translate.dict().player.download"
+        (click)="download()"
+      >
+        <app-icon name="download" [size]="14" />
+      </button>
       <button
         type="button"
         class="player__icon-btn player__collapse-toggle"
