@@ -192,10 +192,23 @@
     color: var(--text-muted);
   }
 
-  &__history-progress {
+  // While generating, text + spinner + percent sit on one row (replacing
+  // the usual two-row text/time layout) so the progress reads as
+  // attached to the title, not as a second line underneath it.
+  &__history-title-row {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
+    min-width: 0;
+
+    .sidebar__history-text {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  &__history-percent {
+    flex-shrink: 0;
     font-size: 10.5px;
     font-weight: 600;
     color: var(--accent);

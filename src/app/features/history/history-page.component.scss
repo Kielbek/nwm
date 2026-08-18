@@ -201,8 +201,17 @@
     animation: history-spin 0.7s linear infinite;
   }
 
+  &__title-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
   &__text {
-    margin: 0 0 14px;
+    margin: 0;
+    flex: 1;
+    min-width: 0;
     font-size: 13.5px;
     line-height: 1.55;
     color: var(--text-primary);

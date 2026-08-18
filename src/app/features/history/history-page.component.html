@@ -41,17 +41,18 @@
                 {{ entry.voiceName }}
               </span>
               <span class="history__tag">{{ entry.modelName }}</span>
+              <span class="history__time">{{ relativeTime(entry.createdAt) }}</span>
+            </div>
+
+            <div class="history__title-row">
+              <p class="history__text">{{ snippet(entry.text) }}</p>
               @if (isGenerating(entry)) {
                 <span class="history__progress">
                   <span class="history__spinner"></span>
-                  {{ translate.dict().player.generating }} — {{ progressPercent(entry) }}%
+                  {{ progressPercent(entry) }}%
                 </span>
-              } @else {
-                <span class="history__time">{{ relativeTime(entry.createdAt) }}</span>
               }
             </div>
-
-            <p class="history__text">{{ snippet(entry.text) }}</p>
           </button>
 
           <div class="history__item-foot">
