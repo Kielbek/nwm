@@ -7,6 +7,7 @@ import {
   OnDestroy,
   Output,
   SimpleChanges,
+  effect,
   signal,
 } from '@angular/core';
 import { IconComponent } from '../../../shared/components/icon/icon.component';
@@ -41,6 +42,16 @@ interface PendingSeek {
  * (without stopping) at the end of the queue until GenerationHistoryService
  * appends the next one (see `ngOnChanges`'s "same generation" branch),
  * which is what makes long generations audible before they finish.
+ *
+ * Play/pause *intent* lives on `GenerationHistoryService.isPlaying`, not
+ * here — this component is mounted once app-shell-wide, but other UI (a
+ * sidebar/history row) also needs to show and control play/pause for the
+ * active entry without holding a reference to this component. The
+ * constructor's `effect()` reacts to that shared signal by starting/
+ * stopping the actual `<audio>` engine; `ngOnChanges` still handles
+ * bootstrapping playback directly when the active entry itself changes,
+ * since the shared signal may already read `true` from the previous entry
+ * and therefore wouldn't otherwise re-fire for the new one.
  */
 @Component({
   selector: 'app-generation-player',
@@ -55,7 +66,6 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   @Output() closeRequested = new EventEmitter<void>();
   @Output() collapsedChange = new EventEmitter<boolean>();
 
-  readonly isPlaying = signal(false);
   readonly elapsed = signal(0);
   readonly duration = signal(1);
   readonly justCopied = signal(false);
@@ -78,7 +88,29 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
     private readonly history: GenerationHistoryService,
     private readonly auth: AuthService,
     private readonly voiceLibrary: VoiceLibraryService
-  ) {}
+  ) {
+    // Reacts to isPlaying() being toggled from elsewhere (a sidebar/history
+    // row's play button, or this component's own togglePlay()) for the
+    // *current* entry. Bootstrapping playback for a newly-activated entry
+    // is handled directly in ngOnChanges instead — see the class doc.
+    effect(
+      () => {
+        if (!this.entry) {
+          return;
+        }
+        if (this.history.isPlaying()) {
+          this.startEngine();
+        } else {
+          this.stopEngine();
+        }
+      },
+      { allowSignalWrites: true }
+    );
+  }
+
+  isPlaying(): boolean {
+    return this.history.isPlaying();
+  }
 
   avatarGradient(): string {
     const voice = this.voiceLibrary.voices().find((v) => v.id === this.entry.voiceId);
@@ -98,7 +130,7 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
       change.firstChange || change.previousValue?.id !== change.currentValue?.id;
 
     if (isNewGeneration) {
-      this.stopPlayback();
+      this.stopEngine();
       this.audio = null;
       this.currentChunkIndex = null;
       this.pendingSeek = null;
@@ -112,7 +144,11 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
       // soon as the first chunk streams in) or a "replay" of an already-
       // finished one (plays immediately) — either way, activating an entry
       // means the user wants to hear it now, not press play a second time.
-      this.resume();
+      // Set directly rather than relying on the effect above: isPlaying()
+      // may already read `true` from the *previous* entry, in which case
+      // setting it to the same value wouldn't re-trigger that effect.
+      this.history.isPlaying.set(true);
+      this.startEngine();
       return;
     }
 
@@ -120,7 +156,7 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
     if (this.isPlaying() && !this.audio) {
       // We ran out of available audio and were waiting — a new chunk (or
       // the final combined result) may have just arrived.
-      this.resume();
+      this.startEngine();
     }
   }
 
@@ -177,11 +213,7 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   }
 
   togglePlay(): void {
-    if (this.isPlaying()) {
-      this.pause();
-    } else {
-      this.resume();
-    }
+    this.history.isPlaying.update((playing) => !playing);
   }
 
   skip(delta: number): void {
@@ -220,11 +252,8 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
     downloadEntry(this.entry, this.auth.getAccessToken());
   }
 
-  private resume(): void {
-    // Set intent-to-play unconditionally, even with zero chunks so far —
-    // ngOnChanges's "same generation" branch checks isPlaying() to decide
-    // whether to auto-start playback the moment the first chunk lands.
-    this.isPlaying.set(true);
+  /** Starts (or resumes) actually playing audio — called whenever isPlaying() becomes true. */
+  private startEngine(): void {
     if (!this.hasPlayableAudio()) {
       this.isBuffering.set(this.isGenerating());
       return;
@@ -249,8 +278,8 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
     this.playChunkAtIndex(0);
   }
 
-  private pause(): void {
-    this.isPlaying.set(false);
+  /** Stops actually playing audio — called whenever isPlaying() becomes false. */
+  private stopEngine(): void {
     this.isBuffering.set(false);
     this.stopTicking();
     this.audio?.pause();
@@ -310,7 +339,7 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
 
   private handleEnded(): void {
     this.elapsed.set(this.duration());
-    this.isPlaying.set(false);
+    this.history.isPlaying.set(false);
     this.isBuffering.set(false);
     this.stopTicking();
   }
@@ -331,8 +360,9 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
     }
   }
 
+  /** Full teardown (component destroyed, or the player closed) — also detaches the old audio's handlers. */
   private stopPlayback(): void {
-    this.isPlaying.set(false);
+    this.history.isPlaying.set(false);
     this.stopTicking();
     if (this.audio) {
       this.audio.onended = null;

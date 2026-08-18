@@ -75,10 +75,14 @@ export class SidebarComponent {
     return formatRelativeTime(iso, this.translate.dict().historyPage);
   }
 
-  replay(entry: GenerationEntry): void {
+  togglePlayback(entry: GenerationEntry): void {
     // No navigation needed — the player is a persistent bar visible on
     // every /app/* page, so playback starts right where you are.
-    this.history.replay(entry);
+    this.history.togglePlayback(entry);
+  }
+
+  isEntryPlaying(entry: GenerationEntry): boolean {
+    return this.history.activeEntryId() === entry.id && this.history.isPlaying();
   }
 
   reuse(entry: GenerationEntry): void {

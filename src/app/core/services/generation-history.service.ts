@@ -83,6 +83,14 @@ export class GenerationHistoryService {
   readonly activeEntry = computed(
     () => this.entries().find((entry) => entry.id === this.activeEntryId()) ?? null
   );
+  // Whether the active entry should be playing right now — the single
+  // source of truth for play/pause state, so any UI that shows a
+  // play/pause control for the active entry (the persistent player, a
+  // sidebar/history row, ...) stays in sync with all the others. The
+  // actual <audio> engine still lives in GenerationPlayerComponent (it's
+  // mounted once, app-shell-wide); it reacts to this signal rather than
+  // owning play/pause state itself.
+  readonly isPlaying = signal(false);
 
   /** True while a page (initial load or loadMore()) is in flight — drives loading skeletons. */
   readonly loadingMore = signal(false);
@@ -130,6 +138,7 @@ export class GenerationHistoryService {
   private resetForAccountChange(isAuthenticated: boolean): void {
     this.entries.set([]);
     this.activeEntryId.set(null);
+    this.isPlaying.set(false);
     this.pendingReuse.set(null);
     this.progressTimelines.clear();
     this.stopTickingIfIdle();
@@ -339,6 +348,7 @@ export class GenerationHistoryService {
     this.entries.set(this.entries().filter((entry) => entry.id !== id));
     if (this.activeEntryId() === id) {
       this.activeEntryId.set(null);
+      this.isPlaying.set(false);
     }
     this.progressTimelines.delete(id);
     this.stopTickingIfIdle();
@@ -347,6 +357,7 @@ export class GenerationHistoryService {
   clear(): void {
     this.entries.set([]);
     this.activeEntryId.set(null);
+    this.isPlaying.set(false);
     this.progressTimelines.clear();
     this.stopTickingIfIdle();
   }
@@ -359,6 +370,22 @@ export class GenerationHistoryService {
   /** Opens the entry's already-generated audio in the persistent player — no re-synthesis. */
   replay(entry: GenerationEntry): void {
     this.activeEntryId.set(entry.id);
+  }
+
+  /**
+   * Play/pause control usable from anywhere an entry is listed (sidebar,
+   * history page, ...) without needing a reference to the player itself.
+   * Activating a different entry always starts it playing — pressing play
+   * on a row is never a no-op; toggling only applies once that entry is
+   * already the active one.
+   */
+  togglePlayback(entry: GenerationEntry): void {
+    if (this.activeEntryId() === entry.id) {
+      this.isPlaying.update((playing) => !playing);
+    } else {
+      this.activeEntryId.set(entry.id);
+      this.isPlaying.set(true);
+    }
   }
 
   consumePendingReuse(): PendingReuse | null {
