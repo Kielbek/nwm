@@ -101,6 +101,31 @@ never sent to a queue name directly (see `RabbitMqConfig.java` — each
 queue is bound to the exchange under its routing key, so a direct-to-queue
 publish is silently dropped).
 
+### Voice/model settings
+
+`modelId` (expressive/standard/fast/draft) selects a preset of XTTS
+inference knobs (`temperature`, `repetition_penalty`, `top_p`) — same
+model, different sampling behavior, deliberately spread apart so the
+tiers are audibly distinct rather than a rounding error apart.
+
+The frontend's `stability`/`similarity`/`styleExaggeration` sliders (0-1,
+ElevenLabs-style naming since the UI predates picking XTTS) nudge those
+same knobs on top of whatever the model preset already set, rather than
+replacing it:
+
+- **stability** → `temperature` (low stability = more variable/expressive,
+  high = more consistent/monotone, same direction ElevenLabs uses it).
+- **styleExaggeration** → `top_p` (wider nucleus sampling = more varied
+  delivery).
+- **similarity** → `gpt_cond_len` — XTTS has no direct "voice similarity"
+  dial; cloning fidelity comes from how much of the reference clip it
+  conditions on, so this scales that from 3s (low similarity) to 30s
+  (high similarity, uses the whole typical reference sample).
+
+`languageOverride` is still just a boolean toggle with nothing behind it —
+language is always auto-detected (`language.py`); there's no per-request
+language field in the job message yet to actually override with.
+
 ### Text chunking
 
 XTTS's prosody degrades on long single calls, so long input text is split

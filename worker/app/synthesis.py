@@ -38,13 +38,38 @@ _model = None
 
 # modelId from the frontend's model picker (expressive/standard/fast/draft)
 # maps to XTTS inference knobs rather than genuinely different engines —
-# XTTS v2 is the only model here.
+# XTTS v2 is the only model here. temperature and top_p both drive prosody
+# variety (higher = more expressive/varied, lower = flatter/more
+# deterministic) — deliberately spread wide apart across tiers so the
+# difference is actually audible, not just a fraction of a percent.
 _MODEL_TUNING = {
-    "expressive": {"temperature": 0.85, "repetition_penalty": 2.0},
-    "standard": {"temperature": 0.65, "repetition_penalty": 2.0},
-    "fast": {"temperature": 0.5, "repetition_penalty": 1.5},
-    "draft": {"temperature": 0.3, "repetition_penalty": 1.0},
+    "expressive": {"temperature": 0.95, "repetition_penalty": 2.5, "top_p": 0.95},
+    "standard": {"temperature": 0.65, "repetition_penalty": 2.0, "top_p": 0.85},
+    "fast": {"temperature": 0.4, "repetition_penalty": 1.5, "top_p": 0.75},
+    "draft": {"temperature": 0.2, "repetition_penalty": 1.0, "top_p": 0.65},
 }
+
+# Frontend settings sliders (stability/similarity/styleExaggeration), 0-1,
+# mapped onto real XTTS inference knobs — nudging around whatever the
+# selected model tier already set above, rather than replacing it, so both
+# the model choice and these sliders visibly affect the result together:
+#
+# - stability: ElevenLabs-style semantics (low = more variable/expressive,
+#   high = more consistent/monotone) — nudges `temperature` down as
+#   stability increases.
+# - styleExaggeration: widens sampling diversity via `top_p` as it increases.
+# - similarity: XTTS has no direct "voice similarity" knob — cloning
+#   fidelity comes from how much of the reference clip it conditions on
+#   (`gpt_cond_len`, seconds), so more similarity = use more of the
+#   reference sample for conditioning.
+_STABILITY_TEMPERATURE_SWING = 0.5
+_STYLE_TOP_P_SWING = 0.15
+_MIN_GPT_COND_LEN_SECONDS = 3
+_MAX_GPT_COND_LEN_SECONDS = 30
+
+
+def _clamp(value: float, low: float, high: float) -> float:
+    return max(low, min(high, value))
 
 _OUTPUT_FORMATS = {
     "mp3-128": {"format": "mp3", "bitrate": "128k", "extension": "mp3"},
@@ -98,6 +123,21 @@ class ChunkSynthesizer:
         tuning = _MODEL_TUNING.get(self._job.model_id, _MODEL_TUNING["standard"])
         speed = max(0.5, min(2.0, self._job.settings.speed))
 
+        stability = _clamp(self._job.settings.stability, 0.0, 1.0)
+        style_exaggeration = _clamp(self._job.settings.style_exaggeration, 0.0, 1.0)
+        similarity = _clamp(self._job.settings.similarity, 0.0, 1.0)
+
+        # stability=0 -> +swing/2 (more variable than the model's baseline),
+        # stability=1 -> -swing/2 (more consistent than the baseline).
+        temperature = _clamp(
+            tuning["temperature"] + (0.5 - stability) * _STABILITY_TEMPERATURE_SWING, 0.05, 1.0
+        )
+        top_p = _clamp(tuning["top_p"] + (style_exaggeration - 0.5) * _STYLE_TOP_P_SWING, 0.3, 1.0)
+        gpt_cond_len = round(
+            _MIN_GPT_COND_LEN_SECONDS
+            + similarity * (_MAX_GPT_COND_LEN_SECONDS - _MIN_GPT_COND_LEN_SECONDS)
+        )
+
         text_chunks = chunk_text(self._job.text, max_chars=settings.max_chunk_chars)
         if not text_chunks:
             raise ValueError("No synthesizable text after chunking")
@@ -112,8 +152,10 @@ class ChunkSynthesizer:
                     speaker_wav=str(voice.reference_wav),
                     language=language,
                     speed=speed,
-                    temperature=tuning["temperature"],
+                    temperature=temperature,
                     repetition_penalty=tuning["repetition_penalty"],
+                    top_p=top_p,
+                    gpt_cond_len=gpt_cond_len,
                     file_path=str(chunk_path),
                 )
                 segment = AudioSegment.from_wav(chunk_path)
