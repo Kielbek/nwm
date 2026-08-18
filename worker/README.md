@@ -34,12 +34,21 @@ has a live Stripe subscription, that's the sign it's overdue.
 Spring server ──(tts.generate.requests)──▶ this worker
                                               │
                                               ├─ chunk text (text_chunking.py)
-                                              ├─ synthesize each chunk (XTTS, synthesis.py)
-                                              ├─ stitch chunks into one file
-                                              ├─ upload to S3/MinIO (storage.py)
+                                              ├─ synthesize chunk 0 (XTTS, synthesis.py) ─▶ upload ─▶ publish (tts.generate.chunks) ─┐
+                                              ├─ synthesize chunk 1                       ─▶ upload ─▶ publish (tts.generate.chunks) ─┤
+                                              ├─ ...                                                                                  ├─▶ Spring server
+                                              ├─ stitch all chunks into one combined file                                             │   (SSE to browser
+                                              ├─ upload combined file to S3/MinIO (storage.py)                                        │    as each arrives)
                                               │
-Spring server ◀──(tts.generate.results)────┘
+Spring server ◀──(tts.generate.results, combined file)────────────────────────────────────────────────────────────────────────────┘
 ```
+
+Chunks are published **as each one finishes**, not batched — this is what
+lets the frontend start playing audio before a long job's later chunks
+(or the final combined file) are even done synthesizing. The combined
+file is still produced and published at the end via `tts.generate.results`
+exactly as before, so the "download the whole thing" / history-replay
+path is unaffected.
 
 ### Message contract
 
@@ -61,10 +70,21 @@ both sides in sync if either changes.
 }
 ```
 
-**Publishes** to `tts.generate.results` — **through the `tts.exchange`
-exchange with routing key `tts.result`**, not sent to the queue name
-directly (see `RabbitMqConfig.java` — the queue is bound to the exchange
-under that routing key, so a direct-to-queue publish is silently dropped):
+**Publishes** to `tts.generate.chunks` — routing key `tts.chunk` — once
+per text segment, as soon as that segment is synthesized and uploaded:
+
+```json
+{
+  "jobId": "uuid",
+  "chunkIndex": 0,
+  "totalChunks": 3,
+  "audioS3Key": "generations/<userId>/<jobId>/chunk-0.mp3",
+  "durationSeconds": 4.2
+}
+```
+
+**Publishes** to `tts.generate.results` — routing key `tts.result` — once,
+after every chunk is done and the combined file is uploaded:
 
 ```json
 {
@@ -75,6 +95,11 @@ under that routing key, so a direct-to-queue publish is silently dropped):
   "errorMessage": null
 }
 ```
+
+Both go **through the `tts.exchange` exchange with their routing key**,
+never sent to a queue name directly (see `RabbitMqConfig.java` — each
+queue is bound to the exchange under its routing key, so a direct-to-queue
+publish is silently dropped).
 
 ### Text chunking
 
@@ -151,17 +176,19 @@ that requires the full torch/coqui-tts install and real model weights.
 
 ### Manual integration test (no Spring needed)
 
-`tests/_setup_topology.py`, `_publish_fake_job.py`, and `_consume_result.py`
-are one-off scripts (not pytest tests — hence the leading underscore) that
-exercise the real RabbitMQ contract without needing the Spring server
-running at all. Useful to sanity-check the worker in isolation, or to
-narrow down whether a bug is in this worker or in the Spring side:
+`tests/_setup_topology.py`, `_publish_fake_job.py`, `_consume_chunks.py`, and
+`_consume_result.py` are one-off scripts (not pytest tests — hence the
+leading underscore) that exercise the real RabbitMQ contract without
+needing the Spring server running at all. Useful to sanity-check the
+worker in isolation, or to narrow down whether a bug is in this worker or
+in the Spring side:
 
 ```bash
 # with RabbitMQ running and RABBITMQ_* env vars exported to match it
 python tests/_setup_topology.py          # declares tts.exchange/queues, same as RabbitMqConfig.java
 python tests/_publish_fake_job.py "some text to synthesize"
 python -m app.main                       # in another terminal — processes the job
+python tests/_consume_chunks.py          # prints every message that landed on tts.generate.chunks
 python tests/_consume_result.py          # prints whatever landed on tts.generate.results
 ```
 

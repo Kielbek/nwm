@@ -5,7 +5,6 @@ import {
   GenerationEntry,
   GenerationHistoryService,
 } from '../../core/services/generation-history.service';
-import { TtsService } from '../../core/services/tts.service';
 import { TranslateService } from '../../core/services/translate.service';
 import { SeoService } from '../../core/services/seo.service';
 import { formatRelativeTime } from '../../core/utils/relative-time';
@@ -25,7 +24,6 @@ export class HistoryPageComponent {
 
   constructor(
     readonly history: GenerationHistoryService,
-    readonly ttsService: TtsService,
     readonly translate: TranslateService,
     private readonly router: Router,
     seo: SeoService
@@ -38,7 +36,8 @@ export class HistoryPageComponent {
   }
 
   replay(entry: GenerationEntry): void {
-    this.ttsService.synthesize({ text: entry.text, settings: entry.settings }).subscribe();
+    this.history.replay(entry);
+    this.router.navigateByUrl('/app');
   }
 
   reuse(entry: GenerationEntry): void {

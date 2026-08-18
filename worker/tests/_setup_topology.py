@@ -23,10 +23,15 @@ channel.queue_declare(
     },
 )
 channel.queue_declare(queue="tts.generate.results", durable=True)
+channel.queue_declare(queue="tts.generate.chunks", durable=True)
 channel.queue_declare(queue="tts.generate.dlq", durable=True)
 
 channel.queue_bind(queue="tts.generate.requests", exchange="tts.exchange", routing_key="tts.request")
 channel.queue_bind(queue="tts.generate.results", exchange="tts.exchange", routing_key="tts.result")
+channel.queue_bind(queue="tts.generate.chunks", exchange="tts.exchange", routing_key="tts.chunk")
 
-print("Topology declared: tts.exchange, tts.generate.requests, tts.generate.results, tts.generate.dlq")
+print(
+    "Topology declared: tts.exchange, tts.generate.requests, tts.generate.results, "
+    "tts.generate.chunks, tts.generate.dlq"
+)
 connection.close()

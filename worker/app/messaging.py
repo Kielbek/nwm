@@ -51,3 +51,18 @@ def publish_result(channel: pika.channel.Channel, result: dict[str, Any]) -> Non
         properties=pika.BasicProperties(content_type="application/json", delivery_mode=2),
     )
     logger.info("Published result for job %s (%s)", result.get("jobId"), result.get("status"))
+
+
+def publish_chunk(channel: pika.channel.Channel, chunk: dict[str, Any]) -> None:
+    channel.basic_publish(
+        exchange=settings.tts_exchange,
+        routing_key=settings.tts_chunk_routing_key,
+        body=json.dumps(chunk).encode("utf-8"),
+        properties=pika.BasicProperties(content_type="application/json", delivery_mode=2),
+    )
+    logger.info(
+        "Published chunk %d/%d for job %s",
+        chunk.get("chunkIndex", 0) + 1,
+        chunk.get("totalChunks"),
+        chunk.get("jobId"),
+    )

@@ -46,6 +46,7 @@ class Settings:
     tts_exchange: str
     tts_request_queue: str
     tts_result_routing_key: str
+    tts_chunk_routing_key: str
 
     s3_endpoint: str
     s3_region: str
@@ -74,6 +75,9 @@ def load_settings() -> Settings:
         tts_exchange=_env("TTS_EXCHANGE", "tts.exchange"),
         tts_request_queue=_env("TTS_REQUEST_QUEUE", "tts.generate.requests"),
         tts_result_routing_key=_env("TTS_RESULT_ROUTING_KEY", "tts.result"),
+        # Published as each text segment finishes, ahead of the final
+        # result — must match RabbitMqConfig.ROUTING_KEY_CHUNK on the server.
+        tts_chunk_routing_key=_env("TTS_CHUNK_ROUTING_KEY", "tts.chunk"),
         s3_endpoint=_env("S3_ENDPOINT", "http://localhost:9000"),
         s3_region=_env("S3_REGION", "us-east-1"),
         s3_bucket=_env("S3_BUCKET", "nwm-audio"),

@@ -6,7 +6,6 @@ import {
   GenerationEntry,
   GenerationHistoryService,
 } from '../../core/services/generation-history.service';
-import { TtsService } from '../../core/services/tts.service';
 import { formatRelativeTime } from '../../core/utils/relative-time';
 
 const RECENT_ENTRIES_LIMIT = 6;
@@ -62,7 +61,6 @@ export class SidebarComponent {
   constructor(
     readonly translate: TranslateService,
     readonly history: GenerationHistoryService,
-    private readonly ttsService: TtsService,
     private readonly router: Router
   ) {}
 
@@ -75,7 +73,8 @@ export class SidebarComponent {
   }
 
   replay(entry: GenerationEntry): void {
-    this.ttsService.synthesize({ text: entry.text, settings: entry.settings }).subscribe();
+    this.history.replay(entry);
+    this.router.navigateByUrl('/app');
   }
 
   reuse(entry: GenerationEntry): void {

@@ -52,6 +52,24 @@ class TtsJob:
 
 
 @dataclass(frozen=True)
+class TtsChunkResult:
+    job_id: str
+    chunk_index: int
+    total_chunks: int
+    audio_s3_key: str
+    duration_seconds: float
+
+    def to_message(self) -> dict[str, Any]:
+        return {
+            "jobId": self.job_id,
+            "chunkIndex": self.chunk_index,
+            "totalChunks": self.total_chunks,
+            "audioS3Key": self.audio_s3_key,
+            "durationSeconds": self.duration_seconds,
+        }
+
+
+@dataclass(frozen=True)
 class TtsResult:
     job_id: str
     status: str  # "COMPLETED" | "FAILED"

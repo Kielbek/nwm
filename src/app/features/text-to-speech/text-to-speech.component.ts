@@ -125,10 +125,23 @@ export class TextToSpeechComponent {
     seo: SeoService
   ) {
     effect(() => seo.setPrivateTitle(this.translate.dict().seo.generatorTitle));
+    // Kicked off by TtsService.synthesize() as soon as the backend accepts
+    // the job — jumps the player straight to the (still-streaming) entry.
+    effect(() => {
+      const id = this.ttsService.lastStartedEntryId();
+      if (id) {
+        this.lastEntryId.set(id);
+      }
+    });
+
     const pending = this.history.consumePendingReuse();
     if (pending) {
       this.text.set(pending.text);
       this.voiceLibrary.selectVoice(pending.voiceId);
+    }
+    const pendingPlaybackId = this.history.consumePendingPlaybackId();
+    if (pendingPlaybackId) {
+      this.lastEntryId.set(pendingPlaybackId);
     }
   }
 
@@ -189,16 +202,7 @@ export class TextToSpeechComponent {
       outputFormat: this.outputFormat(),
     };
 
-    this.ttsService.synthesize({ text: this.text(), settings }).subscribe((result) => {
-      if (result) {
-        // Character usage only actually changes server-side on a real
-        // success (the browser-speech fallback path returns null and never
-        // touched the backend), so only re-sync the quota then.
-        this.auth.refreshCurrentUser().subscribe();
-      }
-    });
-
-    const entry = this.history.add({
+    const meta = {
       text: this.text(),
       voiceId: this.voiceLibrary.selectedVoice().id,
       voiceName: this.voiceLibrary.selectedVoice().name,
@@ -207,8 +211,19 @@ export class TextToSpeechComponent {
       modelName: this.selectedModel().name,
       outputFormat: this.outputFormat(),
       settings,
+    };
+
+    // lastEntryId is set reactively (see the effect in the constructor) as
+    // soon as the backend accepts the job — synthesize() registers it with
+    // GenerationHistoryService itself once the POST resolves.
+    this.ttsService.synthesize({ text: this.text(), settings }, meta).subscribe((result) => {
+      if (result) {
+        // Character usage only actually changes server-side on a real
+        // success (the browser-speech fallback path returns null and never
+        // touched the backend), so only re-sync the quota then.
+        this.auth.refreshCurrentUser().subscribe();
+      }
     });
-    this.lastEntryId.set(entry.id);
   }
 
   triggerFileImport(input: HTMLInputElement): void {

@@ -26,6 +26,7 @@ public class RabbitMqConfig {
 
   public static final String ROUTING_KEY_REQUEST = "tts.request";
   public static final String ROUTING_KEY_RESULT = "tts.result";
+  public static final String ROUTING_KEY_CHUNK = "tts.chunk";
 
   private final AppProperties.Messaging messaging;
 
@@ -52,6 +53,11 @@ public class RabbitMqConfig {
   }
 
   @Bean
+  public Queue ttsChunkQueue() {
+    return QueueBuilder.durable(messaging.ttsChunkQueue()).build();
+  }
+
+  @Bean
   public Queue ttsDeadLetterQueue() {
     return QueueBuilder.durable(messaging.ttsDlq()).build();
   }
@@ -64,6 +70,11 @@ public class RabbitMqConfig {
   @Bean
   public Binding ttsResultBinding() {
     return BindingBuilder.bind(ttsResultQueue()).to(ttsExchange()).with(ROUTING_KEY_RESULT);
+  }
+
+  @Bean
+  public Binding ttsChunkBinding() {
+    return BindingBuilder.bind(ttsChunkQueue()).to(ttsExchange()).with(ROUTING_KEY_CHUNK);
   }
 
   @Bean

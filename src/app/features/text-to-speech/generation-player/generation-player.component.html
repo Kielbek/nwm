@@ -28,6 +28,7 @@
       <button
         type="button"
         class="player__play"
+        [disabled]="!hasPlayableAudio()"
         [attr.aria-label]="isPlaying() ? translate.dict().player.pause : translate.dict().player.play"
         (click)="togglePlay()"
       >

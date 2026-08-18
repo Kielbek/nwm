@@ -6,12 +6,15 @@ import app.nwm.server.notification.NotificationType;
 import app.nwm.server.plan.PlanCatalog;
 import app.nwm.server.storage.S3StorageService;
 import app.nwm.server.tts.dto.JobResponse;
+import app.nwm.server.tts.dto.JobResponse.ChunkResponse;
 import app.nwm.server.tts.dto.SynthesizeRequest;
 import app.nwm.server.tts.dto.TtsSettingsPayload;
 import app.nwm.server.tts.messaging.TtsRequestProducer;
+import app.nwm.server.tts.messaging.TtsStreamRegistry;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.slf4j.Logger;
@@ -20,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import app.nwm.server.user.User;
 import app.nwm.server.user.UserRepository;
 
@@ -29,25 +33,31 @@ public class TtsJobService {
   private static final Logger log = LoggerFactory.getLogger(TtsJobService.class);
 
   private final GenerationJobRepository generationJobRepository;
+  private final GenerationJobChunkRepository generationJobChunkRepository;
   private final UserRepository userRepository;
   private final S3StorageService s3StorageService;
   private final ObjectMapper objectMapper;
   private final Optional<TtsRequestProducer> requestProducer;
   private final NotificationService notificationService;
+  private final TtsStreamRegistry streamRegistry;
 
   public TtsJobService(
       GenerationJobRepository generationJobRepository,
+      GenerationJobChunkRepository generationJobChunkRepository,
       UserRepository userRepository,
       S3StorageService s3StorageService,
       ObjectMapper objectMapper,
       Optional<TtsRequestProducer> requestProducer,
-      NotificationService notificationService) {
+      NotificationService notificationService,
+      TtsStreamRegistry streamRegistry) {
     this.generationJobRepository = generationJobRepository;
+    this.generationJobChunkRepository = generationJobChunkRepository;
     this.userRepository = userRepository;
     this.s3StorageService = s3StorageService;
     this.objectMapper = objectMapper;
     this.requestProducer = requestProducer;
     this.notificationService = notificationService;
+    this.streamRegistry = streamRegistry;
   }
 
   @Transactional
@@ -84,7 +94,7 @@ public class TtsJobService {
       log.warn("Messaging disabled — job {} was persisted but never dispatched to a worker", job.getId());
     }
 
-    return JobResponse.from(job, null);
+    return JobResponse.from(job, null, List.of());
   }
 
   @Transactional(readOnly = true)
@@ -93,25 +103,65 @@ public class TtsJobService {
         generationJobRepository
             .findByIdAndUserId(jobId, userId)
             .orElseThrow(() -> ApiException.notFound("Job not found"));
-    String downloadUrl =
-        job.getAudioS3Key() != null
-            ? s3StorageService.presignDownloadUrl(job.getAudioS3Key()).toString()
-            : null;
-    return JobResponse.from(job, downloadUrl);
+    return toJobResponse(job);
   }
 
   @Transactional(readOnly = true)
   public Page<JobResponse> listHistory(UUID userId, Pageable pageable) {
     return generationJobRepository
         .findByUserIdOrderByCreatedAtDesc(userId, pageable)
-        .map(
-            job -> {
-              String downloadUrl =
-                  job.getAudioS3Key() != null
-                      ? s3StorageService.presignDownloadUrl(job.getAudioS3Key()).toString()
-                      : null;
-              return JobResponse.from(job, downloadUrl);
-            });
+        .map(this::toJobResponse);
+  }
+
+  /**
+   * Opens an SSE connection for a job's progress. Any chunks already
+   * persisted (the worker may have raced ahead of the browser's connect)
+   * are replayed immediately; further chunks and the final "done" event
+   * arrive as TtsChunkConsumer/TtsResultConsumer process worker messages.
+   */
+  @Transactional(readOnly = true)
+  public SseEmitter streamJob(UUID userId, UUID jobId) {
+    GenerationJob job =
+        generationJobRepository
+            .findByIdAndUserId(jobId, userId)
+            .orElseThrow(() -> ApiException.notFound("Job not found"));
+
+    SseEmitter emitter = streamRegistry.register(job.getId());
+    List<GenerationJobChunk> existingChunks =
+        generationJobChunkRepository.findByJobIdOrderByChunkIndexAsc(job.getId());
+    for (GenerationJobChunk chunk : existingChunks) {
+      streamRegistry.replayChunk(job.getId(), emitter, toChunkResponse(chunk));
+    }
+
+    if (job.getStatus() == JobStatus.COMPLETED || job.getStatus() == JobStatus.FAILED) {
+      streamRegistry.completeImmediately(job.getId(), emitter, toJobResponse(job, existingChunks));
+    }
+    return emitter;
+  }
+
+  @Transactional
+  public void applyChunk(
+      UUID jobId, int chunkIndex, int totalChunks, String audioS3Key, BigDecimal durationSeconds) {
+    GenerationJob job = generationJobRepository.findById(jobId).orElse(null);
+    if (job == null) {
+      log.warn("Received a chunk for unknown job {}", jobId);
+      return;
+    }
+    if (generationJobChunkRepository.existsByJobIdAndChunkIndex(jobId, chunkIndex)) {
+      // Redelivery (e.g. a redelivered-but-already-processed message) — the
+      // chunk is already persisted and was already broadcast, skip it.
+      return;
+    }
+
+    if (job.getStatus() == JobStatus.PENDING) {
+      job.markProcessing();
+      generationJobRepository.save(job);
+    }
+
+    GenerationJobChunk chunk =
+        new GenerationJobChunk(job, chunkIndex, totalChunks, audioS3Key, durationSeconds);
+    generationJobChunkRepository.save(chunk);
+    streamRegistry.emitChunk(jobId, toChunkResponse(chunk));
   }
 
   @Transactional
@@ -135,6 +185,7 @@ public class TtsJobService {
           "/app/history");
     }
     generationJobRepository.save(job);
+    streamRegistry.completeAll(jobId, toJobResponse(job));
   }
 
   private void refundCharacters(GenerationJob job) {
@@ -149,5 +200,23 @@ public class TtsJobService {
     } catch (JsonProcessingException e) {
       throw new IllegalStateException("Failed to serialize TTS settings", e);
     }
+  }
+
+  private JobResponse toJobResponse(GenerationJob job) {
+    return toJobResponse(job, generationJobChunkRepository.findByJobIdOrderByChunkIndexAsc(job.getId()));
+  }
+
+  private JobResponse toJobResponse(GenerationJob job, List<GenerationJobChunk> chunks) {
+    String downloadUrl =
+        job.getAudioS3Key() != null
+            ? s3StorageService.presignDownloadUrl(job.getAudioS3Key()).toString()
+            : null;
+    List<ChunkResponse> chunkResponses = chunks.stream().map(this::toChunkResponse).toList();
+    return JobResponse.from(job, downloadUrl, chunkResponses);
+  }
+
+  private ChunkResponse toChunkResponse(GenerationJobChunk chunk) {
+    String url = s3StorageService.presignDownloadUrl(chunk.getAudioS3Key()).toString();
+    return new ChunkResponse(chunk.getChunkIndex(), chunk.getTotalChunks(), url, chunk.getDurationSeconds());
   }
 }

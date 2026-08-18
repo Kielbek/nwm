@@ -22,6 +22,27 @@ const SKIP_SECONDS = 10;
 const TICK_MS = 200;
 const SHARE_FEEDBACK_MS = 2000;
 
+const EXTENSION_BY_FORMAT: Record<string, string> = {
+  'mp3-128': 'mp3',
+  'mp3-192': 'mp3',
+  wav: 'wav',
+  ogg: 'ogg',
+};
+
+interface PendingSeek {
+  index: number;
+  seconds: number;
+}
+
+/**
+ * Plays a generation's real synthesized audio, chunk by chunk, as an
+ * ordered queue of `<audio>` elements — not a template-bound one, created
+ * in code so it can be swapped out as playback advances. While a job is
+ * still streaming in, this plays whatever chunks have arrived and pauses
+ * (without stopping) at the end of the queue until GenerationHistoryService
+ * appends the next one (see `ngOnChanges`'s "same generation" branch),
+ * which is what makes long generations audible before they finish.
+ */
 @Component({
   selector: 'app-generation-player',
   standalone: true,
@@ -39,6 +60,9 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   readonly duration = signal(1);
   readonly justCopied = signal(false);
 
+  private audio: HTMLAudioElement | null = null;
+  private currentChunkIndex: number | null = null;
+  private pendingSeek: PendingSeek | null = null;
   private tickTimer?: ReturnType<typeof setInterval>;
   private copiedTimeout?: ReturnType<typeof setTimeout>;
 
@@ -49,12 +73,27 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     const change = changes['entry'];
+    if (!change) {
+      return;
+    }
     const isNewGeneration =
-      change && (change.firstChange || change.previousValue?.id !== change.currentValue?.id);
+      change.firstChange || change.previousValue?.id !== change.currentValue?.id;
+
     if (isNewGeneration) {
       this.stopPlayback();
-      this.duration.set(this.estimateDuration());
+      this.audio = null;
+      this.currentChunkIndex = null;
+      this.pendingSeek = null;
       this.elapsed.set(0);
+      this.duration.set(this.computeDuration());
+      return;
+    }
+
+    this.duration.set(this.computeDuration());
+    if (this.isPlaying() && !this.audio) {
+      // We ran out of available audio and were waiting — a new chunk (or
+      // the final combined result) may have just arrived.
+      this.resume();
     }
   }
 
@@ -74,6 +113,10 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
     return `${m}:${String(s).padStart(2, '0')}`;
   }
 
+  hasPlayableAudio(): boolean {
+    return this.entry.chunks.length > 0;
+  }
+
   togglePlay(): void {
     if (this.isPlaying()) {
       this.pause();
@@ -83,10 +126,17 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   }
 
   skip(delta: number): void {
-    const next = Math.min(this.duration(), Math.max(0, this.elapsed() + delta));
-    this.elapsed.set(next);
+    if (!this.hasPlayableAudio()) {
+      return;
+    }
+    const target = Math.min(this.duration(), Math.max(0, this.elapsed() + delta));
+    const { index, offset } = this.locateChunkFor(target);
+    this.elapsed.set(target);
     if (this.isPlaying()) {
-      this.speak(next);
+      this.playChunkAtIndex(index, offset);
+    } else {
+      this.currentChunkIndex = index;
+      this.pendingSeek = { index, seconds: offset };
     }
   }
 
@@ -108,6 +158,17 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   }
 
   download(): void {
+    if (this.entry.downloadUrl) {
+      const extension = EXTENSION_BY_FORMAT[this.entry.outputFormat] ?? 'mp3';
+      const link = document.createElement('a');
+      link.href = this.entry.downloadUrl;
+      link.download = `${this.entry.voiceName.toLowerCase()}-${this.entry.id}.${extension}`;
+      link.click();
+      return;
+    }
+
+    // Audio isn't ready yet (still streaming, or generation failed) — fall
+    // back to downloading the text so the button still does something.
     const lines = [
       `${this.entry.voiceName} — ${this.entry.modelName}`,
       new Date(this.entry.createdAt).toLocaleString(),
@@ -124,36 +185,82 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   }
 
   private resume(): void {
+    if (!this.hasPlayableAudio()) {
+      return;
+    }
     this.isPlaying.set(true);
-    this.speak(this.elapsed());
-    this.startTicking();
+
+    if (this.pendingSeek) {
+      const { index, seconds } = this.pendingSeek;
+      this.pendingSeek = null;
+      this.playChunkAtIndex(index, seconds);
+      return;
+    }
+    if (this.audio) {
+      this.audio.play().catch(() => {});
+      this.startTicking();
+      return;
+    }
+    if (this.currentChunkIndex !== null) {
+      this.advanceToNextChunk();
+      return;
+    }
+    this.playChunkAtIndex(0);
   }
 
   private pause(): void {
     this.isPlaying.set(false);
     this.stopTicking();
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
+    this.audio?.pause();
   }
 
-  private speak(fromSeconds: number): void {
-    if (!('speechSynthesis' in window)) {
+  private playChunkAtIndex(index: number, seekSeconds = 0): void {
+    const chunk = this.entry.chunks.find((c) => c.index === index);
+    if (!chunk) {
+      // Not synthesized yet — ngOnChanges resumes automatically once it is.
+      this.currentChunkIndex = index;
+      this.audio = null;
+      this.stopTicking();
       return;
     }
-    window.speechSynthesis.cancel();
-    const text = this.entry.text;
-    const offset = Math.round((fromSeconds / this.duration()) * text.length);
-    const remaining = text.slice(offset).trim();
-    if (!remaining) {
-      this.handleEnded();
+
+    if (this.audio) {
+      this.audio.onended = null;
+      this.audio.onerror = null;
+      this.audio.pause();
+    }
+
+    const audio = new Audio(chunk.url);
+    audio.playbackRate = this.entry.settings.speed || 1;
+    if (seekSeconds > 0) {
+      audio.currentTime = seekSeconds;
+    }
+    audio.onended = () => this.advanceToNextChunk();
+    audio.onerror = () => this.handleEnded();
+
+    this.audio = audio;
+    this.currentChunkIndex = index;
+    audio.play().catch(() => {});
+    this.startTicking();
+  }
+
+  private advanceToNextChunk(): void {
+    const nextIndex = (this.currentChunkIndex ?? 0) + 1;
+    const nextChunk = this.entry.chunks.find((c) => c.index === nextIndex);
+    if (nextChunk) {
+      this.playChunkAtIndex(nextIndex);
       return;
     }
-    const utterance = new SpeechSynthesisUtterance(remaining);
-    utterance.lang = this.translate.lang() === 'pl' ? 'pl-PL' : 'en-US';
-    utterance.rate = this.entry.settings.speed;
-    utterance.onend = () => this.handleEnded();
-    window.speechSynthesis.speak(utterance);
+
+    const stillGenerating = this.entry.status === 'PENDING' || this.entry.status === 'PROCESSING';
+    if (stillGenerating) {
+      // Pause here — ngOnChanges resumes once the next chunk lands.
+      this.currentChunkIndex = nextIndex - 1;
+      this.audio = null;
+      this.stopTicking();
+      return;
+    }
+    this.handleEnded();
   }
 
   private handleEnded(): void {
@@ -165,12 +272,9 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   private startTicking(): void {
     this.stopTicking();
     this.tickTimer = setInterval(() => {
-      const next = this.elapsed() + TICK_MS / 1000;
-      if (next >= this.duration()) {
-        this.handleEnded();
-        return;
+      if (this.audio) {
+        this.elapsed.set(this.elapsedBeforeCurrentChunk() + this.audio.currentTime);
       }
-      this.elapsed.set(next);
     }, TICK_MS);
   }
 
@@ -184,9 +288,49 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   private stopPlayback(): void {
     this.isPlaying.set(false);
     this.stopTicking();
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
+    if (this.audio) {
+      this.audio.onended = null;
+      this.audio.onerror = null;
+      this.audio.pause();
     }
+  }
+
+  private elapsedBeforeCurrentChunk(): number {
+    if (this.currentChunkIndex === null) {
+      return 0;
+    }
+    let sum = 0;
+    for (const chunk of this.entry.chunks) {
+      if (chunk.index < this.currentChunkIndex) {
+        sum += chunk.durationSeconds ?? 0;
+      }
+    }
+    return sum;
+  }
+
+  private locateChunkFor(targetSeconds: number): { index: number; offset: number } {
+    const chunks = this.entry.chunks;
+    if (!chunks.length) {
+      return { index: 0, offset: 0 };
+    }
+    let remaining = targetSeconds;
+    for (const chunk of chunks) {
+      const chunkDuration = chunk.durationSeconds ?? 0;
+      const isLast = chunk.index === chunks[chunks.length - 1].index;
+      if (remaining < chunkDuration || isLast) {
+        return { index: chunk.index, offset: Math.max(0, remaining) };
+      }
+      remaining -= chunkDuration;
+    }
+    return { index: chunks[chunks.length - 1].index, offset: 0 };
+  }
+
+  private computeDuration(): number {
+    if (this.entry.durationSeconds != null) {
+      return this.entry.durationSeconds;
+    }
+    const sum = this.entry.chunks.reduce((acc, chunk) => acc + (chunk.durationSeconds ?? 0), 0);
+    return sum > 0 ? sum : this.estimateDuration();
   }
 
   private estimateDuration(): number {

@@ -27,6 +27,7 @@ public record AppProperties(
       boolean enabled,
       String ttsRequestQueue,
       String ttsResultQueue,
+      String ttsChunkQueue,
       String ttsExchange,
       String ttsDlq) {}
 

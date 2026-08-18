@@ -4,6 +4,7 @@ import app.nwm.server.tts.GenerationJob;
 import app.nwm.server.tts.JobStatus;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 public record JobResponse(
@@ -17,9 +18,10 @@ public record JobResponse(
     BigDecimal durationSeconds,
     String downloadUrl,
     String errorMessage,
-    Instant createdAt) {
+    Instant createdAt,
+    List<ChunkResponse> chunks) {
 
-  public static JobResponse from(GenerationJob job, String downloadUrl) {
+  public static JobResponse from(GenerationJob job, String downloadUrl, List<ChunkResponse> chunks) {
     return new JobResponse(
         job.getId(),
         job.getStatus(),
@@ -31,6 +33,10 @@ public record JobResponse(
         job.getDurationSeconds(),
         downloadUrl,
         job.getErrorMessage(),
-        job.getCreatedAt());
+        job.getCreatedAt(),
+        chunks);
   }
+
+  /** One playable segment of the job, in order — the frontend player plays these sequentially. */
+  public record ChunkResponse(int index, int total, String url, BigDecimal durationSeconds) {}
 }

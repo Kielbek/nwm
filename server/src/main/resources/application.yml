@@ -61,6 +61,8 @@ spring:
             scope: openid,profile,email
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
 
+spring.mvc.async.request-timeout: -1 # SSE (/api/tts/jobs/{id}/stream) can legitimately stay open for minutes during long CPU synthesis; -1 disables the servlet container's default ~30s async timeout for it.
+
 server:
   port: ${SERVER_PORT:8080}
   forward-headers-strategy: framework
@@ -108,6 +110,7 @@ app:
     enabled: ${MESSAGING_ENABLED:true}
     tts-request-queue: tts.generate.requests
     tts-result-queue: tts.generate.results
+    tts-chunk-queue: tts.generate.chunks
     tts-exchange: tts.exchange
     tts-dlq: tts.generate.dlq
   storage:

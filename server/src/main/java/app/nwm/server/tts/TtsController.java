@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
 @RequestMapping("/api/tts")
@@ -43,6 +45,12 @@ public class TtsController {
   @GetMapping("/jobs/{id}")
   public JobResponse getJob(@AuthenticationPrincipal SecurityUser principal, @PathVariable UUID id) {
     return ttsJobService.getJob(principal.getId(), id);
+  }
+
+  /** Server-Sent Events stream of a job's chunks as they're synthesized, ending with a "done" event. */
+  @GetMapping(path = "/jobs/{id}/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+  public SseEmitter streamJob(@AuthenticationPrincipal SecurityUser principal, @PathVariable UUID id) {
+    return ttsJobService.streamJob(principal.getId(), id);
   }
 
   @GetMapping("/history")

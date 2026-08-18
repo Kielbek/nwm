@@ -14,10 +14,10 @@ from typing import Any
 import pika
 
 from .config import settings
-from .messaging import build_connection, publish_result
-from .models import TtsJob, TtsResult
+from .messaging import build_connection, publish_chunk, publish_result
+from .models import TtsChunkResult, TtsJob, TtsResult
 from .storage import upload_audio
-from .synthesis import synthesize
+from .synthesis import ChunkSynthesizer
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s"
@@ -53,7 +53,23 @@ def handle_message(
     )
 
     try:
-        audio_bytes, duration_seconds, extension = synthesize(job)
+        synthesizer = ChunkSynthesizer(job)
+        for chunk in synthesizer.chunks():
+            chunk_key = f"{job.result_object_key_prefix}/{job.job_id}/chunk-{chunk.index}.{chunk.extension}"
+            upload_audio(
+                job.s3_bucket,
+                chunk_key,
+                chunk.audio_bytes,
+                _CONTENT_TYPES.get(chunk.extension, "application/octet-stream"),
+            )
+            publish_chunk(
+                channel,
+                TtsChunkResult(
+                    job.job_id, chunk.index, chunk.total, chunk_key, chunk.duration_seconds
+                ).to_message(),
+            )
+
+        audio_bytes, duration_seconds, extension = synthesizer.combined()
         key = f"{job.result_object_key_prefix}/{job.job_id}.{extension}"
         upload_audio(
             job.s3_bucket,

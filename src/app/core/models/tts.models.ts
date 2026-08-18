@@ -44,6 +44,13 @@ export interface SynthesizeResult {
 
 export type JobStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
 
+export interface JobChunk {
+  index: number;
+  total: number;
+  url: string;
+  durationSeconds: number | null;
+}
+
 export interface JobResponse {
   id: string;
   status: JobStatus;
@@ -56,4 +63,5 @@ export interface JobResponse {
   downloadUrl: string | null;
   errorMessage: string | null;
   createdAt: string;
+  chunks: JobChunk[];
 }
