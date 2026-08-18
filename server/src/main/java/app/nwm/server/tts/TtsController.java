@@ -2,6 +2,7 @@ package app.nwm.server.tts;
 
 import app.nwm.server.security.SecurityUser;
 import app.nwm.server.tts.dto.JobResponse;
+import app.nwm.server.tts.dto.MoveJobRequest;
 import app.nwm.server.tts.dto.SynthesizeRequest;
 import jakarta.validation.Valid;
 import java.util.UUID;
@@ -16,10 +17,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -73,9 +76,18 @@ public class TtsController {
   @GetMapping("/history")
   public Page<JobResponse> history(
       @AuthenticationPrincipal SecurityUser principal,
+      @RequestParam(required = false) UUID folderId,
       @PageableDefault(size = 20) Pageable pageable) {
     int cappedSize = Math.min(pageable.getPageSize(), MAX_PAGE_SIZE);
     Pageable safePageable = PageRequest.of(pageable.getPageNumber(), cappedSize, pageable.getSort());
-    return ttsJobService.listHistory(principal.getId(), safePageable);
+    return ttsJobService.listHistory(principal.getId(), folderId, safePageable);
+  }
+
+  @PatchMapping("/jobs/{id}/folder")
+  public JobResponse moveToFolder(
+      @AuthenticationPrincipal SecurityUser principal,
+      @PathVariable UUID id,
+      @RequestBody MoveJobRequest request) {
+    return ttsJobService.moveToFolder(principal.getId(), id, request.folderId());
   }
 }

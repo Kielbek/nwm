@@ -19,6 +19,7 @@ public record JobResponse(
     String downloadUrl,
     String errorMessage,
     Instant createdAt,
+    UUID folderId,
     List<ChunkResponse> chunks) {
 
   public static JobResponse from(GenerationJob job, String downloadUrl, List<ChunkResponse> chunks) {
@@ -34,6 +35,7 @@ public record JobResponse(
         downloadUrl,
         job.getErrorMessage(),
         job.getCreatedAt(),
+        job.getFolderId(),
         chunks);
   }
 

@@ -1,6 +1,7 @@
 package app.nwm.server.tts;
 
 import app.nwm.server.common.ApiException;
+import app.nwm.server.folder.GenerationFolderService;
 import app.nwm.server.notification.NotificationService;
 import app.nwm.server.notification.NotificationType;
 import app.nwm.server.plan.PlanCatalog;
@@ -40,6 +41,7 @@ public class TtsJobService {
   private final Optional<TtsRequestProducer> requestProducer;
   private final NotificationService notificationService;
   private final TtsStreamRegistry streamRegistry;
+  private final GenerationFolderService folderService;
 
   public TtsJobService(
       GenerationJobRepository generationJobRepository,
@@ -49,7 +51,8 @@ public class TtsJobService {
       ObjectMapper objectMapper,
       Optional<TtsRequestProducer> requestProducer,
       NotificationService notificationService,
-      TtsStreamRegistry streamRegistry) {
+      TtsStreamRegistry streamRegistry,
+      GenerationFolderService folderService) {
     this.generationJobRepository = generationJobRepository;
     this.generationJobChunkRepository = generationJobChunkRepository;
     this.userRepository = userRepository;
@@ -58,6 +61,7 @@ public class TtsJobService {
     this.requestProducer = requestProducer;
     this.notificationService = notificationService;
     this.streamRegistry = streamRegistry;
+    this.folderService = folderService;
   }
 
   @Transactional
@@ -107,10 +111,24 @@ public class TtsJobService {
   }
 
   @Transactional(readOnly = true)
-  public Page<JobResponse> listHistory(UUID userId, Pageable pageable) {
-    return generationJobRepository
-        .findByUserIdOrderByCreatedAtDesc(userId, pageable)
-        .map(this::toJobResponse);
+  public Page<JobResponse> listHistory(UUID userId, UUID folderId, Pageable pageable) {
+    Page<GenerationJob> jobs =
+        folderId != null
+            ? generationJobRepository.findByUserIdAndFolderIdOrderByCreatedAtDesc(userId, folderId, pageable)
+            : generationJobRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable);
+    return jobs.map(this::toJobResponse);
+  }
+
+  @Transactional
+  public JobResponse moveToFolder(UUID userId, UUID jobId, UUID folderId) {
+    GenerationJob job =
+        generationJobRepository
+            .findByIdAndUserId(jobId, userId)
+            .orElseThrow(() -> ApiException.notFound("Job not found"));
+    folderService.assertOwnedIfPresent(userId, folderId);
+    job.moveToFolder(folderId);
+    generationJobRepository.save(job);
+    return toJobResponse(job);
   }
 
   /**

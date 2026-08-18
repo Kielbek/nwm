@@ -1,5 +1,6 @@
 package app.nwm.server.tts;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,13 @@ public interface GenerationJobRepository extends JpaRepository<GenerationJob, UU
   Optional<GenerationJob> findByIdAndUserId(UUID id, UUID userId);
 
   Page<GenerationJob> findByUserIdOrderByCreatedAtDesc(UUID userId, Pageable pageable);
+
+  Page<GenerationJob> findByUserIdAndFolderIdOrderByCreatedAtDesc(
+      UUID userId, UUID folderId, Pageable pageable);
+
+  List<GenerationJob> findAllByFolderId(UUID folderId);
+
+  long countByFolderId(UUID folderId);
 
   Page<GenerationJob> findAllByOrderByCreatedAtDesc(Pageable pageable);
 

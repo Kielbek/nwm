@@ -266,6 +266,29 @@ character grants). Adding a new notification type is a one-line call to
 `NotificationService.notify(...)` from wherever the triggering event
 happens.
 
+## Folders
+
+A single-level (no nesting) way for a user to organize their generated
+audio — `GenerationJob` rows optionally point at a `GenerationFolder` via
+a plain `folder_id` column (not a JPA relationship; nothing needs to
+navigate from job to folder in code, only filter/display by its id).
+
+- `GET /api/folders` — the user's folders, each with a `jobCount`.
+- `POST /api/folders` — create (`{"name": "..."}`).
+- `PATCH /api/folders/{id}` — rename.
+- `DELETE /api/folders/{id}` — deletes the folder and unfiles its jobs
+  (`folder_id` -> null) rather than deleting them. `GenerationFolderService`
+  does this explicitly rather than relying on the FK's `ON DELETE SET
+  NULL` alone, since Flyway is disabled in the test profile (Hibernate
+  generates that schema from entities, and a plain `@Column` carries no FK
+  for it to apply cascade behavior to) — the DB constraint is still there
+  as a safety net for any future direct-delete code path, but the app
+  can't lean on it to actually be exercised by the test suite.
+- `PATCH /api/tts/jobs/{id}/folder` — move a job (`{"folderId": "..."}`,
+  or `null` to unfile it back to the top-level view).
+- `GET /api/tts/history?folderId=...` — the existing paginated history
+  endpoint, now optionally filtered to one folder.
+
 ## Logging
 
 Every request gets an `X-Request-Id` (reused if the client already sent

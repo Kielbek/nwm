@@ -66,6 +66,13 @@ public class GenerationJob {
   @Column(name = "error_message")
   private String errorMessage;
 
+  // Plain UUID rather than a @ManyToOne to app.nwm.server.folder.GenerationFolder
+  // — nothing here needs to navigate to the folder entity itself, only
+  // filter/display by its id, so a full JPA relationship (and the fetch
+  // joins/proxies that come with it) would be unused overhead.
+  @Column(name = "folder_id")
+  private UUID folderId;
+
   @Column(name = "created_at", nullable = false, updatable = false)
   private Instant createdAt;
 
@@ -118,6 +125,11 @@ public class GenerationJob {
     this.errorMessage = errorMessage;
   }
 
+  /** `null` unfiles it (moves it back to the top-level "All" view). */
+  public void moveToFolder(UUID folderId) {
+    this.folderId = folderId;
+  }
+
   public UUID getId() {
     return id;
   }
@@ -164,6 +176,10 @@ public class GenerationJob {
 
   public String getErrorMessage() {
     return errorMessage;
+  }
+
+  public UUID getFolderId() {
+    return folderId;
   }
 
   public Instant getCreatedAt() {
