@@ -48,8 +48,6 @@ export const pl: Dictionary = {
     skipForward: 'Przewiń 10 sekund do przodu',
     play: 'Odtwórz',
     pause: 'Wstrzymaj',
-    generating: 'Generowanie dźwięku',
-    connecting: 'Łączenie z serwerem…',
     close: 'Zamknij odtwarzacz',
     collapse: 'Zwiń odtwarzacz',
     expand: 'Rozwiń odtwarzacz',

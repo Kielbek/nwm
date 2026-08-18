@@ -47,8 +47,6 @@ export const en: Dictionary = {
     skipForward: 'Skip forward 10 seconds',
     play: 'Play',
     pause: 'Pause',
-    generating: 'Generating audio',
-    connecting: 'Connecting to the server…',
     close: 'Close player',
     collapse: 'Collapse player',
     expand: 'Expand player',

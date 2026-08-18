@@ -95,8 +95,6 @@ export interface Dictionary {
     skipForward: string;
     play: string;
     pause: string;
-    generating: string;
-    connecting: string;
     close: string;
     collapse: string;
     expand: string;

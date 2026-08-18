@@ -20,7 +20,6 @@ import { VoiceLibraryService } from '../../../core/services/voice-library.servic
 import { formatRelativeTime } from '../../../core/utils/relative-time';
 import { downloadEntry } from '../../../core/utils/download-entry';
 import { voiceAvatarGradient, voiceInitial } from '../../../core/utils/voice-avatar';
-import { pseudoWaveformHeights } from '../../../core/utils/waveform';
 
 const FALLBACK_AVATAR_COLOR = '#d4d4d4';
 
@@ -28,8 +27,6 @@ const AVG_CHARS_PER_SECOND = 14;
 const SKIP_SECONDS = 10;
 const TICK_MS = 200;
 const SHARE_FEEDBACK_MS = 2000;
-const PLAYBACK_BAR_COUNT = 48;
-const GENERATING_BAR_COUNT = 28;
 
 interface PendingSeek {
   index: number;
@@ -63,12 +60,12 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   readonly duration = signal(1);
   readonly justCopied = signal(false);
   readonly collapsed = signal(false);
-
-  // Decorative bar heights for the waveform-style scrubber/progress meter —
-  // there's no real per-sample amplitude data on the client, so these are a
-  // fixed pseudo-random shape rather than a flat line or literal noise.
-  readonly playbackBars = pseudoWaveformHeights(PLAYBACK_BAR_COUNT);
-  readonly generatingBars = pseudoWaveformHeights(GENERATING_BAR_COUNT, 45);
+  // True while playback wants to run but has caught up to the last chunk
+  // that's actually arrived yet, and the job is still generating more — the
+  // play button shows a spinner instead of pause/play during this, since
+  // there's nothing to pause; it clears the instant a new chunk lands or
+  // the user skips back into already-buffered audio.
+  readonly isBuffering = signal(false);
 
   private audio: HTMLAudioElement | null = null;
   private currentChunkIndex: number | null = null;
@@ -90,20 +87,6 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
 
   avatarInitial(): string {
     return voiceInitial(this.entry.voiceName);
-  }
-
-  /** Whether playback has passed bar `i`'s position — colors it as "played". */
-  isPlaybackBarActive(i: number): boolean {
-    if (!this.duration()) {
-      return false;
-    }
-    return i / this.playbackBars.length <= this.elapsed() / this.duration();
-  }
-
-  /** Whether generation progress has passed bar `i`'s position — colors it as "done". */
-  isGeneratingBarActive(i: number): boolean {
-    const percent = this.generationProgressPercent();
-    return i / this.generatingBars.length <= percent / 100;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -172,16 +155,6 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
 
   generationProgressPercent(): number {
     return this.history.smoothedProgressPercent(this.entry) ?? 0;
-  }
-
-  generationProgressLabel(): string {
-    const total = this.entry.chunks[0]?.total ?? 0;
-    if (!total) {
-      // Waiting on the first chunk — the step count isn't known yet, so
-      // there's nothing meaningful to put a "x/y" fraction on.
-      return this.translate.dict().player.generating;
-    }
-    return `${this.translate.dict().player.generating} — ${this.entry.chunks.length}/${total}`;
   }
 
   /** Progress fraction (0-100) shown on the collapsed mini-player's track/knob position. */
@@ -253,6 +226,7 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
     // whether to auto-start playback the moment the first chunk lands.
     this.isPlaying.set(true);
     if (!this.hasPlayableAudio()) {
+      this.isBuffering.set(this.isGenerating());
       return;
     }
 
@@ -263,6 +237,7 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
       return;
     }
     if (this.audio) {
+      this.isBuffering.set(false);
       this.audio.play().catch(() => {});
       this.startTicking();
       return;
@@ -276,6 +251,7 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
 
   private pause(): void {
     this.isPlaying.set(false);
+    this.isBuffering.set(false);
     this.stopTicking();
     this.audio?.pause();
   }
@@ -287,6 +263,7 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
       this.currentChunkIndex = index;
       this.audio = null;
       this.stopTicking();
+      this.isBuffering.set(this.isPlaying() && this.isGenerating());
       return;
     }
 
@@ -306,6 +283,7 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
 
     this.audio = audio;
     this.currentChunkIndex = index;
+    this.isBuffering.set(false);
     audio.play().catch(() => {});
     this.startTicking();
   }
@@ -318,12 +296,13 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
       return;
     }
 
-    const stillGenerating = this.entry.status === 'PENDING' || this.entry.status === 'PROCESSING';
-    if (stillGenerating) {
-      // Pause here — ngOnChanges resumes once the next chunk lands.
+    if (this.isGenerating()) {
+      // Pause here — ngOnChanges resumes once the next chunk lands. The
+      // play button shows a spinner (isBuffering) rather than acting done.
       this.currentChunkIndex = nextIndex - 1;
       this.audio = null;
       this.stopTicking();
+      this.isBuffering.set(true);
       return;
     }
     this.handleEnded();
@@ -332,6 +311,7 @@ export class GenerationPlayerComponent implements OnChanges, OnDestroy {
   private handleEnded(): void {
     this.elapsed.set(this.duration());
     this.isPlaying.set(false);
+    this.isBuffering.set(false);
     this.stopTicking();
   }
 
