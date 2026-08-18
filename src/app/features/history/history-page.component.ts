@@ -9,6 +9,7 @@ import { TranslateService } from '../../core/services/translate.service';
 import { HistoryDetailModalService } from '../../core/services/history-detail-modal.service';
 import { SeoService } from '../../core/services/seo.service';
 import { formatRelativeTime } from '../../core/utils/relative-time';
+import { generationProgressPercent, isGenerating } from '../../core/utils/generation-progress';
 
 const SNIPPET_LENGTH = 220;
 
@@ -75,5 +76,13 @@ export class HistoryPageComponent {
 
   setFeedback(entry: GenerationEntry, feedback: 'up' | 'down'): void {
     this.history.setFeedback(entry.id, entry.feedback === feedback ? null : feedback);
+  }
+
+  isGenerating(entry: GenerationEntry): boolean {
+    return isGenerating(entry.status);
+  }
+
+  progressPercent(entry: GenerationEntry): number | null {
+    return generationProgressPercent(entry.status, entry.chunks);
   }
 }

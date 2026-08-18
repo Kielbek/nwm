@@ -49,7 +49,14 @@
           <div class="sidebar__history-item">
             <button type="button" class="sidebar__history-main" (click)="historyModal.open(entry.id)">
               <span class="sidebar__history-text">{{ snippet(entry.text) }}</span>
-              <span class="sidebar__history-time">{{ relativeTime(entry.createdAt) }}</span>
+              @if (isGenerating(entry)) {
+                <span class="sidebar__history-progress">
+                  <span class="sidebar__history-spinner"></span>
+                  <span>{{ progressPercent(entry) }}%</span>
+                </span>
+              } @else {
+                <span class="sidebar__history-time">{{ relativeTime(entry.createdAt) }}</span>
+              }
             </button>
             <div class="sidebar__history-actions">
               <button

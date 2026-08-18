@@ -246,6 +246,23 @@
       opacity: 0.4;
       cursor: not-allowed;
     }
+
+    // Busy (actively generating) shouldn't look "disabled and dimmed" —
+    // it's doing real, visible work, not sitting inert.
+    &--busy {
+      opacity: 1;
+      cursor: default;
+    }
+  }
+
+  &__generate-spinner {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    border: 2px solid rgb(255 255 255 / 0.35);
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: tts-generate-spin 0.7s linear infinite;
   }
 
   &__error {
@@ -585,5 +602,11 @@
     .tts__toggle--on & {
       transform: translateX(16px);
     }
+  }
+}
+
+@keyframes tts-generate-spin {
+  to {
+    transform: rotate(360deg);
   }
 }

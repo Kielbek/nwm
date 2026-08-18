@@ -14,6 +14,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { UpgradeModalService } from '../../core/services/upgrade-modal.service';
 import { SeoService } from '../../core/services/seo.service';
 import { OutputFormat } from '../../core/models/tts.models';
+import { generationProgressPercent } from '../../core/utils/generation-progress';
 
 const MAX_CHARACTERS = 5000;
 const RING_RADIUS = 9;
@@ -84,6 +85,17 @@ export class TextToSpeechComponent {
   readonly charactersRemaining = computed(() =>
     Math.max(0, this.account.characterLimit() - this.account.charactersUsed())
   );
+
+  // Null while there's nothing to report progress on yet (before the POST
+  // resolves, or once the job is done) — the button falls back to a plain
+  // spinner + "Generating…" for that brief window instead of a percentage.
+  readonly generateProgress = computed(() => {
+    const entry = this.history.activeEntry();
+    if (!entry) {
+      return null;
+    }
+    return generationProgressPercent(entry.status, entry.chunks);
+  });
 
   readonly filteredVoices = computed(() => {
     const query = this.voiceSearch().trim().toLowerCase();

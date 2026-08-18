@@ -70,17 +70,22 @@
       <button
         type="button"
         class="tts__generate-btn"
+        [class.tts__generate-btn--busy]="ttsService.isSynthesizing()"
         [disabled]="!text().trim() || ttsService.isSynthesizing()"
         (click)="generate()"
       >
-        <app-icon name="play" [size]="15" />
-        {{
-          ttsService.isSynthesizing()
-            ? translate.dict().editor.generating
-            : history.activeEntry()
-              ? translate.dict().editor.regenerate
-              : translate.dict().editor.generate
-        }}
+        @if (ttsService.isSynthesizing()) {
+          <span class="tts__generate-spinner"></span>
+          <span>
+            {{ translate.dict().editor.generating }}
+            @if (generateProgress(); as percent) {
+              — {{ percent }}%
+            }
+          </span>
+        } @else {
+          <app-icon name="play" [size]="15" />
+          <span>{{ history.activeEntry() ? translate.dict().editor.regenerate : translate.dict().editor.generate }}</span>
+        }
       </button>
     </div>
 

@@ -8,6 +8,7 @@ import {
 } from '../../core/services/generation-history.service';
 import { HistoryDetailModalService } from '../../core/services/history-detail-modal.service';
 import { formatRelativeTime } from '../../core/utils/relative-time';
+import { generationProgressPercent, isGenerating } from '../../core/utils/generation-progress';
 
 const SNIPPET_LENGTH = 34;
 // Trigger loadMore() this many pixels before the sidebar's own scroll
@@ -87,6 +88,14 @@ export class SidebarComponent {
 
   remove(id: string): void {
     this.history.remove(id);
+  }
+
+  isGenerating(entry: GenerationEntry): boolean {
+    return isGenerating(entry.status);
+  }
+
+  progressPercent(entry: GenerationEntry): number | null {
+    return generationProgressPercent(entry.status, entry.chunks);
   }
 
   onScroll(event: Event): void {
