@@ -113,14 +113,14 @@
       <app-icon name="invite" [size]="18" />
     </button>
 
-    <a
+    <button
+      type="button"
       class="header__icon-btn header__icon-btn--secondary"
-      routerLink="/app/history"
-      routerLinkActive="header__icon-btn--active"
       [attr.aria-label]="translate.dict().sidebar.history"
+      (click)="fileManagerModal.open()"
     >
       <app-icon name="folder" [size]="18" />
-    </a>
+    </button>
 
     <app-dropdown #notifDropdown align="end">
       <button

@@ -350,6 +350,28 @@ export interface Dictionary {
     daysAgo: string;
     characters: string;
   };
+  fileManager: {
+    title: string;
+    subtitle: string;
+    allFiles: string;
+    newFolder: string;
+    newFolderPlaceholder: string;
+    createAction: string;
+    cancelAction: string;
+    renameAction: string;
+    deleteFolder: string;
+    confirmDeleteFolderTitle: string;
+    confirmDeleteFolderBody: string;
+    confirmDeleteFolderAction: string;
+    itemCount: string;
+    emptyFolders: string;
+    emptyRoot: string;
+    emptyRootHint: string;
+    emptyFolder: string;
+    emptyFolderHint: string;
+    dropToMove: string;
+    dropToUnfile: string;
+  };
   referral: {
     title: string;
     subtitle: string;

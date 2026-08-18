@@ -57,5 +57,6 @@ export interface JobResponse {
   downloadUrl: string | null;
   errorMessage: string | null;
   createdAt: string;
+  folderId: string | null;
   chunks: JobChunk[];
 }

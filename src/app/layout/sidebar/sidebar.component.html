@@ -35,10 +35,10 @@
       <app-icon name="voices" [size]="18" />
       <span>{{ translate.dict().sidebar.voices }}</span>
     </a>
-    <a class="sidebar__item" routerLink="/app/history" routerLinkActive="sidebar__item--active">
+    <button type="button" class="sidebar__item sidebar__item--button" (click)="fileManagerModal.open()">
       <app-icon name="folder" [size]="18" />
       <span>{{ translate.dict().sidebar.history }}</span>
-    </a>
+    </button>
   </nav>
 
   @if (history.entries().length) {

@@ -1,0 +1,226 @@
+@if (modal.isOpen()) {
+  <div class="fm">
+    <div class="fm__backdrop" (click)="close()"></div>
+    <div class="fm__panel" role="dialog" aria-modal="true">
+      <div class="fm__head">
+        <div class="fm__head-titles">
+          @if (currentFolder(); as folder) {
+            <button
+              type="button"
+              class="fm__breadcrumb"
+              [class.fm__breadcrumb--drop-target]="dragOverRoot()"
+              (click)="backToRoot()"
+              (dragover)="onRootDragOver($event)"
+              (dragleave)="onRootDragLeave()"
+              (drop)="onRootDrop($event)"
+            >
+              <app-icon name="chevron-right" [size]="13" class="fm__breadcrumb-icon" />
+              {{ translate.dict().fileManager.allFiles }}
+            </button>
+            <h2 class="fm__title">{{ folder.name }}</h2>
+          } @else {
+            <h2 class="fm__title">{{ translate.dict().fileManager.title }}</h2>
+            <p class="fm__subtitle">{{ translate.dict().fileManager.subtitle }}</p>
+          }
+        </div>
+
+        <div class="fm__head-actions">
+          @if (currentFolder(); as folder) {
+            @if (renamingFolderId() === folder.id) {
+              <input
+                class="fm__rename-input"
+                [value]="renameValue()"
+                (input)="renameValue.set($any($event.target).value)"
+                (keydown.enter)="confirmRenameFolder(folder)"
+                (keydown.escape)="cancelRenameFolder()"
+              />
+              <button type="button" class="fm__icon-btn" (click)="confirmRenameFolder(folder)">
+                <app-icon name="check" [size]="15" />
+              </button>
+              <button type="button" class="fm__icon-btn" (click)="cancelRenameFolder()">
+                <app-icon name="close" [size]="15" />
+              </button>
+            } @else if (deleteConfirmFolderId() === folder.id) {
+              <span class="fm__delete-confirm-text">{{ translate.dict().fileManager.confirmDeleteFolderBody }}</span>
+              <button type="button" class="fm__btn" (click)="cancelDeleteFolder()">
+                {{ translate.dict().historyPage.confirmCancelAction }}
+              </button>
+              <button type="button" class="fm__btn fm__btn--danger-solid" (click)="confirmDeleteFolder(folder)">
+                {{ translate.dict().fileManager.confirmDeleteFolderAction }}
+              </button>
+            } @else {
+              <button
+                type="button"
+                class="fm__icon-btn"
+                [attr.aria-label]="translate.dict().fileManager.renameAction"
+                (click)="startRenameFolder(folder, $event)"
+              >
+                <app-icon name="edit" [size]="15" />
+              </button>
+              <button
+                type="button"
+                class="fm__icon-btn fm__icon-btn--danger"
+                [attr.aria-label]="translate.dict().fileManager.deleteFolder"
+                (click)="startDeleteFolder(folder, $event)"
+              >
+                <app-icon name="trash" [size]="15" />
+              </button>
+            }
+          }
+          <button
+            type="button"
+            class="fm__icon-btn fm__close"
+            [attr.aria-label]="translate.dict().player.close"
+            (click)="close()"
+          >
+            <app-icon name="close" [size]="16" />
+          </button>
+        </div>
+      </div>
+
+      <div class="fm__body">
+        @if (!currentFolder()) {
+          <div class="fm__folders-grid">
+            @if (folders.loading() && !folders.folders().length) {
+              @for (n of [1, 2, 3]; track n) {
+                <div class="fm__folder-skeleton"></div>
+              }
+            } @else {
+              @for (folder of folders.folders(); track folder.id) {
+                <button
+                  type="button"
+                  class="fm__folder-tile"
+                  [class.fm__folder-tile--drop-target]="dragOverFolderId() === folder.id"
+                  (click)="openFolder(folder)"
+                  (dragover)="onFolderDragOver(folder, $event)"
+                  (dragleave)="onFolderDragLeave(folder)"
+                  (drop)="onFolderDrop(folder, $event)"
+                >
+                  <span class="fm__folder-icon">
+                    <app-icon name="folder" [size]="20" />
+                  </span>
+                  <span class="fm__folder-info">
+                    <span class="fm__folder-name">{{ folder.name }}</span>
+                    <span class="fm__folder-count">{{ itemCountLabel(folder.jobCount) }}</span>
+                  </span>
+                  @if (dragOverFolderId() === folder.id) {
+                    <span class="fm__folder-drop-hint">{{ translate.dict().fileManager.dropToMove }}</span>
+                  }
+                </button>
+              }
+            }
+
+            @if (creatingFolder()) {
+              <div class="fm__folder-tile fm__folder-tile--creating">
+                <span class="fm__folder-icon">
+                  <app-icon name="folder" [size]="20" />
+                </span>
+                <input
+                  class="fm__folder-new-input"
+                  [value]="newFolderName()"
+                  [placeholder]="translate.dict().fileManager.newFolderPlaceholder"
+                  (input)="newFolderName.set($any($event.target).value)"
+                  (keydown.enter)="confirmCreateFolder()"
+                  (keydown.escape)="cancelCreateFolder()"
+                />
+                <div class="fm__folder-new-actions">
+                  <button type="button" class="fm__icon-btn" (click)="confirmCreateFolder()">
+                    <app-icon name="check" [size]="14" />
+                  </button>
+                  <button type="button" class="fm__icon-btn" (click)="cancelCreateFolder()">
+                    <app-icon name="close" [size]="14" />
+                  </button>
+                </div>
+              </div>
+            } @else {
+              <button type="button" class="fm__folder-tile fm__folder-tile--new" (click)="startCreateFolder()">
+                <span class="fm__folder-icon fm__folder-icon--new">
+                  <app-icon name="plus" [size]="18" />
+                </span>
+                <span class="fm__folder-name">{{ translate.dict().fileManager.newFolder }}</span>
+              </button>
+            }
+          </div>
+
+          @if (!folders.loading() && !folders.folders().length && !creatingFolder()) {
+            <p class="fm__folders-empty">{{ translate.dict().fileManager.emptyFolders }}</p>
+          }
+        }
+
+        <div class="fm__entries">
+          @if (currentEntries().length) {
+            <div class="fm__entries-grid">
+              @for (entry of currentEntries(); track entry.id) {
+                <div
+                  class="fm__entry"
+                  [class.fm__entry--dragging]="dragEntryId() === entry.id"
+                  draggable="true"
+                  (dragstart)="onDragStart(entry, $event)"
+                  (dragend)="onDragEnd()"
+                  (click)="openDetail(entry)"
+                >
+                  <button
+                    type="button"
+                    class="fm__entry-play"
+                    [class.fm__entry-play--active]="isEntryPlaying(entry)"
+                    [disabled]="!entry.chunks.length"
+                    (click)="togglePlayback(entry, $event)"
+                  >
+                    <app-icon [name]="isEntryPlaying(entry) ? 'pause' : 'play'" [size]="12" />
+                  </button>
+                  <div class="fm__entry-body">
+                    <div class="fm__entry-head">
+                      <span class="fm__entry-time">{{ relativeTime(entry.createdAt) }}</span>
+                      @if (isGenerating(entry)) {
+                        <span class="fm__entry-progress">
+                          <span class="fm__entry-spinner"></span>
+                          @if (progressPercent(entry); as percent) {
+                            {{ percent }}%
+                          }
+                        </span>
+                      }
+                    </div>
+                    <p class="fm__entry-text">{{ snippet(entry.text) }}</p>
+                  </div>
+                </div>
+              }
+            </div>
+
+            @if (currentHasMore()) {
+              <button
+                type="button"
+                class="fm__load-more"
+                [disabled]="currentLoading()"
+                (click)="loadMoreEntries()"
+              >
+                {{ currentLoading() ? translate.dict().historyPage.loading : translate.dict().historyPage.loadMore }}
+              </button>
+            }
+          } @else if (currentLoading()) {
+            <div class="fm__entries-grid">
+              @for (n of [1, 2, 3, 4]; track n) {
+                <div class="fm__entry-skeleton"></div>
+              }
+            </div>
+          } @else {
+            <div class="fm__empty">
+              <span class="fm__empty-icon">
+                <app-icon name="folder" [size]="22" />
+              </span>
+              <strong>
+                {{ currentFolder() ? translate.dict().fileManager.emptyFolder : translate.dict().fileManager.emptyRoot }}
+              </strong>
+              <span>
+                {{
+                  currentFolder()
+                    ? translate.dict().fileManager.emptyFolderHint
+                    : translate.dict().fileManager.emptyRootHint
+                }}
+              </span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+}

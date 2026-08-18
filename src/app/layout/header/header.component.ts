@@ -9,6 +9,7 @@ import { AuthService } from '../../core/services/auth.service';
 import { NotificationItem, NotificationsService } from '../../core/services/notifications.service';
 import { ReferralService } from '../../core/services/referral.service';
 import { CommandPaletteService } from '../../core/services/command-palette.service';
+import { FileManagerModalService } from '../../core/services/file-manager-modal.service';
 
 @Component({
   selector: 'app-header',
@@ -37,6 +38,7 @@ export class HeaderComponent {
     readonly notifications: NotificationsService,
     readonly referral: ReferralService,
     readonly palette: CommandPaletteService,
+    readonly fileManagerModal: FileManagerModalService,
     private readonly router: Router
   ) {}
 

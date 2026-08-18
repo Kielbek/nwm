@@ -14,6 +14,7 @@ import { CommandPaletteService } from '../../../core/services/command-palette.se
 import { TranslateService } from '../../../core/services/translate.service';
 import { VoiceLibraryService } from '../../../core/services/voice-library.service';
 import { DocsService } from '../../../core/services/docs.service';
+import { FileManagerModalService } from '../../../core/services/file-manager-modal.service';
 
 interface PaletteItem {
   icon: IconName;
@@ -48,7 +49,7 @@ export class CommandPaletteComponent {
     const allPages: PaletteItem[] = [
       { icon: 'text-to-speech', label: dict.sidebar.nav, action: () => this.goTo('/app') },
       { icon: 'voices', label: dict.sidebar.voices, action: () => this.goTo('/app/voices') },
-      { icon: 'folder', label: dict.sidebar.history, action: () => this.goTo('/app/history') },
+      { icon: 'folder', label: dict.sidebar.history, action: () => this.openFileManager() },
       { icon: 'star', label: dict.header.feedback, action: () => this.goTo('/app/feedback') },
       { icon: 'book', label: dict.header.docs, action: () => this.goTo('/app/docs') },
       { icon: 'edit', label: dict.header.profile, action: () => this.goTo('/app/profile') },
@@ -103,6 +104,7 @@ export class CommandPaletteComponent {
     readonly translate: TranslateService,
     private readonly voiceLibrary: VoiceLibraryService,
     private readonly docsService: DocsService,
+    private readonly fileManagerModal: FileManagerModalService,
     private readonly router: Router
   ) {
     effect(() => {
@@ -185,6 +187,11 @@ export class CommandPaletteComponent {
   private goTo(route: string): void {
     this.router.navigateByUrl(route);
     this.palette.close();
+  }
+
+  private openFileManager(): void {
+    this.palette.close();
+    this.fileManagerModal.open();
   }
 
   private goToDoc(articleId: string): void {

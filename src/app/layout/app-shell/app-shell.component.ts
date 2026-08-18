@@ -9,6 +9,7 @@ import { InviteModalComponent } from '../../shared/components/invite-modal/invit
 import { UpgradeModalComponent } from '../../shared/components/upgrade-modal/upgrade-modal.component';
 import { GenerationPlayerComponent } from '../../features/text-to-speech/generation-player/generation-player.component';
 import { HistoryDetailModalComponent } from '../../shared/components/history-detail-modal/history-detail-modal.component';
+import { FileManagerModalComponent } from '../../shared/components/file-manager-modal/file-manager-modal.component';
 import { GenerationHistoryService } from '../../core/services/generation-history.service';
 import { SeoService } from '../../core/services/seo.service';
 
@@ -29,6 +30,7 @@ const SIDEBAR_WIDTH_PX = 248;
     UpgradeModalComponent,
     GenerationPlayerComponent,
     HistoryDetailModalComponent,
+    FileManagerModalComponent,
   ],
   templateUrl: './app-shell.component.html',
   styleUrl: './app-shell.component.scss',

@@ -7,6 +7,7 @@ import {
   GenerationHistoryService,
 } from '../../core/services/generation-history.service';
 import { HistoryDetailModalService } from '../../core/services/history-detail-modal.service';
+import { FileManagerModalService } from '../../core/services/file-manager-modal.service';
 import { formatRelativeTime } from '../../core/utils/relative-time';
 import { isGenerating } from '../../core/utils/generation-progress';
 
@@ -64,6 +65,7 @@ export class SidebarComponent {
     readonly translate: TranslateService,
     readonly history: GenerationHistoryService,
     readonly historyModal: HistoryDetailModalService,
+    readonly fileManagerModal: FileManagerModalService,
     private readonly router: Router
   ) {}
 

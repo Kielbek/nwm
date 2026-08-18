@@ -1,5 +1,6 @@
 import { Injectable, computed, effect, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable, map, tap } from 'rxjs';
 import { JobChunk, JobResponse, JobStatus, OutputFormat, TtsSettings } from '../models/tts.models';
 import { AuthService } from './auth.service';
 import { VoiceLibraryService } from './voice-library.service';
@@ -23,6 +24,7 @@ export interface GenerationEntry {
   durationSeconds: number | null;
   downloadUrl: string | null;
   errorMessage: string | null;
+  folderId: string | null;
 }
 
 export interface PendingReuse {
@@ -297,6 +299,7 @@ export class GenerationHistoryService {
       durationSeconds: null,
       downloadUrl: null,
       errorMessage: null,
+      folderId: null,
     };
     this.entries.set([entry, ...this.entries()].slice(0, MAX_LOADED_ENTRIES));
     this.activeEntryId.set(entry.id);
@@ -330,6 +333,7 @@ export class GenerationHistoryService {
       durationSeconds: job.durationSeconds,
       downloadUrl: job.downloadUrl,
       errorMessage: job.errorMessage,
+      folderId: job.folderId,
     }));
     if (!isGenerating(job.status)) {
       this.progressTimelines.delete(job.id);
@@ -388,6 +392,32 @@ export class GenerationHistoryService {
     }
   }
 
+  /** Files (or unfiles, if `folderId` is null) an entry — used by the file manager's drag-and-drop. */
+  moveToFolder(entry: GenerationEntry, folderId: string | null): Observable<void> {
+    return this.http.patch<JobResponse>(`/api/tts/jobs/${entry.id}/folder`, { folderId }).pipe(
+      tap(() => this.updateEntry(entry.id, (e) => ({ ...e, folderId }))),
+      map(() => void 0)
+    );
+  }
+
+  /**
+   * One page of a specific folder's entries, for the file manager's
+   * folder-open view — deliberately separate from `entries`/`loadMore()`
+   * (which back the sidebar's unfiled-and-filed-together global list) so
+   * browsing into a folder doesn't have to already have every one of its
+   * jobs loaded into that global, paginated cache.
+   */
+  loadFolderEntries(folderId: string, page: number, size = 30): Observable<{ entries: GenerationEntry[]; hasMore: boolean }> {
+    return this.http
+      .get<HistoryPage>('/api/tts/history', { params: { page: String(page), size: String(size), folderId } })
+      .pipe(
+        map((result) => ({
+          entries: result.content.map((job) => this.fromJobResponse(job)),
+          hasMore: !result.last,
+        }))
+      );
+  }
+
   consumePendingReuse(): PendingReuse | null {
     const pending = this.pendingReuse();
     if (pending) {
@@ -428,6 +458,7 @@ export class GenerationHistoryService {
       durationSeconds: job.durationSeconds,
       downloadUrl: job.downloadUrl,
       errorMessage: job.errorMessage,
+      folderId: job.folderId,
     };
   }
 }
