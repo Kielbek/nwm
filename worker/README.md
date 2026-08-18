@@ -62,7 +62,7 @@ both sides in sync if either changes.
   "jobId": "uuid",
   "text": "...",
   "voiceId": "marek",
-  "modelId": "standard",
+  "modelId": "natural",
   "outputFormat": "mp3-128",
   "settings": { "speed": 1.0, "stability": 0.5, "similarity": 0.85, "styleExaggeration": 0.0, "languageOverride": false },
   "s3Bucket": "nwm-audio",
@@ -103,10 +103,12 @@ publish is silently dropped).
 
 ### Voice/model settings
 
-`modelId` (expressive/standard/fast/draft) selects a preset of XTTS
+`modelId` (natural/dynamic/calm/excited/serious) selects a preset of XTTS
 inference knobs (`temperature`, `repetition_penalty`, `top_p`) — same
-model, different sampling behavior, deliberately spread apart so the
-tiers are audibly distinct rather than a rounding error apart.
+model, different sampling behavior. It's presented to the user as a
+speaking-style choice, not a model picker, since there's only one voice
+model (XTTS v2); the presets are deliberately spread apart so the styles
+are audibly distinct rather than a rounding error apart.
 
 The frontend's `stability`/`similarity`/`styleExaggeration` sliders (0-1,
 ElevenLabs-style naming since the UI predates picking XTTS) nudge those

@@ -86,7 +86,7 @@ export const en: Dictionary = {
   },
   settings: {
     voice: 'Voice',
-    model: 'Model',
+    model: 'Speaking style',
     speed: 'Speed',
     speedSlower: 'Slower',
     speedFaster: 'Faster',
@@ -162,10 +162,11 @@ export const en: Dictionary = {
     { name: 'Tomasz', description: 'Neutral, all-purpose' },
   ],
   models: [
-    { name: 'Expressive', description: 'Rich emotion and intonation' },
-    { name: 'Standard', description: 'Natural sound, many languages' },
-    { name: 'Fast', description: 'Lowest latency, good quality' },
-    { name: 'Draft', description: 'Fastest preview, lower quality' },
+    { name: 'Natural', description: 'Plain, everyday speech' },
+    { name: 'Dynamic', description: 'Lively, energetic delivery' },
+    { name: 'Calm', description: 'Slower, subdued tone' },
+    { name: 'Excited', description: 'High energy and enthusiasm' },
+    { name: 'Serious', description: 'Matter-of-fact, formal tone' },
   ],
   formats: [
     'MP3 44.1 kHz (128kbps)',

@@ -36,17 +36,18 @@ logger = logging.getLogger(__name__)
 
 _model = None
 
-# modelId from the frontend's model picker (expressive/standard/fast/draft)
-# maps to XTTS inference knobs rather than genuinely different engines —
-# XTTS v2 is the only model here. temperature and top_p both drive prosody
-# variety (higher = more expressive/varied, lower = flatter/more
-# deterministic) — deliberately spread wide apart across tiers so the
-# difference is actually audible, not just a fraction of a percent.
+# modelId from the frontend's picker (natural/dynamic/calm/excited/serious)
+# is really a speaking-style preset, not a different engine — XTTS v2 is the
+# only model here. temperature and top_p both drive prosody variety (higher
+# = more expressive/varied, lower = flatter/more deterministic) —
+# deliberately spread wide apart across styles so the difference in
+# delivery is actually audible, not just a fraction of a percent.
 _MODEL_TUNING = {
-    "expressive": {"temperature": 0.95, "repetition_penalty": 2.5, "top_p": 0.95},
-    "standard": {"temperature": 0.65, "repetition_penalty": 2.0, "top_p": 0.85},
-    "fast": {"temperature": 0.4, "repetition_penalty": 1.5, "top_p": 0.75},
-    "draft": {"temperature": 0.2, "repetition_penalty": 1.0, "top_p": 0.65},
+    "natural": {"temperature": 0.55, "repetition_penalty": 1.8, "top_p": 0.8},
+    "dynamic": {"temperature": 0.8, "repetition_penalty": 2.2, "top_p": 0.9},
+    "calm": {"temperature": 0.3, "repetition_penalty": 1.3, "top_p": 0.65},
+    "excited": {"temperature": 0.95, "repetition_penalty": 2.5, "top_p": 0.95},
+    "serious": {"temperature": 0.4, "repetition_penalty": 1.6, "top_p": 0.7},
 }
 
 # Frontend settings sliders (stability/similarity/styleExaggeration), 0-1,
@@ -120,7 +121,7 @@ class ChunkSynthesizer:
         model = _load_model()
         voice = get_voice_profile(self._job.voice_id)
         language = detect_language(self._job.text, default=settings.default_language)
-        tuning = _MODEL_TUNING.get(self._job.model_id, _MODEL_TUNING["standard"])
+        tuning = _MODEL_TUNING.get(self._job.model_id, _MODEL_TUNING["natural"])
         speed = max(0.5, min(2.0, self._job.settings.speed))
 
         stability = _clamp(self._job.settings.stability, 0.0, 1.0)

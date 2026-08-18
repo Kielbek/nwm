@@ -19,11 +19,16 @@ const MAX_CHARACTERS = 5000;
 const RING_RADIUS = 9;
 const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 
+// There's only one underlying voice model (XTTS v2) — these aren't different
+// "AI models" to pick between, they're speaking-style presets (different
+// temperature/top_p/repetition_penalty combinations, see worker/README.md)
+// framed as tone-of-voice choices instead of a fake model-quality tier list.
 const MODEL_META = [
-  { id: 'expressive', badge: 'E' },
-  { id: 'standard', badge: 'S' },
-  { id: 'fast', badge: 'F' },
-  { id: 'draft', badge: 'D' },
+  { id: 'natural', badge: '🙂' },
+  { id: 'dynamic', badge: '⚡' },
+  { id: 'calm', badge: '🌙' },
+  { id: 'excited', badge: '🎉' },
+  { id: 'serious', badge: '🎓' },
 ];
 
 const FORMAT_META: OutputFormat[] = ['mp3-128', 'mp3-192', 'wav', 'ogg'];
@@ -63,7 +68,7 @@ export class TextToSpeechComponent {
   readonly text = signal('');
   readonly tipDismissed = signal(false);
   readonly voiceSearch = signal('');
-  readonly selectedModelId = signal(MODEL_META[1].id);
+  readonly selectedModelId = signal(MODEL_META[0].id);
   readonly outputFormat = signal<OutputFormat>('mp3-128');
   readonly speed = signal(1);
   readonly stability = signal(0.5);

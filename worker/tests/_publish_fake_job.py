@@ -14,7 +14,7 @@ message = {
     "jobId": job_id,
     "text": text,
     "voiceId": "marek",
-    "modelId": "standard",
+    "modelId": "natural",
     "outputFormat": "mp3-128",
     "settings": {
         "speed": 1.0,

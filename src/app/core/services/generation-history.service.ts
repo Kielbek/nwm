@@ -8,7 +8,7 @@ import { generationProgressPercent, isGenerating } from '../utils/generation-pro
 
 export type GenerationFeedback = 'up' | 'down' | null;
 
-const MODEL_IDS = ['expressive', 'standard', 'fast', 'draft'];
+const MODEL_IDS = ['natural', 'dynamic', 'calm', 'excited', 'serious'];
 
 export interface GenerationEntry {
   id: string; // the backend's GenerationJob id — real audio lives at /api/tts/jobs/{id}
