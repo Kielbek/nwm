@@ -40,35 +40,9 @@
   }
 }
 
-:root:not([data-theme='light']) .landing {
-  @media (prefers-color-scheme: dark) {
-    --paper: #18181a;
-    --paper-deep: #202022;
-    --ink: #f2f1ec;
-    --muted-ink: #9c9a91;
-    --line: #333230;
-    --line-dark: #45433f;
-    --violet: #8f85ee;
-    --violet-soft: rgb(143 133 238 / 0.16);
-    --coral: #e58a76;
-    --lime: #c3dd8c;
-    --card-hover: #202022;
-  }
-}
-
-:root[data-theme='dark'] .landing {
-  --paper: #18181a;
-  --paper-deep: #202022;
-  --ink: #f2f1ec;
-  --muted-ink: #9c9a91;
-  --line: #333230;
-  --line-dark: #45433f;
-  --violet: #8f85ee;
-  --violet-soft: rgb(143 133 238 / 0.16);
-  --coral: #e58a76;
-  --lime: #c3dd8c;
-  --card-hover: #202022;
-}
+// Dark-mode overrides for this palette live in src/styles.scss (global),
+// not here — see the comment there for why a component-scoped :root
+// selector can never match.
 
 .landing {
   --landing-max: 1180px;

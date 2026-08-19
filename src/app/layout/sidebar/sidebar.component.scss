@@ -1,4 +1,18 @@
+// Restyled to match the landing page's "paper" visual identity — see the
+// matching comment in header.component.scss for why shadowing the
+// app-wide token names here is enough to restyle every rule below without
+// rewriting each one. Page content next to the sidebar keeps the app theme.
 .sidebar {
+  --border: #d9d7cf;
+  --bg-sidebar: #eceae3;
+  --bg-hover: #e4e1d5;
+  --bg-active: #d9d5c8;
+  --text-primary: #171715;
+  --text-secondary: #4f4d45;
+  --text-muted: #6f6d66;
+  --accent: #6257d8;
+  --accent-soft: #e3e0fb;
+
   display: flex;
   flex-direction: column;
   width: 248px;
@@ -7,6 +21,8 @@
   padding: 16px 12px;
   border-right: 1px solid var(--border);
   background: var(--bg-sidebar);
+  color: var(--text-primary);
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   // The sidebar itself no longer scrolls — only .sidebar__history does
   // (below), so the top nav and the bottom "Settings" link always stay
   // put instead of scrolling away with a long history list.
@@ -57,6 +73,7 @@
     font-size: 15px;
     letter-spacing: -0.01em;
     white-space: nowrap;
+    font-family: 'Space Grotesk', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 
   &__brand-mark {
@@ -66,7 +83,7 @@
     width: 26px;
     height: 26px;
     border-radius: 8px;
-    background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+    background: linear-gradient(135deg, #171715, var(--accent));
     color: #fff;
     flex-shrink: 0;
   }
@@ -301,6 +318,10 @@
     }
   }
 }
+
+// Dark-mode overrides for this palette live in src/styles.scss (global),
+// not here — see the comment there for why a component-scoped :root
+// selector can never match.
 
 @keyframes sidebar-spin {
   to {

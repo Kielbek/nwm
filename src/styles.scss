@@ -374,3 +374,336 @@ button {
     transform: rotate(360deg);
   }
 }
+
+// ======================================================================
+// Dark-mode overrides for the "paper" visual system (landing page,
+// pricing page, in-app header/sidebar, and the public nav/footer's paper
+// variant used by both).
+//
+// These live here — in the global stylesheet — rather than in each
+// component's own .scss, because Angular's emulated view encapsulation
+// stamps a scoping attribute onto every compound selector in a
+// component-scoped stylesheet, including :root. A selector like
+// ":root:not([data-theme='light']) .header" written inside a component's
+// .scss compiles to "[_ngcontent-xxx]:root:not(...) .header[_ngcontent-xxx]"
+// — and :root (the <html> element) never carries that attribute, so it
+// can never match. Global styles.scss isn't component-scoped, so the
+// plain selectors below work correctly against the real <html> element.
+// ======================================================================
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    .landing,
+    .pricing {
+      --paper: #18181a;
+      --paper-deep: #202022;
+      --ink: #f2f1ec;
+      --muted-ink: #9c9a91;
+      --line: #333230;
+      --line-dark: #45433f;
+      --violet: #8f85ee;
+      --violet-soft: rgb(143 133 238 / 0.16);
+      --coral: #e58a76;
+      --lime: #c3dd8c;
+      --card-hover: #202022;
+    }
+
+    .header {
+      --border: #333230;
+      --border-strong: #45433f;
+      --bg-surface: #18181a;
+      --bg-hover: #202022;
+      --text-primary: #f2f1ec;
+      --text-secondary: #b5b3aa;
+      --text-muted: #9c9a91;
+      --accent: #8f85ee;
+      --accent-hover: #a49bf2;
+      --accent-contrast: #18181a;
+      --accent-soft: rgb(143 133 238 / 0.16);
+
+      .header__link--primary {
+        background: #f2f1ec;
+        color: #18181a;
+
+        &:hover {
+          background: var(--accent);
+          color: #fff;
+        }
+      }
+
+      .header__avatar {
+        background: linear-gradient(135deg, #f2f1ec, var(--accent));
+        color: #18181a;
+      }
+    }
+
+    .sidebar {
+      --border: #333230;
+      --bg-sidebar: #202022;
+      --bg-hover: #28282a;
+      --bg-active: #333230;
+      --text-primary: #f2f1ec;
+      --text-secondary: #b5b3aa;
+      --text-muted: #9c9a91;
+      --accent: #8f85ee;
+      --accent-soft: rgb(143 133 238 / 0.16);
+
+      .sidebar__brand-mark {
+        background: linear-gradient(135deg, #f2f1ec, var(--accent));
+        color: #18181a;
+      }
+    }
+
+    .public-nav--paper {
+      background: rgb(24 24 26 / 0.9);
+      border-bottom-color: #333230;
+
+      .public-nav__logo {
+        color: #f2f1ec;
+      }
+
+      .public-nav__links a {
+        color: #9c9a91;
+
+        &:hover {
+          color: #f2f1ec;
+        }
+      }
+
+      .public-nav__link--active {
+        color: #f2f1ec !important;
+      }
+
+      .public-nav__lang-toggle {
+        background: #202022;
+        border-color: #333230;
+      }
+
+      .public-nav__lang-btn {
+        color: #9c9a91;
+
+        &--active {
+          background: #18181a;
+          color: #f2f1ec;
+        }
+      }
+
+      .public-nav__icon-btn {
+        border-color: #45433f;
+        color: #9c9a91;
+
+        &:hover {
+          background: #202022;
+          color: #f2f1ec;
+        }
+      }
+
+      .public-nav__link {
+        color: #9c9a91;
+
+        &:hover {
+          color: #f2f1ec;
+        }
+      }
+
+      .public-nav__cta {
+        background: #f2f1ec;
+        color: #18181a;
+
+        &:hover {
+          background: #8f85ee;
+          color: #fff;
+        }
+      }
+    }
+
+    .public-footer--paper {
+      background: #18181a;
+      border-top-color: #333230;
+
+      .public-footer__logo {
+        color: #f2f1ec;
+      }
+
+      .public-footer__brand p {
+        color: #9c9a91;
+      }
+
+      .public-footer__col {
+        strong {
+          color: #f2f1ec;
+        }
+
+        a {
+          color: #9c9a91;
+
+          &:hover {
+            color: #f2f1ec;
+          }
+        }
+      }
+
+      .public-footer__bottom {
+        border-top-color: #333230;
+        color: #9c9a91;
+      }
+    }
+  }
+}
+
+:root[data-theme='dark'] {
+  .landing,
+  .pricing {
+    --paper: #18181a;
+    --paper-deep: #202022;
+    --ink: #f2f1ec;
+    --muted-ink: #9c9a91;
+    --line: #333230;
+    --line-dark: #45433f;
+    --violet: #8f85ee;
+    --violet-soft: rgb(143 133 238 / 0.16);
+    --coral: #e58a76;
+    --lime: #c3dd8c;
+    --card-hover: #202022;
+  }
+
+  .header {
+    --border: #333230;
+    --border-strong: #45433f;
+    --bg-surface: #18181a;
+    --bg-hover: #202022;
+    --text-primary: #f2f1ec;
+    --text-secondary: #b5b3aa;
+    --text-muted: #9c9a91;
+    --accent: #8f85ee;
+    --accent-hover: #a49bf2;
+    --accent-contrast: #18181a;
+    --accent-soft: rgb(143 133 238 / 0.16);
+
+    .header__link--primary {
+      background: #f2f1ec;
+      color: #18181a;
+
+      &:hover {
+        background: var(--accent);
+        color: #fff;
+      }
+    }
+
+    .header__avatar {
+      background: linear-gradient(135deg, #f2f1ec, var(--accent));
+      color: #18181a;
+    }
+  }
+
+  .sidebar {
+    --border: #333230;
+    --bg-sidebar: #202022;
+    --bg-hover: #28282a;
+    --bg-active: #333230;
+    --text-primary: #f2f1ec;
+    --text-secondary: #b5b3aa;
+    --text-muted: #9c9a91;
+    --accent: #8f85ee;
+    --accent-soft: rgb(143 133 238 / 0.16);
+
+    .sidebar__brand-mark {
+      background: linear-gradient(135deg, #f2f1ec, var(--accent));
+      color: #18181a;
+    }
+  }
+
+  .public-nav--paper {
+    background: rgb(24 24 26 / 0.9);
+    border-bottom-color: #333230;
+
+    .public-nav__logo {
+      color: #f2f1ec;
+    }
+
+    .public-nav__links a {
+      color: #9c9a91;
+
+      &:hover {
+        color: #f2f1ec;
+      }
+    }
+
+    .public-nav__link--active {
+      color: #f2f1ec !important;
+    }
+
+    .public-nav__lang-toggle {
+      background: #202022;
+      border-color: #333230;
+    }
+
+    .public-nav__lang-btn {
+      color: #9c9a91;
+
+      &--active {
+        background: #18181a;
+        color: #f2f1ec;
+      }
+    }
+
+    .public-nav__icon-btn {
+      border-color: #45433f;
+      color: #9c9a91;
+
+      &:hover {
+        background: #202022;
+        color: #f2f1ec;
+      }
+    }
+
+    .public-nav__link {
+      color: #9c9a91;
+
+      &:hover {
+        color: #f2f1ec;
+      }
+    }
+
+    .public-nav__cta {
+      background: #f2f1ec;
+      color: #18181a;
+
+      &:hover {
+        background: #8f85ee;
+        color: #fff;
+      }
+    }
+  }
+
+  .public-footer--paper {
+    background: #18181a;
+    border-top-color: #333230;
+
+    .public-footer__logo {
+      color: #f2f1ec;
+    }
+
+    .public-footer__brand p {
+      color: #9c9a91;
+    }
+
+    .public-footer__col {
+      strong {
+        color: #f2f1ec;
+      }
+
+      a {
+        color: #9c9a91;
+
+        &:hover {
+          color: #f2f1ec;
+        }
+      }
+    }
+
+    .public-footer__bottom {
+      border-top-color: #333230;
+      color: #9c9a91;
+    }
+  }
+}

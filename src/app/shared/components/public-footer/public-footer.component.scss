@@ -117,71 +117,9 @@
   }
 }
 
-:root:not([data-theme='light']) .public-footer--paper {
-  @media (prefers-color-scheme: dark) {
-    background: #18181a;
-    border-top-color: #333230;
-
-    .public-footer__logo {
-      color: #f2f1ec;
-    }
-
-    .public-footer__brand p {
-      color: #9c9a91;
-    }
-
-    .public-footer__col {
-      strong {
-        color: #f2f1ec;
-      }
-
-      a {
-        color: #9c9a91;
-
-        &:hover {
-          color: #f2f1ec;
-        }
-      }
-    }
-
-    .public-footer__bottom {
-      border-top-color: #333230;
-      color: #9c9a91;
-    }
-  }
-}
-
-:root[data-theme='dark'] .public-footer--paper {
-  background: #18181a;
-  border-top-color: #333230;
-
-  .public-footer__logo {
-    color: #f2f1ec;
-  }
-
-  .public-footer__brand p {
-    color: #9c9a91;
-  }
-
-  .public-footer__col {
-    strong {
-      color: #f2f1ec;
-    }
-
-    a {
-      color: #9c9a91;
-
-      &:hover {
-        color: #f2f1ec;
-      }
-    }
-  }
-
-  .public-footer__bottom {
-    border-top-color: #333230;
-    color: #9c9a91;
-  }
-}
+// Dark-mode overrides for this palette live in src/styles.scss (global),
+// not here — see the comment there for why a component-scoped :root
+// selector can never match.
 
 @media (max-width: 1040px) {
   .public-footer__top {
