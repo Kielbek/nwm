@@ -546,6 +546,7 @@ export const pl: Dictionary = {
     voicesTitle: 'Głosy, które brzmią jak prawdziwi ludzie',
     voicesSubtitle: 'Odsłuchaj próbki poniżej i wybierz ten, który pasuje do Twojego projektu.',
     voicesCta: 'Zobacz wszystkie głosy',
+    voiceProfileTag: 'profil ekspresyjny',
     useCasesEyebrow: 'Zastosowania',
     useCasesTitle: 'Jeden głos. Nieskończone możliwości.',
     useCasesSubtitle: 'Dobry głos nie tylko czyta tekst — nadaje mu miejsce, w którym może wybrzmieć.',

@@ -422,6 +422,7 @@ export interface Dictionary {
     voicesTitle: string;
     voicesSubtitle: string;
     voicesCta: string;
+    voiceProfileTag: string;
     useCasesEyebrow: string;
     useCasesTitle: string;
     useCasesSubtitle: string;

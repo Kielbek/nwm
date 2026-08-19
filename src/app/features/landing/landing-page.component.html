@@ -108,18 +108,6 @@
     </div>
   </section>
 
-  <section class="landing__stats" #reveal>
-    <span class="landing__stats-title">{{ translate.dict().landing.statsTitle }}</span>
-    <div class="landing__stats-grid">
-      @for (stat of translate.dict().landingStats; track stat.label) {
-        <div class="landing__stat">
-          <strong #statValue>{{ stat.value }}</strong>
-          <span>{{ stat.label }}</span>
-        </div>
-      }
-    </div>
-  </section>
-
   <section class="landing__features" id="features">
     <header class="landing__section-head landing__section-head--left" #reveal>
       <span class="landing__eyebrow">{{ translate.dict().landing.navFeatures }} / 01</span>
@@ -181,7 +169,7 @@
     </header>
 
     <app-carousel class="landing__carousel" #reveal>
-      @for (voice of voiceLibrary.voices(); track voice.id) {
+      @for (voice of voiceLibrary.voices(); track voice.id; let i = $index) {
         <div class="landing__voice-card" #carouselItem>
           <div class="landing__voice-head">
             <span class="landing__voice-avatar" [style.background]="voice.avatarColor">
@@ -204,6 +192,13 @@
             @for (bar of waveformBars; track bar) {
               <span class="landing__voice-wave-bar" [style.--i]="bar"></span>
             }
+          </div>
+          <div class="landing__voice-foot">
+            <span>{{ translate.dict().landing.navVoices }} 0{{ i + 1 }}</span>
+            <span>
+              <app-icon name="voices" [size]="12" />
+              {{ translate.dict().landing.voiceProfileTag }}
+            </span>
           </div>
         </div>
       }

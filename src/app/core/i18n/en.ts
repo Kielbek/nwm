@@ -543,6 +543,7 @@ export const en: Dictionary = {
     voicesTitle: 'Voices that sound like real people',
     voicesSubtitle: 'Preview samples below and pick the one that fits your project.',
     voicesCta: 'See all voices',
+    voiceProfileTag: 'expressive profile',
     useCasesEyebrow: 'Use cases',
     useCasesTitle: 'One voice. Endless possibilities.',
     useCasesSubtitle: 'A good voice does not just read the words — it gives them somewhere to land.',

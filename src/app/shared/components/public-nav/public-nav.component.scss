@@ -151,8 +151,14 @@
     color: #171715;
   }
 
+  .public-nav__logo-mark {
+    background: #171715;
+    border-radius: 8px;
+  }
+
   .public-nav__links a {
     color: #6f6d66;
+    font-weight: 500;
 
     &:hover {
       color: #171715;
@@ -189,6 +195,7 @@
 
   .public-nav__link {
     color: #6f6d66;
+    font-weight: 400;
 
     &:hover {
       color: #171715;
@@ -196,6 +203,7 @@
   }
 
   .public-nav__cta {
+    border-radius: 999px;
     background: #171715;
     color: #f5f4ef;
 

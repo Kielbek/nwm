@@ -41,15 +41,11 @@ const FEATURED_PLAN_INDICES = [0, 2, 5];
 })
 export class LandingPageComponent implements AfterViewInit, OnDestroy {
   @ViewChildren('reveal', { read: ElementRef }) revealEls?: QueryList<ElementRef<HTMLElement>>;
-  @ViewChildren('statValue', { read: ElementRef }) statValueEls?: QueryList<
-    ElementRef<HTMLElement>
-  >;
 
   readonly waveformBars = Array.from({ length: 28 }, (_, i) => i);
   readonly openFaqIndex = signal<number | null>(0);
 
   private revealObserver?: IntersectionObserver;
-  private statsAnimated = false;
   private revealFallbackTimeout?: ReturnType<typeof setTimeout>;
 
   constructor(
@@ -113,10 +109,6 @@ export class LandingPageComponent implements AfterViewInit, OnDestroy {
           }
           entry.target.classList.add('is-visible');
           this.revealObserver?.unobserve(entry.target);
-          if (entry.target.classList.contains('landing__stats') && !this.statsAnimated) {
-            this.statsAnimated = true;
-            this.animateStats();
-          }
         }
       },
       { threshold: 0.15 }
@@ -132,10 +124,6 @@ export class LandingPageComponent implements AfterViewInit, OnDestroy {
     // sections.
     this.revealFallbackTimeout = setTimeout(() => {
       this.revealEls?.forEach((ref) => ref.nativeElement.classList.add('is-visible'));
-      if (!this.statsAnimated) {
-        this.statsAnimated = true;
-        this.animateStats();
-      }
     }, 2500);
   }
 
@@ -148,29 +136,5 @@ export class LandingPageComponent implements AfterViewInit, OnDestroy {
   togglePreview(voice: PreviewableVoice, event: Event): void {
     event.stopPropagation();
     this.voicePreview.toggle(voice);
-  }
-
-  private animateStats(): void {
-    const duration = 900;
-    this.statValueEls?.forEach((ref) => {
-      const el = ref.nativeElement;
-      const raw = el.textContent?.trim() ?? '';
-      const match = raw.match(/^(\d+)(.*)$/);
-      if (!match) {
-        return;
-      }
-      const target = parseInt(match[1], 10);
-      const suffix = match[2];
-      const start = performance.now();
-
-      const step = (now: number): void => {
-        const progress = Math.min(1, (now - start) / duration);
-        el.textContent = `${Math.round(target * progress)}${suffix}`;
-        if (progress < 1) {
-          requestAnimationFrame(step);
-        }
-      };
-      requestAnimationFrame(step);
-    });
   }
 }
