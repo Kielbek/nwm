@@ -377,6 +377,38 @@
     margin: 0 auto 40px;
   }
 
+  // Restyled to match the dedicated /pricing page's "paper" visual
+  // identity — see the matching comment in header.component.scss for why
+  // shadowing the app-wide token names here is enough to restyle every
+  // rule below (including the carousel it renders) without rewriting
+  // each one. Only the plan/pricing section picks this up — the rest of
+  // the profile page (identity card, usage, top-ups, history) keeps the
+  // regular app theme.
+  &__plans-section {
+    --border: #d9d7cf;
+    --border-strong: #c7c4bb;
+    --bg-surface: #f5f4ef;
+    --bg-hover: #eceae3;
+    --text-primary: #171715;
+    --text-secondary: #4f4d45;
+    --text-muted: #6f6d66;
+    --accent: #6257d8;
+    --accent-hover: #7a70df;
+    --accent-soft: #e3e0fb;
+    --accent-contrast: #ffffff;
+    --lime: #b8d979;
+    // The current-plan card and the ink CTA pills invert in dark mode
+    // (light chip on a dark page instead of a dark chip on a light page)
+    // — these live as tokens, redefined alongside the rest in
+    // styles.scss, so the swap can't lose a specificity fight against
+    // this component's own nested &--current rules the way a plain
+    // global override of those same selectors would.
+    --cta-bg: #171715;
+    --cta-fg: #f5f4ef;
+    --current-muted: rgb(255 255 255 / 0.55);
+    --current-body: rgb(255 255 255 / 0.75);
+  }
+
   &__section-actions {
     display: flex;
     align-items: center;
@@ -428,17 +460,16 @@
     cursor: pointer;
 
     &--active {
-      background: var(--bg-surface);
-      color: var(--text-primary);
-      box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+      background: var(--cta-bg);
+      color: var(--cta-fg);
     }
   }
 
   &__savings-badge {
     padding: 1px 6px;
     border-radius: 999px;
-    background: var(--accent-soft);
-    color: var(--accent);
+    background: var(--lime);
+    color: #171715;
     font-size: 9.5px;
     font-weight: 700;
   }
@@ -459,10 +490,25 @@
     border: 1px solid var(--border);
     border-radius: 16px;
     background: var(--bg-surface);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
 
     &--current {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px var(--accent);
+      background: var(--cta-bg);
+      color: var(--cta-fg);
+      border-color: var(--cta-bg);
+
+      .profile__plan-tagline,
+      .profile__plan-price span {
+        color: var(--current-muted);
+      }
+
+      .profile__plan-features li {
+        color: var(--current-body);
+
+        app-icon {
+          color: var(--lime);
+        }
+      }
     }
   }
 
@@ -472,8 +518,8 @@
     right: 16px;
     padding: 3px 8px;
     border-radius: 999px;
-    background: var(--accent-soft);
-    color: var(--accent);
+    background: var(--lime);
+    color: #171715;
     font-size: 9.5px;
     font-weight: 700;
     text-transform: uppercase;
@@ -483,6 +529,7 @@
   &__plan-name {
     font-size: 16px;
     font-weight: 700;
+    font-family: 'Space Grotesk', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 
   &__plan-tagline {
@@ -499,8 +546,9 @@
 
     strong {
       font-size: 24px;
-      font-weight: 800;
+      font-weight: 600;
       letter-spacing: -0.01em;
+      font-family: 'Space Grotesk', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
 
     span {
@@ -536,23 +584,30 @@
 
   &__plan-btn {
     padding: 9px;
-    border: none;
-    border-radius: 9px;
-    background: var(--accent);
-    color: var(--accent-contrast);
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: var(--cta-bg);
+    color: var(--cta-fg);
     font-size: 12.5px;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
 
     &:hover:not(:disabled) {
-      background: var(--accent-hover);
+      background: var(--accent);
+      color: #fff;
     }
 
     &--current,
     &:disabled {
-      background: var(--bg-hover);
-      color: var(--text-muted);
+      background: var(--cta-fg);
+      color: var(--cta-bg);
       cursor: default;
+
+      &:hover {
+        background: var(--cta-fg);
+        color: var(--cta-bg);
+      }
     }
   }
 
