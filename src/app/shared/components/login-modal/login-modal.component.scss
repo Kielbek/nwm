@@ -1,0 +1,120 @@
+:host {
+  display: contents;
+}
+
+// Mirrors the paper/ink palette used by AuthLayoutComponent — the modal
+// isn't a descendant of .auth-layout, so it needs its own copy of these
+// tokens for the projected .auth-form (global class) to pick up. Dark-mode
+// overrides live in src/styles.scss (global), not here — see the comment
+// there for why a component-scoped :root selector can never match.
+.login-modal {
+  --border: #d9d7cf;
+  --border-strong: #c7c4bb;
+  --bg-page: #eceae3;
+  --bg-surface: #f5f4ef;
+  --bg-hover: #eceae3;
+  --bg-active: #e0ddd3;
+  --text-primary: #171715;
+  --text-secondary: #4f4d45;
+  --text-muted: #6f6d66;
+  --accent: #6257d8;
+  --accent-hover: #7a70df;
+  --accent-contrast: #ffffff;
+  --accent-soft: #e3e0fb;
+
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+
+  &__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgb(0 0 0 / 0.45);
+  }
+
+  &__panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    max-height: calc(100dvh - 40px);
+    overflow-y: auto;
+    border-radius: 20px;
+    box-shadow: 0 24px 64px -16px rgb(0 0 0 / 0.4);
+    animation: login-modal-in 0.2s ease;
+
+    // .auth-form (global styles.scss) already supplies the card's own
+    // border/background/padding — this wrapper just centers + anchors
+    // the close button, so nesting it here would double the card look.
+    app-login-form {
+      display: block;
+      width: 100%;
+    }
+  }
+
+  &__close {
+    // Positioned inside the panel's own bounds (not a negative offset)
+    // because .login-modal__panel has overflow-y:auto for tall forms —
+    // an absolutely-positioned child outside those bounds gets clipped.
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--bg-surface);
+    color: var(--text-muted);
+    box-shadow: 0 4px 12px -4px rgb(0 0 0 / 0.3);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+  }
+
+  &__logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+
+  &__logo-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+}
+
+@keyframes login-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

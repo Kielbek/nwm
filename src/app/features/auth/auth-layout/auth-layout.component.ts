@@ -15,5 +15,8 @@ import { TranslateService } from '../../../core/services/translate.service';
 export class AuthLayoutComponent {
   @Input() tagline = '';
 
+  /** Purely decorative animated wave bars in the brand panel's mock card — count only, no data. */
+  readonly mockBars = Array.from({ length: 14 });
+
   constructor(readonly translate: TranslateService) {}
 }

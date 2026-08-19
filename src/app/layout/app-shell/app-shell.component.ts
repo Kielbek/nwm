@@ -12,8 +12,8 @@ import { HistoryDetailModalComponent } from '../../shared/components/history-det
 import { FileManagerModalComponent } from '../../shared/components/file-manager-modal/file-manager-modal.component';
 import { GenerationHistoryService } from '../../core/services/generation-history.service';
 import { SeoService } from '../../core/services/seo.service';
+import { MOBILE_BREAKPOINT } from '../../core/utils/viewport';
 
-const MOBILE_BREAKPOINT = 780;
 // Mirrors .sidebar's width in sidebar.component.scss.
 const SIDEBAR_WIDTH_PX = 248;
 

@@ -59,7 +59,7 @@
           [class.settings__segment--active]="translate.lang() === 'pl'"
           (click)="setLang('pl')"
         >
-          🇵🇱 Polski
+          <app-flag code="pl" [size]="15" /> Polski
         </button>
         <button
           type="button"
@@ -67,7 +67,7 @@
           [class.settings__segment--active]="translate.lang() === 'en'"
           (click)="setLang('en')"
         >
-          🇬🇧 English
+          <app-flag code="en" [size]="15" /> English
         </button>
       </div>
     </div>

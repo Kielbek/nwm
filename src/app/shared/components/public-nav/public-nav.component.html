@@ -22,7 +22,7 @@
         [class.public-nav__lang-btn--active]="translate.lang() === 'pl'"
         (click)="setLang('pl')"
       >
-        🇵🇱 PL
+        <app-flag code="pl" [size]="15" /> PL
       </button>
       <button
         type="button"
@@ -30,7 +30,7 @@
         [class.public-nav__lang-btn--active]="translate.lang() === 'en'"
         (click)="setLang('en')"
       >
-        🇬🇧 EN
+        <app-flag code="en" [size]="15" /> EN
       </button>
     </div>
     <button
@@ -41,7 +41,11 @@
     >
       <app-icon [name]="theme.mode() === 'dark' ? 'moon' : 'sun'" [size]="17" />
     </button>
-    <a class="public-nav__link" routerLink="/app">{{ translate.dict().landing.navOpenApp }}</a>
-    <a class="public-nav__cta" routerLink="/app">{{ translate.dict().landing.navTryFree }}</a>
+    <a class="public-nav__link" href="/app" (click)="onEnterApp($event)">
+      {{ translate.dict().landing.navOpenApp }}
+    </a>
+    <a class="public-nav__cta" href="/app" (click)="onEnterApp($event)">
+      {{ translate.dict().landing.navTryFree }}
+    </a>
   </div>
 </nav>

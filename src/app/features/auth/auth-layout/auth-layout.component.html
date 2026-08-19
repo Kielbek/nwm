@@ -12,6 +12,22 @@
 
     <div class="auth-layout__brand-copy">
       <h2>{{ tagline || translate.dict().authLayout.tagline }}</h2>
+
+      <div class="auth-layout__mock" aria-hidden="true">
+        <div class="auth-layout__mock-head">
+          <span class="auth-layout__mock-tag">
+            <app-icon name="text-to-speech" [size]="11" />
+            NWM
+          </span>
+          <span class="auth-layout__mock-dot"></span>
+        </div>
+        <div class="auth-layout__mock-wave">
+          @for (bar of mockBars; track $index) {
+            <span class="auth-layout__mock-bar"></span>
+          }
+        </div>
+      </div>
+
       <ul>
         <li>
           <app-icon name="check" [size]="13" />

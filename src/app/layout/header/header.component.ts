@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { IconComponent, IconName } from '../../shared/components/icon/icon.component';
+import { FlagComponent } from '../../shared/components/flag/flag.component';
 import { DropdownComponent } from '../../shared/components/dropdown/dropdown.component';
 import { ThemeMode, ThemeService } from '../../core/services/theme.service';
 import { Lang, TranslateService } from '../../core/services/translate.service';
@@ -15,7 +16,7 @@ import { FileManagerModalService } from '../../core/services/file-manager-modal.
   selector: 'app-header',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IconComponent, DropdownComponent, RouterLink, RouterLinkActive],
+  imports: [IconComponent, FlagComponent, DropdownComponent, RouterLink, RouterLinkActive],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })

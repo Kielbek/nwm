@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/cor
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
+import { FlagComponent } from '../../shared/components/flag/flag.component';
 import { ThemeService, ThemeMode } from '../../core/services/theme.service';
 import { TranslateService, Lang } from '../../core/services/translate.service';
 import { AccountService } from '../../core/services/account.service';
@@ -21,7 +22,7 @@ const TWO_FACTOR_KEY = 'nwm-2fa-enabled';
   selector: 'app-settings-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, IconComponent],
+  imports: [FormsModule, IconComponent, FlagComponent],
   templateUrl: './settings-page.component.html',
   styleUrl: './settings-page.component.scss',
 })

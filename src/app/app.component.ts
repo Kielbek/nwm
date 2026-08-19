@@ -8,11 +8,12 @@ import {
   RouterOutlet,
 } from '@angular/router';
 import { CookieBannerComponent } from './shared/components/cookie-banner/cookie-banner.component';
+import { LoginModalComponent } from './shared/components/login-modal/login-modal.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CookieBannerComponent],
+  imports: [RouterOutlet, CookieBannerComponent, LoginModalComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

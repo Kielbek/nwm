@@ -1,0 +1,24 @@
+@if (modal.isOpen()) {
+  <div class="login-modal">
+    <div class="login-modal__backdrop" (click)="modal.close()"></div>
+    <div class="login-modal__panel" role="dialog" aria-modal="true">
+      <button
+        type="button"
+        class="login-modal__close"
+        [attr.aria-label]="translate.dict().upgradeModal.close"
+        (click)="modal.close()"
+      >
+        <app-icon name="close" [size]="16" />
+      </button>
+
+      <a class="login-modal__logo" routerLink="/" (click)="modal.close()">
+        <span class="login-modal__logo-mark">
+          <app-icon name="text-to-speech" [size]="14" />
+        </span>
+        NWM
+      </a>
+
+      <app-login-form (success)="modal.close()" />
+    </div>
+  </div>
+}
