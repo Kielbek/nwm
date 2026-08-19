@@ -489,7 +489,7 @@ button {
       --accent-soft: rgb(143 133 238 / 0.16);
     }
 
-    .profile__plans-section {
+    .profile {
       --border: #333230;
       --border-strong: #45433f;
       --bg-surface: #18181a;
@@ -506,6 +506,11 @@ button {
       --cta-fg: #18181a;
       --current-muted: rgb(0 0 0 / 0.55);
       --current-body: rgb(0 0 0 / 0.75);
+
+      .profile__avatar {
+        background: linear-gradient(135deg, #f2f1ec, var(--accent));
+        color: #18181a;
+      }
     }
 
     .ask {
@@ -728,7 +733,7 @@ button {
     --accent-soft: rgb(143 133 238 / 0.16);
   }
 
-  .profile__plans-section {
+  .profile {
     --border: #333230;
     --border-strong: #45433f;
     --bg-surface: #18181a;
@@ -745,6 +750,11 @@ button {
     --cta-fg: #18181a;
     --current-muted: rgb(0 0 0 / 0.55);
     --current-body: rgb(0 0 0 / 0.75);
+
+    .profile__avatar {
+      background: linear-gradient(135deg, #f2f1ec, var(--accent));
+      color: #18181a;
+    }
   }
 
   .ask {
