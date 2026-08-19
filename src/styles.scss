@@ -489,6 +489,37 @@ button {
       --accent-soft: rgb(143 133 238 / 0.16);
     }
 
+    .voices {
+      --border: #333230;
+      --border-strong: #45433f;
+      --bg-surface: #18181a;
+      --bg-hover: #202022;
+      --bg-active: #28282a;
+      --text-primary: #f2f1ec;
+      --text-secondary: #b5b3aa;
+      --text-muted: #9c9a91;
+      --accent: #8f85ee;
+      --accent-hover: #a49bf2;
+      --accent-soft: rgb(143 133 238 / 0.16);
+      --accent-contrast: #18181a;
+      --lime: #c3dd8c;
+
+      .voices__chip--active,
+      .voices__card-btn {
+        background: #f2f1ec;
+        color: #18181a;
+      }
+
+      .voices__card--active {
+        border-color: #f2f1ec;
+        box-shadow: 0 12px 28px -18px rgb(0 0 0 / 0.6), 0 0 0 1px #f2f1ec;
+      }
+
+      .voices__card-badge {
+        color: #18181a;
+      }
+    }
+
     .profile {
       --border: #333230;
       --border-strong: #45433f;
@@ -731,6 +762,37 @@ button {
     --text-muted: #9c9a91;
     --accent: #8f85ee;
     --accent-soft: rgb(143 133 238 / 0.16);
+  }
+
+  .voices {
+    --border: #333230;
+    --border-strong: #45433f;
+    --bg-surface: #18181a;
+    --bg-hover: #202022;
+    --bg-active: #28282a;
+    --text-primary: #f2f1ec;
+    --text-secondary: #b5b3aa;
+    --text-muted: #9c9a91;
+    --accent: #8f85ee;
+    --accent-hover: #a49bf2;
+    --accent-soft: rgb(143 133 238 / 0.16);
+    --accent-contrast: #18181a;
+    --lime: #c3dd8c;
+
+    .voices__chip--active,
+    .voices__card-btn {
+      background: #f2f1ec;
+      color: #18181a;
+    }
+
+    .voices__card--active {
+      border-color: #f2f1ec;
+      box-shadow: 0 12px 28px -18px rgb(0 0 0 / 0.6), 0 0 0 1px #f2f1ec;
+    }
+
+    .voices__card-badge {
+      color: #18181a;
+    }
   }
 
   .profile {

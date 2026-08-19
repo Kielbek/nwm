@@ -82,6 +82,10 @@
   </div>
 
   @if (filteredVoices().length) {
+    <div class="voices__results-head">
+      <span class="voices__results-count">{{ filteredVoices().length }}</span>
+      <span>{{ translate.dict().voicesPage.title }}</span>
+    </div>
     <div class="voices__grid">
       @for (voice of filteredVoices(); track voice.id) {
         <div
@@ -89,8 +93,8 @@
           [class.voices__card--active]="voice.id === voiceLibrary.selectedVoiceId()"
         >
           <div class="voices__card-top">
-            <span class="voices__card-avatar" [style.background]="avatarGradient(voice.avatarColor)">
-              {{ initials(voice.name) }}
+            <span class="voices__card-avatar" [style.background]="avatarOrb(voice.avatarColor)">
+              <span class="voices__card-avatar-ring"></span>
             </span>
             <div class="voices__card-top-right">
               @if (voice.id === voiceLibrary.selectedVoiceId()) {
