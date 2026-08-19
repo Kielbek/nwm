@@ -523,7 +523,7 @@ export const pl: Dictionary = {
     navReviews: 'Opinie',
     navOpenApp: 'Otwórz aplikację',
     navTryFree: 'Wypróbuj za darmo',
-    heroBadge: 'Zasilane najnowszymi modelami syntezy mowy',
+    heroBadge: 'Studio głosowe',
     heroTitleLine1: 'Zamień tekst',
     heroTitleLine2: 'w naturalnie brzmiącą mowę',
     heroSubtitle:

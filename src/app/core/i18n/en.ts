@@ -520,7 +520,7 @@ export const en: Dictionary = {
     navReviews: 'Reviews',
     navOpenApp: 'Open app',
     navTryFree: 'Try it free',
-    heroBadge: 'Powered by the latest speech synthesis models',
+    heroBadge: 'Voice studio',
     heroTitleLine1: 'Turn text',
     heroTitleLine2: 'into natural-sounding speech',
     heroSubtitle:
