@@ -1,51 +1,40 @@
-<aside class="ask" [class.ask--open]="open" [class.ask--overlay]="overlay">
+<aside class="ask" [class.ask--open]="open" [class.ask--overlay]="overlay" [class.ask--expanded]="expanded()">
   <div class="ask__header">
     <div class="ask__title-group">
-      <span class="ask__badge-icon">
-        <app-icon name="sparkle" [size]="14" />
-      </span>
-      <div class="ask__title-copy">
-        <div class="ask__title-row">
-          <strong class="ask__title">{{ translate.dict().ask.title }}</strong>
-          <span class="ask__demo-badge">{{ translate.dict().ask.demoBadge }}</span>
-        </div>
-        <span class="ask__subtitle">{{ translate.dict().ask.subtitle }}</span>
-      </div>
-    </div>
-    <div class="ask__header-actions">
-      @if (chat.messages().length) {
-        <button
-          type="button"
-          class="ask__icon-btn"
-          [attr.aria-label]="translate.dict().ask.clear"
-          (click)="chat.clear()"
-        >
-          <app-icon name="trash" [size]="15" />
-        </button>
-      }
       <button
         type="button"
         class="ask__icon-btn"
         [attr.aria-label]="translate.dict().ask.close"
         (click)="closeRequested.emit()"
       >
-        <app-icon name="close" [size]="16" />
+        <app-icon name="panel" [size]="17" />
+      </button>
+      <strong class="ask__title">{{ translate.dict().ask.title }}</strong>
+      <span class="ask__demo-badge">{{ translate.dict().ask.demoBadge }}</span>
+    </div>
+    <div class="ask__header-actions">
+      <button
+        type="button"
+        class="ask__icon-btn"
+        [attr.aria-label]="expanded() ? translate.dict().ask.collapse : translate.dict().ask.expand"
+        (click)="toggleExpanded()"
+      >
+        <app-icon name="expand" [size]="15" />
+      </button>
+      <button
+        type="button"
+        class="ask__icon-btn"
+        [attr.aria-label]="translate.dict().ask.clear"
+        (click)="chat.clear()"
+      >
+        <app-icon name="plus" [size]="16" />
       </button>
     </div>
   </div>
 
   <div class="ask__body" #body>
     @if (!chat.messages().length) {
-      <div class="ask__empty">
-        <p class="ask__empty-text">{{ translate.dict().ask.emptyHint }}</p>
-        <div class="ask__suggestions">
-          @for (suggestion of translate.dict().ask.suggestions; track suggestion) {
-            <button type="button" class="ask__suggestion-chip" (click)="sendSuggestion(suggestion)">
-              {{ suggestion }}
-            </button>
-          }
-        </div>
-      </div>
+      <p class="ask__greeting">{{ translate.dict().ask.greeting }}</p>
     }
 
     @for (message of chat.messages(); track message.id) {
@@ -96,13 +85,49 @@
       (input)="autoResize(textarea)"
       (keydown.enter)="onEnter($event)"
     ></textarea>
-    <button
-      type="submit"
-      class="ask__send"
-      [attr.aria-label]="translate.dict().ask.send"
-      [disabled]="!draft().trim() || chat.isSending()"
-    >
-      <app-icon name="send" [size]="14" />
-    </button>
+    <div class="ask__composer-row">
+      <div class="ask__composer-prompts">
+        <button
+          type="button"
+          class="ask__composer-icon"
+          [class.ask__composer-icon--active]="promptsOpen()"
+          [attr.aria-label]="translate.dict().ask.quickPrompts"
+          (click)="togglePrompts()"
+        >
+          <app-icon name="plus" [size]="16" />
+        </button>
+        @if (promptsOpen()) {
+          <div class="ask__prompts-menu">
+            @for (suggestion of translate.dict().ask.suggestions; track suggestion) {
+              <button type="button" class="ask__prompts-item" (click)="pickPrompt(suggestion)">
+                {{ suggestion }}
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="ask__composer-row-right">
+        @if (micSupported) {
+          <button
+            type="button"
+            class="ask__composer-icon"
+            [class.ask__composer-icon--active]="listening()"
+            [attr.aria-label]="listening() ? translate.dict().ask.micStop : translate.dict().ask.micStart"
+            (click)="toggleMic()"
+          >
+            <app-icon name="mic" [size]="16" />
+          </button>
+        }
+        <button
+          type="submit"
+          class="ask__send"
+          [attr.aria-label]="translate.dict().ask.send"
+          [disabled]="!draft().trim() || chat.isSending()"
+        >
+          <app-icon name="send" [size]="14" />
+        </button>
+      </div>
+    </div>
   </form>
 </aside>

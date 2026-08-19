@@ -137,14 +137,17 @@ export const pl: Dictionary = {
   ],
   ask: {
     title: 'Zapytaj',
-    subtitle: 'Asystent AI (Gemini)',
+    greeting: 'Cześć! Jak mogę ci dzisiaj pomóc?',
     demoBadge: 'DEMO',
-    placeholder: 'Napisz wiadomość...',
-    emptyHint:
-      'Zapytaj o pomoc przy scenariuszu, tekście reklamy, doborze tonu głosu i nie tylko.',
+    placeholder: 'Zapytaj o cokolwiek...',
     send: 'Wyślij',
     close: 'Zamknij panel Zapytaj',
-    clear: 'Wyczyść rozmowę',
+    clear: 'Nowa rozmowa',
+    quickPrompts: 'Szybkie podpowiedzi',
+    expand: 'Rozszerz panel',
+    collapse: 'Zwiń panel',
+    micStart: 'Dyktuj wiadomość',
+    micStop: 'Zatrzymaj dyktowanie',
     copy: 'Kopiuj odpowiedź',
     copied: 'Skopiowano',
     suggestions: [

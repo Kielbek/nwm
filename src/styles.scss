@@ -481,6 +481,16 @@ button {
       --accent-deep: #6b60d0;
       --accent-soft: rgb(143 133 238 / 0.16);
       --accent-contrast: #18181a;
+
+      .ask__send {
+        background: #f2f1ec;
+        color: #18181a;
+
+        &:hover:not(:disabled) {
+          background: var(--accent);
+          color: #fff;
+        }
+      }
     }
 
     .public-nav--paper {
@@ -670,6 +680,16 @@ button {
     --accent-deep: #6b60d0;
     --accent-soft: rgb(143 133 238 / 0.16);
     --accent-contrast: #18181a;
+
+    .ask__send {
+      background: #f2f1ec;
+      color: #18181a;
+
+      &:hover:not(:disabled) {
+        background: var(--accent);
+        color: #fff;
+      }
+    }
   }
 
   .public-nav--paper {

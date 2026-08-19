@@ -149,13 +149,17 @@ export interface Dictionary {
   };
   ask: {
     title: string;
-    subtitle: string;
+    greeting: string;
     demoBadge: string;
     placeholder: string;
-    emptyHint: string;
     send: string;
     close: string;
     clear: string;
+    quickPrompts: string;
+    expand: string;
+    collapse: string;
+    micStart: string;
+    micStop: string;
     copy: string;
     copied: string;
     suggestions: string[];
