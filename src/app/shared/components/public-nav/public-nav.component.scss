@@ -139,6 +139,201 @@
   }
 }
 
+// Mirrors the paper/ink palette defined in landing-page.component.scss —
+// duplicated here (rather than shared via a global token) since this bar
+// otherwise uses the app-wide --bg-page/--border tokens, and the landing
+// page's palette is deliberately its own thing, not a global theme.
+.public-nav--paper {
+  background: rgb(245 244 239 / 0.9);
+  border-bottom-color: #d9d7cf;
+
+  .public-nav__logo {
+    color: #171715;
+  }
+
+  .public-nav__links a {
+    color: #6f6d66;
+
+    &:hover {
+      color: #171715;
+    }
+  }
+
+  .public-nav__link--active {
+    color: #171715 !important;
+  }
+
+  .public-nav__lang-toggle {
+    background: #eceae3;
+    border-color: #d9d7cf;
+  }
+
+  .public-nav__lang-btn {
+    color: #6f6d66;
+
+    &--active {
+      background: #f5f4ef;
+      color: #171715;
+    }
+  }
+
+  .public-nav__icon-btn {
+    border-color: #c7c4bb;
+    color: #6f6d66;
+
+    &:hover {
+      background: #eceae3;
+      color: #171715;
+    }
+  }
+
+  .public-nav__link {
+    color: #6f6d66;
+
+    &:hover {
+      color: #171715;
+    }
+  }
+
+  .public-nav__cta {
+    background: #171715;
+    color: #f5f4ef;
+
+    &:hover {
+      background: #6257d8;
+      color: #fff;
+    }
+  }
+}
+
+:root:not([data-theme='light']) .public-nav--paper {
+  @media (prefers-color-scheme: dark) {
+    background: rgb(24 24 26 / 0.9);
+    border-bottom-color: #333230;
+
+    .public-nav__logo {
+      color: #f2f1ec;
+    }
+
+    .public-nav__links a {
+      color: #9c9a91;
+
+      &:hover {
+        color: #f2f1ec;
+      }
+    }
+
+    .public-nav__link--active {
+      color: #f2f1ec !important;
+    }
+
+    .public-nav__lang-toggle {
+      background: #202022;
+      border-color: #333230;
+    }
+
+    .public-nav__lang-btn {
+      color: #9c9a91;
+
+      &--active {
+        background: #18181a;
+        color: #f2f1ec;
+      }
+    }
+
+    .public-nav__icon-btn {
+      border-color: #45433f;
+      color: #9c9a91;
+
+      &:hover {
+        background: #202022;
+        color: #f2f1ec;
+      }
+    }
+
+    .public-nav__link {
+      color: #9c9a91;
+
+      &:hover {
+        color: #f2f1ec;
+      }
+    }
+
+    .public-nav__cta {
+      background: #f2f1ec;
+      color: #18181a;
+
+      &:hover {
+        background: #8f85ee;
+        color: #fff;
+      }
+    }
+  }
+}
+
+:root[data-theme='dark'] .public-nav--paper {
+  background: rgb(24 24 26 / 0.9);
+  border-bottom-color: #333230;
+
+  .public-nav__logo {
+    color: #f2f1ec;
+  }
+
+  .public-nav__links a {
+    color: #9c9a91;
+
+    &:hover {
+      color: #f2f1ec;
+    }
+  }
+
+  .public-nav__link--active {
+    color: #f2f1ec !important;
+  }
+
+  .public-nav__lang-toggle {
+    background: #202022;
+    border-color: #333230;
+  }
+
+  .public-nav__lang-btn {
+    color: #9c9a91;
+
+    &--active {
+      background: #18181a;
+      color: #f2f1ec;
+    }
+  }
+
+  .public-nav__icon-btn {
+    border-color: #45433f;
+    color: #9c9a91;
+
+    &:hover {
+      background: #202022;
+      color: #f2f1ec;
+    }
+  }
+
+  .public-nav__link {
+    color: #9c9a91;
+
+    &:hover {
+      color: #f2f1ec;
+    }
+  }
+
+  .public-nav__cta {
+    background: #f2f1ec;
+    color: #18181a;
+
+    &:hover {
+      background: #8f85ee;
+      color: #fff;
+    }
+  }
+}
+
 @media (max-width: 860px) {
   .public-nav {
     &__links,

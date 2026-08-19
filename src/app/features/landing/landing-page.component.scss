@@ -30,6 +30,14 @@
   background: var(--paper);
   color: var(--ink);
   overflow-x: clip;
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+
+  h1,
+  h2,
+  &__stat strong,
+  &__plan-price strong {
+    font-family: 'Space Grotesk', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
 }
 
 :root:not([data-theme='light']) .landing {
@@ -291,71 +299,107 @@
     color: rgb(255 255 255 / 0.6);
   }
 
-  &__mock-voice {
+  &__mock-timer {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 10.5px;
+    color: rgb(255 255 255 / 0.45);
+  }
+
+  &__mock-label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--violet);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  &__mock-script {
+    margin: 0 0 18px;
+    padding: 12px;
+    border-radius: 8px;
+    background: rgb(255 255 255 / 0.06);
+    color: rgb(255 255 255 / 0.85);
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+
+  &__mock-fields {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  &__mock-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+
+    span {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: rgb(255 255 255 / 0.4);
+    }
+  }
+
+  &__mock-field-value {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 10px;
-    margin-bottom: 16px;
-    border-radius: 10px;
+    gap: 6px;
+    padding: 8px 9px;
+    border-radius: 8px;
     background: rgb(255 255 255 / 0.06);
+    color: rgb(255 255 255 / 0.85);
+    font-size: 11.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    app-icon {
+      color: var(--violet);
+      flex-shrink: 0;
+    }
+
+    &--voice {
+      padding: 5px 9px 5px 5px;
+    }
   }
 
   &__mock-avatar {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
+    width: 22px;
+    height: 22px;
     flex-shrink: 0;
-  }
-
-  &__mock-voice-info {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    min-width: 0;
-  }
-
-  &__mock-voice-name {
-    font-size: 12.5px;
-    font-weight: 700;
+    border-radius: 50%;
     color: #fff;
+    font-size: 10px;
+    font-weight: 700;
   }
 
-  &__mock-voice-desc {
-    font-size: 11px;
-    color: rgb(255 255 255 / 0.45);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  &__mock-panel {
+    border-radius: 10px;
+    border: 1px solid rgb(255 255 255 / 0.08);
+    background: rgb(255 255 255 / 0.04);
+    padding: 14px;
   }
 
-  &__mock-lines {
+  &__mock-panel-head {
     display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-bottom: 20px;
-
-    span {
-      display: block;
-      height: 8px;
-      border-radius: 4px;
-      background: rgb(255 255 255 / 0.08);
-
-      &:nth-child(1) {
-        width: 100%;
-      }
-
-      &:nth-child(2) {
-        width: 88%;
-      }
-
-      &:nth-child(3) {
-        width: 62%;
-      }
-    }
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 10px;
+    color: rgb(255 255 255 / 0.45);
   }
 
   &__mock-wave {
@@ -364,7 +408,14 @@
     justify-content: center;
     gap: 3px;
     height: 40px;
-    margin-bottom: 18px;
+    margin: 12px 0;
+
+    &--light {
+      .landing__mock-wave-bar {
+        background: linear-gradient(180deg, #8a7ff0, #fff);
+        opacity: 0.75;
+      }
+    }
   }
 
   &__mock-wave-bar {
@@ -385,8 +436,25 @@
   &__mock-foot-icons {
     display: flex;
     align-items: center;
-    gap: 6px;
-    color: rgb(255 255 255 / 0.55);
+    gap: 4px;
+
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border: none;
+      border-radius: 50%;
+      background: transparent;
+      color: rgb(255 255 255 / 0.55);
+      cursor: pointer;
+
+      &:hover {
+        background: rgb(255 255 255 / 0.08);
+        color: #fff;
+      }
+    }
   }
 
   &__mock-btn {
@@ -400,6 +468,52 @@
     color: #fff;
     font-size: 12px;
     font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      background: #7a70df;
+    }
+  }
+
+  // -------------------------------------------------------------- trust
+  &__trust {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    max-width: var(--landing-max);
+    margin: 0 auto;
+    padding: 22px 32px;
+    border-top: 1px solid var(--line);
+
+    p {
+      margin: 0;
+      font-size: 13.5px;
+      color: var(--muted-ink);
+    }
+  }
+
+  &__trust-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  &__trust-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--muted-ink);
+    white-space: nowrap;
+
+    app-icon {
+      color: var(--violet);
+    }
   }
 
   // ------------------------------------------------------------ stats
@@ -482,8 +596,10 @@
   &__how,
   &__use-cases,
   &__voices,
+  &__demo,
   &__testimonials,
-  &__pricing {
+  &__pricing,
+  &__api {
     position: relative;
     z-index: 1;
     max-width: var(--landing-max);
@@ -702,6 +818,151 @@
     }
   }
 
+  // ------------------------------------------------------------- demo
+  &__demo-head {
+    margin-bottom: 44px;
+  }
+
+  &__demo-grid {
+    display: grid;
+    grid-template-columns: 1.08fr 0.92fr;
+    gap: 0;
+    border: 1px solid var(--line);
+  }
+
+  &__demo-editor {
+    padding: 24px;
+    background: var(--paper);
+  }
+
+  &__demo-script {
+    margin: 0 0 20px;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--paper-deep);
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+
+  &__demo-fields {
+    margin-bottom: 20px;
+
+    .landing__mock-field span {
+      color: var(--muted-ink);
+    }
+
+    .landing__mock-field-value {
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      color: var(--ink);
+    }
+  }
+
+  &__demo-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+
+    span {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 11px;
+      color: var(--muted-ink);
+    }
+  }
+
+  &__demo-preview {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px;
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  &__demo-preview-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+
+    strong {
+      display: block;
+      margin-top: 8px;
+      font-family: 'Space Grotesk', 'DM Sans', sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+  }
+
+  &__demo-badge {
+    padding: 4px 10px;
+    border: 1px solid rgb(255 255 255 / 0.2);
+    border-radius: 999px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 9px;
+    color: rgb(255 255 255 / 0.6);
+    white-space: nowrap;
+  }
+
+  &__demo-preview-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 11.5px;
+    color: rgb(255 255 255 / 0.6);
+
+    b {
+      padding: 0 4px;
+      color: rgb(255 255 255 / 0.3);
+      font-weight: 400;
+    }
+
+    span:last-child {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 10px;
+      color: rgb(255 255 255 / 0.4);
+    }
+  }
+
+  &__demo-preview-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  &__btn--light {
+    background: #fff;
+    color: var(--ink);
+    border-color: transparent;
+
+    &:hover {
+      background: var(--violet);
+      color: #fff;
+    }
+  }
+
+  &__btn--ghost-dark {
+    border-color: rgb(255 255 255 / 0.2);
+    background: transparent;
+    color: #fff;
+    padding: 0;
+    width: 42px;
+
+    &:hover {
+      border-color: rgb(255 255 255 / 0.5);
+      background: rgb(255 255 255 / 0.1);
+      color: #fff;
+    }
+  }
+
   // ---------------------------------------------------- testimonials
   &__testimonial-card {
     display: flex;
@@ -875,6 +1136,81 @@
     width: 100%;
   }
 
+  // -------------------------------------------------------------- api
+  &__api-grid {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    align-items: center;
+    gap: 48px;
+  }
+
+  &__api-title {
+    margin: 6px 0 12px;
+    font-size: clamp(1.7rem, 3vw, 2.5rem);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+
+  &__api-subtitle {
+    margin: 0 0 24px;
+    max-width: 440px;
+    font-size: 14.5px;
+    color: var(--muted-ink);
+    line-height: 1.6;
+  }
+
+  &__api-note {
+    max-width: 640px;
+    margin: 28px 0 0;
+    font-size: 12.5px;
+    color: var(--muted-ink);
+    line-height: 1.6;
+  }
+
+  &__api-panel {
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--paper);
+  }
+
+  &__api-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    color: var(--muted-ink);
+
+    span {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 11px;
+    }
+  }
+
+  &__api-code {
+    margin: 0;
+    padding: 18px;
+    overflow-x: auto;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--muted-ink);
+  }
+
+  &__api-panel-foot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-top: 1px solid var(--line);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 10px;
+    color: var(--muted-ink);
+  }
+
   // -------------------------------------------------------------- faq
   &__faq {
     position: relative;
@@ -988,6 +1324,17 @@
     background: linear-gradient(90deg, var(--violet), #8a82e8 56%, var(--coral));
   }
 
+  &__final-cta-circle {
+    position: absolute;
+    right: -40px;
+    bottom: -100px;
+    width: 256px;
+    height: 256px;
+    border-radius: 50%;
+    border: 1px solid rgb(255 255 255 / 0.1);
+    pointer-events: none;
+  }
+
   &__final-cta &__btn--primary {
     background: #fff;
     color: var(--ink);
@@ -1068,9 +1415,20 @@
       grid-template-columns: repeat(2, 1fr);
     }
 
-    &__faq {
+    &__faq,
+    &__demo-grid,
+    &__api-grid {
       grid-template-columns: 1fr;
       gap: 28px;
+    }
+
+    &__trust {
+      justify-content: center;
+      text-align: center;
+    }
+
+    &__trust-list {
+      justify-content: center;
     }
   }
 }
@@ -1086,13 +1444,19 @@
     &__how,
     &__use-cases,
     &__voices,
+    &__demo,
     &__testimonials,
     &__pricing,
+    &__api,
     &__faq {
       padding-left: 20px;
       padding-right: 20px;
       padding-top: 64px;
       padding-bottom: 64px;
+    }
+
+    &__trust {
+      padding: 20px;
     }
 
     &__stats {

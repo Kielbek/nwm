@@ -1,6 +1,6 @@
 <div class="landing">
   <div class="landing__grid-bg" aria-hidden="true"></div>
-  <app-public-nav />
+  <app-public-nav [paper]="true" />
 
   <section class="landing__hero">
     <div class="landing__hero-content">
@@ -35,33 +35,76 @@
             <span class="landing__status-dot"></span>
             {{ translate.dict().header.pageTitle }}
           </span>
+          <span class="landing__mock-timer">00:00:08</span>
         </div>
-        <div class="landing__mock-voice">
-          <span class="landing__mock-avatar" [style.background]="voiceLibrary.voices()[0].avatarColor"></span>
-          <div class="landing__mock-voice-info">
-            <span class="landing__mock-voice-name">{{ voiceLibrary.voices()[0].name }}</span>
-            <span class="landing__mock-voice-desc">{{ voiceLibrary.voices()[0].description }}</span>
+
+        <span class="landing__mock-label">{{ translate.dict().editor.startFrom }}</span>
+        <p class="landing__mock-script">{{ translate.dict().landing.heroScriptSample }}</p>
+
+        <div class="landing__mock-fields">
+          <div class="landing__mock-field">
+            <span>{{ translate.dict().settings.voice }}</span>
+            <div class="landing__mock-field-value landing__mock-field-value--voice">
+              <span class="landing__mock-avatar" [style.background]="voiceLibrary.voices()[0].avatarColor">
+                {{ voiceLibrary.voices()[0].name[0] }}
+              </span>
+              {{ voiceLibrary.voices()[0].name }}
+            </div>
+          </div>
+          <div class="landing__mock-field">
+            <span>{{ translate.dict().landing.fieldLanguage }}</span>
+            <div class="landing__mock-field-value">
+              <app-icon name="globe" [size]="13" />
+              {{ translate.dict().landing.fieldLanguageValue }}
+            </div>
+          </div>
+          <div class="landing__mock-field">
+            <span>{{ translate.dict().landing.fieldStyle }}</span>
+            <div class="landing__mock-field-value">
+              <app-icon name="settings" [size]="13" />
+              {{ translate.dict().landing.fieldStyleValue }}
+            </div>
           </div>
         </div>
-        <div class="landing__mock-lines">
-          <span></span><span></span><span></span>
-        </div>
-        <div class="landing__mock-wave">
-          @for (bar of waveformBars; track bar) {
-            <span class="landing__mock-wave-bar" [style.--i]="bar"></span>
-          }
-        </div>
-        <div class="landing__mock-foot">
-          <div class="landing__mock-foot-icons">
-            <app-icon name="play" [size]="13" />
-            <app-icon name="download" [size]="13" />
+
+        <div class="landing__mock-panel">
+          <div class="landing__mock-panel-head">
+            <span>{{ translate.dict().landing.readyToGenerate }}</span>
+            <span>00:08</span>
           </div>
-          <div class="landing__mock-btn">
-            <app-icon name="sparkle" [size]="12" />
-            {{ translate.dict().editor.generate }}
+          <div class="landing__mock-wave">
+            @for (bar of waveformBars; track bar) {
+              <span class="landing__mock-wave-bar" [style.--i]="bar"></span>
+            }
+          </div>
+          <div class="landing__mock-foot">
+            <div class="landing__mock-foot-icons">
+              <button type="button" [attr.aria-label]="translate.dict().player.play">
+                <app-icon name="play" [size]="13" />
+              </button>
+              <button type="button" [attr.aria-label]="translate.dict().player.download">
+                <app-icon name="download" [size]="13" />
+              </button>
+            </div>
+            <a class="landing__mock-btn" routerLink="/app">
+              <app-icon name="sparkle" [size]="12" />
+              {{ translate.dict().editor.generate }}
+            </a>
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="landing__trust">
+    <p>{{ translate.dict().landing.trustStripTitle }}</p>
+    <div class="landing__trust-list">
+      @for (useCase of translate.dict().landingUseCases; track useCase.title) {
+        <span class="landing__trust-item">
+          <app-icon [name]="useCase.icon" [size]="14" />
+          {{ useCase.title }}
+        </span>
+      }
     </div>
   </section>
 
@@ -172,9 +215,78 @@
     </a>
   </section>
 
-  <section class="landing__testimonials" id="reviews">
+  <section class="landing__demo" id="demo">
+    <div class="landing__section-head landing__section-head--left landing__demo-head" #reveal>
+      <span class="landing__eyebrow">{{ translate.dict().landing.demoEyebrow }} / 05</span>
+      <h2>{{ translate.dict().landing.demoTitle }}</h2>
+      <p>{{ translate.dict().landing.demoSubtitle }}</p>
+    </div>
+
+    <div class="landing__demo-grid" #reveal>
+      <div class="landing__demo-editor">
+        <span class="landing__mock-label">{{ translate.dict().landing.demoScriptLabel }}</span>
+        <p class="landing__demo-script">{{ translate.dict().landing.demoScriptSample }}</p>
+
+        <div class="landing__mock-fields landing__demo-fields">
+          <div class="landing__mock-field">
+            <span>{{ translate.dict().settings.voice }}</span>
+            <div class="landing__mock-field-value">{{ voiceLibrary.voices()[0].name }}</div>
+          </div>
+          <div class="landing__mock-field">
+            <span>{{ translate.dict().landing.fieldLanguage }}</span>
+            <div class="landing__mock-field-value">{{ translate.dict().landing.fieldLanguageValue }}</div>
+          </div>
+          <div class="landing__mock-field">
+            <span>{{ translate.dict().landing.fieldStyle }}</span>
+            <div class="landing__mock-field-value">{{ translate.dict().landing.fieldStyleValue }}</div>
+          </div>
+        </div>
+
+        <div class="landing__demo-footer">
+          <span>{{ demoCharCountLabel() }}</span>
+          <a class="landing__btn landing__btn--primary" routerLink="/app">
+            <app-icon name="sparkle" [size]="14" />
+            {{ translate.dict().editor.generate }}
+          </a>
+        </div>
+      </div>
+
+      <div class="landing__demo-preview">
+        <div class="landing__demo-preview-head">
+          <div>
+            <span class="landing__eyebrow landing__eyebrow--accent">{{ translate.dict().landing.demoPreviewLabel }}</span>
+            <strong>{{ translate.dict().landing.demoPreviewTitle }}</strong>
+          </div>
+          <span class="landing__demo-badge">{{ translate.dict().landing.demoWaitingBadge }}</span>
+        </div>
+
+        <div class="landing__demo-preview-body">
+          <div class="landing__demo-preview-meta">
+            <span>{{ voiceLibrary.voices()[0].name }} <b>/</b> {{ translate.dict().landing.fieldStyleValue }}</span>
+            <span>00:00 / 00:06</span>
+          </div>
+          <div class="landing__mock-wave landing__mock-wave--light">
+            @for (bar of waveformBars; track bar) {
+              <span class="landing__mock-wave-bar" [style.--i]="bar"></span>
+            }
+          </div>
+          <div class="landing__demo-preview-actions">
+            <a class="landing__btn landing__btn--light" routerLink="/app">
+              <app-icon name="play" [size]="14" />
+              {{ translate.dict().player.play }}
+            </a>
+            <a class="landing__btn landing__btn--ghost-dark" routerLink="/app" [attr.aria-label]="translate.dict().player.download">
+              <app-icon name="download" [size]="14" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="landing__testimonials landing__band" id="reviews">
     <header class="landing__section-head landing__section-head--left" #reveal>
-      <span class="landing__eyebrow">{{ translate.dict().landing.navReviews }} / 05</span>
+      <span class="landing__eyebrow">{{ translate.dict().landing.navReviews }} / 06</span>
       <h2>{{ translate.dict().landing.testimonialsTitle }}</h2>
       <p>{{ translate.dict().landing.testimonialsSubtitle }}</p>
     </header>
@@ -196,9 +308,9 @@
     </app-carousel>
   </section>
 
-  <section class="landing__pricing landing__band" id="pricing">
+  <section class="landing__pricing" id="pricing">
     <header class="landing__section-head landing__section-head--left" #reveal>
-      <span class="landing__eyebrow">{{ translate.dict().landing.navPricing }} / 06</span>
+      <span class="landing__eyebrow">{{ translate.dict().landing.navPricing }} / 07</span>
       <h2>{{ translate.dict().landing.pricingTitle }}</h2>
       <p>{{ translate.dict().landing.pricingSubtitle }}</p>
     </header>
@@ -241,9 +353,53 @@
     </a>
   </section>
 
+  <section class="landing__api landing__band" id="api">
+    <div class="landing__api-grid">
+      <div #reveal>
+        <span class="landing__eyebrow">{{ translate.dict().landing.apiEyebrow }} / 08</span>
+        <h2 class="landing__api-title">{{ translate.dict().landing.apiTitle }}</h2>
+        <p class="landing__api-subtitle">{{ translate.dict().landing.apiSubtitle }}</p>
+        <div class="landing__hero-cta">
+          <a class="landing__btn landing__btn--primary" routerLink="/app/docs">
+            {{ translate.dict().landing.apiExploreButton }}
+            <app-icon name="chevron-right" [size]="14" />
+          </a>
+          <a class="landing__btn" routerLink="/app/docs">
+            {{ translate.dict().landing.apiDocsButton }}
+          </a>
+        </div>
+      </div>
+
+      <div class="landing__api-panel" #reveal>
+        <div class="landing__api-panel-head">
+          <span>
+            <app-icon name="link" [size]="13" />
+            nwm-request.ts
+          </span>
+          <app-icon name="copy" [size]="13" />
+        </div>
+        <pre class="landing__api-code"><code>const response = await fetch('/api/tts/synthesize', &#123;
+  method: 'POST',
+  body: JSON.stringify(&#123;
+    text: 'Witaj w przyszłości.',
+    settings: &#123;
+      voiceId: '{{ voiceLibrary.voices()[0].id }}',
+      outputFormat: 'mp3-192',
+    &#125;,
+  &#125;),
+&#125;);</code></pre>
+        <div class="landing__api-panel-foot">
+          <span class="landing__eyebrow landing__eyebrow--accent">POST</span>
+          /api/tts/synthesize
+        </div>
+      </div>
+    </div>
+    <p class="landing__api-note">{{ translate.dict().landing.apiNote }}</p>
+  </section>
+
   <section class="landing__faq" id="faq">
     <div class="landing__faq-head" #reveal>
-      <span class="landing__eyebrow">{{ translate.dict().landing.faqEyebrow }} / 07</span>
+      <span class="landing__eyebrow">{{ translate.dict().landing.faqEyebrow }} / 09</span>
       <h2>{{ translate.dict().landing.faqTitle }}</h2>
       <p>{{ translate.dict().landing.faqSubtitle }}</p>
     </div>
@@ -266,6 +422,7 @@
   <section class="landing__final-cta-wrap">
     <div class="landing__final-cta" #reveal>
       <span class="landing__final-cta-strip" aria-hidden="true"></span>
+      <span class="landing__final-cta-circle" aria-hidden="true"></span>
       <h2>{{ translate.dict().landing.finalCtaTitle }}</h2>
       <p>{{ translate.dict().landing.finalCtaSubtitle }}</p>
       <a class="landing__btn landing__btn--primary landing__btn--large" routerLink="/app">
@@ -275,5 +432,5 @@
     </div>
   </section>
 
-  <app-public-footer />
+  <app-public-footer [paper]="true" />
 </div>

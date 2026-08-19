@@ -46,7 +46,7 @@ export class LandingPageComponent implements AfterViewInit, OnDestroy {
   >;
 
   readonly waveformBars = Array.from({ length: 28 }, (_, i) => i);
-  readonly openFaqIndex = signal<number | null>(null);
+  readonly openFaqIndex = signal<number | null>(0);
 
   private revealObserver?: IntersectionObserver;
   private statsAnimated = false;
@@ -92,6 +92,11 @@ export class LandingPageComponent implements AfterViewInit, OnDestroy {
 
   toggleFaq(index: number): void {
     this.openFaqIndex.set(this.openFaqIndex() === index ? null : index);
+  }
+
+  demoCharCountLabel(): string {
+    const dict = this.translate.dict().landing;
+    return dict.demoCharCount.replace('{n}', String(dict.demoScriptSample.length));
   }
 
   get featuredPlans() {

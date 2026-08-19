@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { IconComponent } from '../icon/icon.component';
 import { TranslateService } from '../../../core/services/translate.service';
@@ -12,6 +12,9 @@ import { TranslateService } from '../../../core/services/translate.service';
   styleUrl: './public-footer.component.scss',
 })
 export class PublicFooterComponent {
+  /** Reskins the footer to the landing page's paper palette — see PublicNavComponent's identical input for why. */
+  @Input() paper = false;
+
   readonly currentYear = new Date().getFullYear();
 
   constructor(readonly translate: TranslateService) {}
