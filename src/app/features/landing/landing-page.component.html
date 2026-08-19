@@ -34,11 +34,13 @@
           <span class="landing__mock-tag">
             <span class="landing__status-dot"></span>
             {{ translate.dict().header.pageTitle }}
+            <span class="landing__mock-tag-sep">/</span>
+            {{ translate.dict().landing.newProjectLabel }}
           </span>
           <span class="landing__mock-timer">00:00:08</span>
         </div>
 
-        <span class="landing__mock-label">{{ translate.dict().editor.startFrom }}</span>
+        <span class="landing__mock-label">{{ translate.dict().landing.scriptLabel }}</span>
         <p class="landing__mock-script">{{ translate.dict().landing.heroScriptSample }}</p>
 
         <div class="landing__mock-fields">
@@ -48,7 +50,10 @@
               <span class="landing__mock-avatar" [style.background]="voiceLibrary.voices()[0].avatarColor">
                 {{ voiceLibrary.voices()[0].name[0] }}
               </span>
-              {{ voiceLibrary.voices()[0].name }}
+              <span class="landing__mock-field-voice-text">
+                {{ voiceLibrary.voices()[0].name }}
+                <small>{{ translate.dict().landing.fieldStyleValue }}</small>
+              </span>
             </div>
           </div>
           <div class="landing__mock-field">
@@ -177,7 +182,7 @@
             </span>
             <div class="landing__voice-info">
               <strong>{{ voice.name }}</strong>
-              <p>{{ voice.description }}</p>
+              <p>{{ voiceMetaLabel(voice) }}</p>
             </div>
             <button
               type="button"
@@ -188,10 +193,13 @@
               <app-icon [name]="voicePreview.playingVoiceId() === voice.id ? 'pause' : 'play'" [size]="13" />
             </button>
           </div>
-          <div class="landing__voice-wave" [class.landing__voice-wave--active]="voicePreview.playingVoiceId() === voice.id">
-            @for (bar of waveformBars; track bar) {
-              <span class="landing__voice-wave-bar" [style.--i]="bar"></span>
-            }
+          <div class="landing__voice-wave-row">
+            <div class="landing__voice-wave" [class.landing__voice-wave--active]="voicePreview.playingVoiceId() === voice.id">
+              @for (bar of waveformBars; track bar) {
+                <span class="landing__voice-wave-bar" [style.--i]="bar"></span>
+              }
+            </div>
+            <span class="landing__voice-wave-lang">{{ translate.dict().landing.fieldLanguageValue }}</span>
           </div>
           <div class="landing__voice-foot">
             <span>{{ translate.dict().landing.navVoices }} 0{{ i + 1 }}</span>

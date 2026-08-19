@@ -17,7 +17,7 @@ import { PublicNavComponent } from '../../shared/components/public-nav/public-na
 import { PublicFooterComponent } from '../../shared/components/public-footer/public-footer.component';
 import { TranslateService } from '../../core/services/translate.service';
 import { AccountService } from '../../core/services/account.service';
-import { VoiceLibraryService } from '../../core/services/voice-library.service';
+import { VoiceGender, VoiceLibraryService, VoiceTone } from '../../core/services/voice-library.service';
 import { VoicePreviewService, PreviewableVoice } from '../../core/services/voice-preview.service';
 import { FeedbackService } from '../../core/services/feedback.service';
 import { SeoService } from '../../core/services/seo.service';
@@ -136,5 +136,18 @@ export class LandingPageComponent implements AfterViewInit, OnDestroy {
   togglePreview(voice: PreviewableVoice, event: Event): void {
     event.stopPropagation();
     this.voicePreview.toggle(voice);
+  }
+
+  voiceMetaLabel(voice: { gender: VoiceGender; tone: VoiceTone }): string {
+    const dict = this.translate.dict().voicesPage;
+    const gender = voice.gender === 'male' ? dict.genderMale : dict.genderFemale;
+    const toneLabels: Record<VoiceTone, string> = {
+      confident: dict.toneConfident,
+      calm: dict.toneCalm,
+      energetic: dict.toneEnergetic,
+      warm: dict.toneWarm,
+      neutral: dict.toneNeutral,
+    };
+    return `${gender} / ${toneLabels[voice.tone]}`;
   }
 }

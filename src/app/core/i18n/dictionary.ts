@@ -408,6 +408,8 @@ export interface Dictionary {
     heroCtaSecondary: string;
     heroTrust: string;
     heroScriptSample: string;
+    scriptLabel: string;
+    newProjectLabel: string;
     fieldLanguage: string;
     fieldStyle: string;
     fieldLanguageValue: string;

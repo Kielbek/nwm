@@ -529,6 +529,8 @@ export const en: Dictionary = {
     heroCtaSecondary: 'See how it works',
     heroTrust: 'No credit card · Free plan forever · Cancel anytime',
     heroScriptSample: 'Welcome to the future of AI voice generation.',
+    scriptLabel: 'Script',
+    newProjectLabel: 'New project',
     fieldLanguage: 'Language',
     fieldStyle: 'Style',
     fieldLanguageValue: 'Polish',

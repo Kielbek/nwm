@@ -532,6 +532,8 @@ export const pl: Dictionary = {
     heroCtaSecondary: 'Zobacz jak to działa',
     heroTrust: 'Bez karty kredytowej · Darmowy plan na zawsze · Anuluj w każdej chwili',
     heroScriptSample: 'Witaj w przyszłości generowania głosu przez AI.',
+    scriptLabel: 'Skrypt',
+    newProjectLabel: 'Nowy projekt',
     fieldLanguage: 'Język',
     fieldStyle: 'Styl',
     fieldLanguageValue: 'Polski',
