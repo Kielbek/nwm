@@ -79,7 +79,7 @@
           </div>
           <div class="landing__mock-wave">
             @for (bar of waveformBars; track bar) {
-              <span class="landing__mock-wave-bar" [style.--i]="bar"></span>
+              <span class="landing__mock-wave-bar" [style.--i]="waveBarHeight(bar)"></span>
             }
           </div>
           <div class="landing__mock-foot">
@@ -270,7 +270,7 @@
           </div>
           <div class="landing__mock-wave landing__mock-wave--light">
             @for (bar of waveformBars; track bar) {
-              <span class="landing__mock-wave-bar" [style.--i]="bar"></span>
+              <span class="landing__mock-wave-bar" [style.--i]="waveBarHeight(bar)"></span>
             }
           </div>
           <div class="landing__demo-preview-actions">

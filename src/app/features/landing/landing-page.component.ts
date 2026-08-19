@@ -138,6 +138,10 @@ export class LandingPageComponent implements AfterViewInit, OnDestroy {
     this.voicePreview.toggle(voice);
   }
 
+  waveBarHeight(index: number): number {
+    return 0.15 + (index % 7) * 0.11;
+  }
+
   voiceMetaLabel(voice: { gender: VoiceGender; tone: VoiceTone }): string {
     const dict = this.translate.dict().voicesPage;
     const gender = voice.gender === 'male' ? dict.genderMale : dict.genderFemale;
