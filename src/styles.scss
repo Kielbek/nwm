@@ -453,7 +453,7 @@ button {
       }
     }
 
-    .tts__settings {
+    .tts {
       --border: #333230;
       --bg-surface: #18181a;
       --bg-hover: #202022;
@@ -466,6 +466,27 @@ button {
       --accent-deep: #6b60d0;
       --accent-soft: rgb(143 133 238 / 0.16);
       --accent-contrast: #18181a;
+
+      .tts__generate-btn {
+        background: #f2f1ec;
+        color: #18181a;
+
+        &:hover:not(:disabled) {
+          background: var(--accent);
+          color: #fff;
+        }
+      }
+    }
+
+    .player {
+      --border: #333230;
+      --bg-surface: #18181a;
+      --bg-hover: #202022;
+      --text-primary: #f2f1ec;
+      --text-secondary: #b5b3aa;
+      --text-muted: #9c9a91;
+      --accent: #8f85ee;
+      --accent-soft: rgb(143 133 238 / 0.16);
     }
 
     .ask {
@@ -652,7 +673,7 @@ button {
     }
   }
 
-  .tts__settings {
+  .tts {
     --border: #333230;
     --bg-surface: #18181a;
     --bg-hover: #202022;
@@ -665,6 +686,27 @@ button {
     --accent-deep: #6b60d0;
     --accent-soft: rgb(143 133 238 / 0.16);
     --accent-contrast: #18181a;
+
+    .tts__generate-btn {
+      background: #f2f1ec;
+      color: #18181a;
+
+      &:hover:not(:disabled) {
+        background: var(--accent);
+        color: #fff;
+      }
+    }
+  }
+
+  .player {
+    --border: #333230;
+    --bg-surface: #18181a;
+    --bg-hover: #202022;
+    --text-primary: #f2f1ec;
+    --text-secondary: #b5b3aa;
+    --text-muted: #9c9a91;
+    --accent: #8f85ee;
+    --accent-soft: rgb(143 133 238 / 0.16);
   }
 
   .ask {

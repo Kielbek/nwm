@@ -19,7 +19,19 @@
   transition: left 0.2s ease;
 }
 
+// Restyled to match the landing page's "paper" visual identity — see the
+// matching comment in header.component.scss for why shadowing the
+// app-wide token names here is enough to restyle every rule below.
 .player {
+  --border: #d9d7cf;
+  --bg-surface: #f5f4ef;
+  --bg-hover: #eceae3;
+  --text-primary: #171715;
+  --text-secondary: #4f4d45;
+  --text-muted: #6f6d66;
+  --accent: #6257d8;
+  --accent-soft: #e3e0fb;
+
   display: grid;
   grid-template-columns: minmax(160px, 1fr) minmax(240px, 2fr) auto;
   align-items: center;
@@ -27,6 +39,7 @@
   padding: 10px 20px;
   border-top: 1px solid var(--border);
   background: var(--bg-surface);
+  color: var(--text-primary);
   box-shadow: 0 -2px 12px rgb(0 0 0 / 0.06);
 
   &__info {
