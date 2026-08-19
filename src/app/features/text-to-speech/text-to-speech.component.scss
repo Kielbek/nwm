@@ -276,7 +276,25 @@
     margin-top: 16px;
   }
 
+  // Restyled to match the landing page's "paper" visual identity — these
+  // custom properties shadow the app-wide tokens for this panel's own
+  // subtree only (including the slider/dropdown child components it
+  // renders), the same way header.component.scss and sidebar.component.scss
+  // do it. The editor pane to its left keeps the regular app theme.
   &__settings {
+    --border: #d9d7cf;
+    --bg-surface: #f5f4ef;
+    --bg-hover: #eceae3;
+    --bg-active: #e4e1d5;
+    --text-primary: #171715;
+    --text-secondary: #4f4d45;
+    --text-muted: #6f6d66;
+    --accent: #6257d8;
+    --accent-hover: #7a70df;
+    --accent-deep: #4a41b0;
+    --accent-soft: #e3e0fb;
+    --accent-contrast: #ffffff;
+
     width: 400px;
     flex-shrink: 0;
     display: flex;
@@ -284,6 +302,8 @@
     gap: 22px;
     padding: 24px 24px 24px;
     border-left: 1px solid var(--border);
+    background: var(--bg-surface);
+    color: var(--text-primary);
     overflow-y: auto;
 
     @media (max-width: 900px) {

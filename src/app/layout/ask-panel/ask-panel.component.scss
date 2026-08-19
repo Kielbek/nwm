@@ -1,4 +1,20 @@
+// Restyled to match the landing page's "paper" visual identity — see the
+// matching comment in header.component.scss for why shadowing the
+// app-wide token names here is enough to restyle every rule below.
 .ask {
+  --border: #d9d7cf;
+  --border-strong: #c7c4bb;
+  --bg-surface: #f5f4ef;
+  --bg-hover: #eceae3;
+  --text-primary: #171715;
+  --text-secondary: #4f4d45;
+  --text-muted: #6f6d66;
+  --accent: #6257d8;
+  --accent-hover: #7a70df;
+  --accent-deep: #4a41b0;
+  --accent-soft: #e3e0fb;
+  --accent-contrast: #ffffff;
+
   display: flex;
   flex-direction: column;
   width: 360px;
@@ -6,6 +22,7 @@
   height: 100dvh;
   border-left: 1px solid var(--border);
   background: var(--bg-surface);
+  color: var(--text-primary);
   overflow: hidden;
   transition: width 0.2s ease, transform 0.2s ease;
 
