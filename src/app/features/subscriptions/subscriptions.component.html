@@ -1,0 +1,146 @@
+<div class="subscriptions">
+  <!-- 1. Pasek zakładek -->
+  <nav class="subscriptions__tabs">
+    <button
+      type="button"
+      class="subscriptions__tab"
+      [class.subscriptions__tab--active]="activeTab() === 'plan'"
+      (click)="setTab('plan')"
+    >
+      Plan i Cennik
+    </button>
+    <button
+      type="button"
+      class="subscriptions__tab"
+      [class.subscriptions__tab--active]="activeTab() === 'api'"
+      (click)="setTab('api')"
+    >
+      Klucze API / Integracje
+    </button>
+    <button
+      type="button"
+      class="subscriptions__tab"
+      [class.subscriptions__tab--active]="activeTab() === 'billing'"
+      (click)="setTab('billing')"
+    >
+      Ustawienia Płatności
+    </button>
+  </nav>
+
+  <!-- 2. Górne karty podsumowania -->
+  <section class="subscriptions__summary-grid">
+    <div class="subscriptions__card subscriptions__card--usage">
+      <div class="subscriptions__usage-head">
+        <strong>Wykorzystanie znaków</strong>
+        <span>{{ charactersUsed | number }} / {{ characterLimit | number }}</span>
+      </div>
+      <div class="subscriptions__progress-track">
+        <div
+          class="subscriptions__progress-fill"
+          [style.width.%]="(charactersUsed / characterLimit) * 100"
+        ></div>
+      </div>
+    </div>
+
+    <div class="subscriptions__card subscriptions__card--plan">
+      <p class="subscriptions__plan-summary-text">
+        Obecnie jesteś na planie <strong>{{ currentPlanName }}</strong>
+      </p>
+      <button type="button" class="subscriptions__btn">Fakturowanie / Płatności</button>
+    </div>
+  </section>
+
+  <!-- 3. Pasek kontrolek cennika -->
+  <div class="subscriptions__controls">
+    <div class="subscriptions__cycle-toggle">
+      <button
+        type="button"
+        class="subscriptions__cycle-btn"
+        [class.subscriptions__cycle-btn--active]="billingCycle() === 'monthly'"
+        (click)="setBillingCycle('monthly')"
+      >
+        Miesięcznie
+      </button>
+      <button
+        type="button"
+        class="subscriptions__cycle-btn"
+        [class.subscriptions__cycle-btn--active]="billingCycle() === 'yearly'"
+        (click)="setBillingCycle('yearly')"
+      >
+        Rocznie
+      </button>
+      <span class="subscriptions__savings-badge">Oszczędzasz 2 miesiące</span>
+    </div>
+
+    <div class="subscriptions__actions">
+      <button type="button" class="subscriptions__btn subscriptions__btn--ghost">Skontaktuj się ze sprzedażą</button>
+      <button type="button" class="subscriptions__arrow" aria-label="Poprzednie plany" (click)="scrollPlans(-1)">
+        &#8249;
+      </button>
+      <button type="button" class="subscriptions__arrow" aria-label="Następne plany" (click)="scrollPlans(1)">
+        &#8250;
+      </button>
+    </div>
+  </div>
+
+  <!-- 4. Karuzela kart cennikowych -->
+  <div class="subscriptions__carousel" #carousel>
+    <div class="subscriptions__carousel-track">
+      @for (plan of plans; track plan.id) {
+        <article
+          class="subscriptions__plan-card"
+          [class.subscriptions__plan-card--featured]="plan.featured"
+          [class.subscriptions__plan-card--current]="plan.current"
+        >
+          @if (plan.featured) {
+            <span class="subscriptions__plan-badge">Najpopularniejszy</span>
+          }
+
+          <h3 class="subscriptions__plan-name">{{ plan.name }}</h3>
+          <p class="subscriptions__plan-desc">{{ plan.description }}</p>
+
+          <div class="subscriptions__plan-price">
+            <strong>{{ planPrice(plan) }} zł</strong>
+            <span>/ mies.</span>
+          </div>
+
+          <ul class="subscriptions__plan-features">
+            @for (feature of plan.features; track feature) {
+              <li class="subscriptions__plan-feature">
+                <span class="subscriptions__check">&#10003;</span>
+                {{ feature }}
+              </li>
+            }
+          </ul>
+
+          @if (plan.current) {
+            <button type="button" class="subscriptions__plan-btn subscriptions__plan-btn--disabled" disabled>
+              Bieżący plan
+            </button>
+          } @else {
+            <button type="button" class="subscriptions__plan-btn">Ulepsz</button>
+          }
+        </article>
+      }
+    </div>
+  </div>
+
+  <!-- 5. FAQ -->
+  <section class="subscriptions__faq">
+    <h2 class="subscriptions__faq-title">Najczęściej zadawane pytania</h2>
+
+    <div class="subscriptions__faq-list">
+      @for (item of faq; track item.question; let i = $index) {
+        <div class="subscriptions__faq-item" [class.subscriptions__faq-item--open]="openFaqIndex() === i">
+          <button type="button" class="subscriptions__faq-question" (click)="toggleFaq(i)">
+            {{ item.question }}
+            <span class="subscriptions__faq-chevron">&#8964;</span>
+          </button>
+          <div class="subscriptions__faq-answer-wrap">
+            <p class="subscriptions__faq-answer">{{ item.answer }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+</div>

@@ -1,0 +1,47 @@
+// Shared SCSS variables for the "paper" visual system used across the
+// landing/pricing pages — kept here so ProfileComponent and
+// SubscriptionsComponent (which reference each other) stay visually
+// consistent without duplicating the palette in both files.
+
+// --- Color palette ----------------------------------------------------
+$paper: #f5f4ef;
+$paper-deep: #eceae3;
+$card-hover: #efeee8;
+$ink: #171715;
+$muted-ink: #6f6d66;
+$body-ink: #4f4d45;
+$line: #d9d7cf;
+$line-dark: #c7c4bb;
+$violet: #6257d8;
+$violet-hover: #7a70df;
+$violet-soft: #e3e0fb;
+$lime: #b8d979;
+$danger: #dc2626;
+$danger-soft: rgba(220, 38, 38, 0.08);
+$white: #ffffff;
+
+// --- Spacing scale ------------------------------------------------------
+$space-xs: 6px;
+$space-sm: 10px;
+$space-md: 16px;
+$space-lg: 24px;
+$space-xl: 32px;
+$space-2xl: 48px;
+
+// --- Radii ----------------------------------------------------------------
+$radius-sm: 8px;
+$radius-md: 12px;
+$radius-lg: 20px;
+$radius-pill: 999px;
+
+// --- Typography -------------------------------------------------------
+$font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+$font-display: 'Space Grotesk', 'DM Sans', sans-serif;
+
+// --- Shadows ------------------------------------------------------------
+$shadow-sm: 0 1px 3px rgba(23, 23, 21, 0.06);
+$shadow-md: 0 12px 32px -16px rgba(23, 23, 21, 0.2);
+$shadow-lg: 0 24px 64px -16px rgba(23, 23, 21, 0.35);
+
+// --- Breakpoints ----------------------------------------------------------
+$bp-tablet: 768px;

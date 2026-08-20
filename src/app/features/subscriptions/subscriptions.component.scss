@@ -1,0 +1,421 @@
+@use '../../shared/styles/paper-tokens' as *;
+
+:host {
+  display: block;
+}
+
+.subscriptions {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: $space-xl $space-lg $space-2xl;
+  background: $paper;
+  color: $ink;
+  font-family: $font-body;
+
+  // ------------------------------------------------------------- tabs
+  &__tabs {
+    display: flex;
+    gap: $space-xs;
+    padding-bottom: $space-sm;
+    border-bottom: 1px solid $line;
+  }
+
+  &__tab {
+    padding: 10px 16px;
+    border: none;
+    border-radius: $radius-sm;
+    background: transparent;
+    color: $muted-ink;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      background: $paper-deep;
+      color: $ink;
+    }
+
+    &--active {
+      background: $ink;
+      color: $paper;
+    }
+  }
+
+  // -------------------------------------------------- summary cards
+  &__summary-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: $space-md;
+  }
+
+  &__card {
+    padding: $space-lg;
+    border: 1px solid $line;
+    border-radius: $radius-lg;
+    background: $white;
+    box-shadow: $shadow-sm;
+  }
+
+  &__card--usage {
+    display: flex;
+    flex-direction: column;
+    gap: $space-sm;
+  }
+
+  &__usage-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    font-size: 13px;
+
+    span {
+      color: $muted-ink;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  &__progress-track {
+    height: 8px;
+    border-radius: $radius-pill;
+    background: $paper-deep;
+    overflow: hidden;
+  }
+
+  &__progress-fill {
+    height: 100%;
+    border-radius: $radius-pill;
+    background: linear-gradient(90deg, $violet, #8a82e8);
+  }
+
+  &__card--plan {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-md;
+  }
+
+  &__plan-summary-text {
+    margin: 0;
+    font-size: 13.5px;
+  }
+
+  // --------------------------------------------------- pricing controls
+  &__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-md;
+  }
+
+  &__cycle-toggle {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+  }
+
+  &__cycle-btn {
+    padding: 8px 16px;
+    border: 1px solid $line;
+    border-radius: $radius-pill;
+    background: $white;
+    color: $muted-ink;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+
+    &--active {
+      border-color: transparent;
+      background: $ink;
+      color: $paper;
+    }
+  }
+
+  &__savings-badge {
+    padding: 4px 10px;
+    border-radius: $radius-pill;
+    background: rgba($lime, 0.35);
+    color: #4c5c2a;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $space-xs;
+  }
+
+  &__arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid $line;
+    border-radius: 50%;
+    background: $white;
+    color: $ink;
+    font-size: 16px;
+    cursor: pointer;
+
+    &:hover {
+      background: $paper-deep;
+    }
+  }
+
+  // ------------------------------------------------------ pricing carousel
+  &__carousel {
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &__carousel-track {
+    display: flex;
+    gap: $space-md;
+    padding-bottom: 4px;
+  }
+
+  &__plan-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 240px;
+    padding: $space-lg;
+    border: 1px solid $line;
+    border-radius: $radius-lg;
+    background: $white;
+
+    &--featured {
+      border-color: $violet;
+      box-shadow: 0 0 0 1px $violet;
+    }
+
+    &--current {
+      background: $paper-deep;
+    }
+  }
+
+  &__plan-badge {
+    display: inline-flex;
+    align-self: flex-start;
+    margin-bottom: $space-sm;
+    padding: 3px 10px;
+    border-radius: $radius-pill;
+    background: $violet;
+    color: $white;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  &__plan-name {
+    margin: 0 0 4px;
+    font-family: $font-display;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  &__plan-desc {
+    margin: 0 0 $space-sm;
+    font-size: 12px;
+    color: $muted-ink;
+    line-height: 1.4;
+  }
+
+  &__plan-price {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-bottom: $space-md;
+
+    strong {
+      font-family: $font-display;
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    span {
+      font-size: 11px;
+      color: $muted-ink;
+    }
+  }
+
+  &__plan-features {
+    list-style: none;
+    margin: 0 0 $space-lg;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+    flex: 1;
+  }
+
+  &__plan-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: $body-ink;
+  }
+
+  &__check {
+    flex-shrink: 0;
+    color: $violet;
+    font-weight: 700;
+  }
+
+  &__plan-btn {
+    padding: 10px;
+    border: none;
+    border-radius: $radius-pill;
+    background: $ink;
+    color: $paper;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      background: $violet;
+      color: $white;
+    }
+
+    &--disabled {
+      background: $paper-deep;
+      color: $muted-ink;
+      cursor: default;
+    }
+  }
+
+  // -------------------------------------------------------------- FAQ
+  &__faq {
+    display: flex;
+    flex-direction: column;
+    gap: $space-md;
+  }
+
+  &__faq-title {
+    margin: 0;
+    font-family: $font-display;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  &__faq-list {
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+  }
+
+  &__faq-item {
+    border: 1px solid $line;
+    border-radius: $radius-md;
+    background: $white;
+    overflow: hidden;
+  }
+
+  &__faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-sm;
+    width: 100%;
+    padding: $space-md $space-lg;
+    border: none;
+    background: transparent;
+    color: $ink;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  &__faq-chevron {
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+
+    .subscriptions__faq-item--open & {
+      transform: rotate(180deg);
+    }
+  }
+
+  // Accordion animation via grid-template-rows 0fr -> 1fr — no fixed
+  // max-height guess needed, and it animates smoothly either direction.
+  &__faq-answer-wrap {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.25s ease;
+
+    .subscriptions__faq-item--open & {
+      grid-template-rows: 1fr;
+    }
+  }
+
+  &__faq-answer {
+    margin: 0;
+    padding: 0 $space-lg $space-md;
+    overflow: hidden;
+    font-size: 12.5px;
+    color: $body-ink;
+    line-height: 1.55;
+  }
+}
+
+// ============================================================ RWD
+@media (max-width: $bp-tablet) {
+  .subscriptions {
+    padding: $space-lg $space-md $space-xl;
+
+    &__tabs {
+      overflow-x: auto;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    &__summary-grid {
+      grid-template-columns: 1fr;
+    }
+
+    &__card--plan {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    &__controls {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    &__actions {
+      justify-content: space-between;
+    }
+
+    // Touch-friendly snap scrolling for the plan carousel on mobile.
+    &__carousel {
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    &__plan-card {
+      flex: 0 0 82%;
+      scroll-snap-align: start;
+    }
+  }
+}
