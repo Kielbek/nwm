@@ -4,6 +4,21 @@
     <p class="profile__subtitle">{{ translate.dict().profilePage.subtitle }}</p>
   </header>
 
+  <section class="profile__stats-grid">
+    <div class="profile__stat-card">
+      <span class="profile__stat-value">{{ recordingsCount() }}</span>
+      <span class="profile__stat-label">{{ translate.dict().profilePage.statsRecordings }}</span>
+    </div>
+    <div class="profile__stat-card">
+      <span class="profile__stat-value">{{ totalAudioMinutes() }} min</span>
+      <span class="profile__stat-label">{{ translate.dict().profilePage.statsAudioTime }}</span>
+    </div>
+    <div class="profile__stat-card">
+      <span class="profile__stat-value">{{ favoriteVoiceName() || translate.dict().profilePage.statsNoVoiceYet }}</span>
+      <span class="profile__stat-label">{{ translate.dict().profilePage.statsFavoriteVoice }}</span>
+    </div>
+  </section>
+
   <div class="profile__top-grid">
     <section class="profile__card profile__identity">
       <div class="profile__identity-top">
@@ -117,6 +132,119 @@
       </div>
     </section>
   </div>
+
+  <section class="profile__card profile__preferences">
+    <h2 class="profile__section-title">{{ translate.dict().profilePage.preferencesTitle }}</h2>
+    <p class="profile__section-subtitle">{{ translate.dict().profilePage.preferencesSubtitle }}</p>
+
+    @if (preferencesSavedToast()) {
+      <div class="profile__toast">
+        <app-icon name="check" [size]="14" />
+        {{ translate.dict().profilePage.preferencesSaved }}
+      </div>
+    }
+
+    <form class="profile__preferences-form" (ngSubmit)="savePreferences()">
+      <label class="profile__field">
+        <span>{{ translate.dict().profilePage.preferencesVoiceLabel }}</span>
+        <select
+          class="profile__select"
+          [ngModel]="defaultVoiceId()"
+          (ngModelChange)="defaultVoiceId.set($event)"
+          name="defaultVoice"
+        >
+          @for (voice of voiceLibrary.voices(); track voice.id) {
+            <option [value]="voice.id">{{ voice.name }}</option>
+          }
+        </select>
+      </label>
+
+      <div class="profile__field">
+        <span>{{ translate.dict().profilePage.preferencesFormatLabel }}</span>
+        <div class="profile__segmented">
+          <button
+            type="button"
+            class="profile__segment"
+            [class.profile__segment--active]="defaultFormat() === 'mp3-128'"
+            (click)="setDefaultFormat('mp3-128')"
+          >
+            MP3
+          </button>
+          <button
+            type="button"
+            class="profile__segment"
+            [class.profile__segment--active]="defaultFormat() === 'wav'"
+            (click)="setDefaultFormat('wav')"
+          >
+            WAV
+          </button>
+          <button
+            type="button"
+            class="profile__segment"
+            [class.profile__segment--active]="defaultFormat() === 'ogg'"
+            (click)="setDefaultFormat('ogg')"
+          >
+            OGG
+          </button>
+        </div>
+      </div>
+
+      <label class="profile__field">
+        <span>{{ translate.dict().profilePage.preferencesSpeedLabel }} · {{ defaultSpeed() }}x</span>
+        <input
+          type="range"
+          class="profile__slider"
+          min="0.5"
+          max="2"
+          step="0.1"
+          [ngModel]="defaultSpeed()"
+          (ngModelChange)="defaultSpeed.set($event)"
+          name="defaultSpeed"
+        />
+      </label>
+
+      <button type="submit" class="profile__btn profile__btn--primary profile__preferences-save">
+        {{ translate.dict().profilePage.preferencesSave }}
+      </button>
+    </form>
+  </section>
+
+  <section class="profile__card profile__api-section">
+    <h2 class="profile__section-title">{{ translate.dict().profilePage.apiKeysTitle }}</h2>
+    <p class="profile__section-subtitle">{{ translate.dict().profilePage.apiKeysSubtitle }}</p>
+
+    @if (hasApiAccess()) {
+      <div class="profile__api-key-row">
+        <input type="text" class="profile__api-key-input" readonly [value]="maskedApiKey" />
+        <button type="button" class="profile__btn" (click)="copyApiKey()">
+          <app-icon [name]="apiKeyCopied() ? 'check' : 'link'" [size]="13" />
+          {{ apiKeyCopied() ? translate.dict().profilePage.apiKeysCopied : translate.dict().profilePage.apiKeysCopy }}
+        </button>
+        <button type="button" class="profile__btn profile__btn--primary">
+          {{ translate.dict().profilePage.apiKeysRegenerate }}
+        </button>
+      </div>
+    } @else {
+      <div class="profile__api-locked">
+        <div class="profile__api-locked-bg" aria-hidden="true">
+          <div class="profile__api-key-row">
+            <input type="text" class="profile__api-key-input" readonly [value]="maskedApiKey" />
+            <button type="button" class="profile__btn">{{ translate.dict().profilePage.apiKeysCopy }}</button>
+            <button type="button" class="profile__btn profile__btn--primary">
+              {{ translate.dict().profilePage.apiKeysRegenerate }}
+            </button>
+          </div>
+        </div>
+        <div class="profile__api-locked-overlay">
+          <app-icon name="lock" [size]="20" />
+          <p class="profile__api-locked-text">{{ translate.dict().profilePage.apiKeysLockedText }}</p>
+          <button type="button" class="profile__btn profile__btn--primary" (click)="selectPlan('creator')">
+            {{ translate.dict().profilePage.apiKeysUpgrade }}
+          </button>
+        </div>
+      </div>
+    }
+  </section>
 
   <section class="profile__section">
     <div class="profile__section-head">
@@ -245,6 +373,26 @@
         <div class="profile__history-empty">
           <app-icon name="download" [size]="16" />
           <span>{{ translate.dict().profilePage.noPurchases }}</span>
+        </div>
+      }
+    </div>
+  </section>
+
+  <section class="profile__section profile__faq">
+    <div class="profile__section-head">
+      <h2>{{ translate.dict().profilePage.faqTitle }}</h2>
+    </div>
+
+    <div class="profile__faq-list">
+      @for (item of translate.dict().profileFaq; track item.question; let i = $index) {
+        <div class="profile__faq-item" [class.profile__faq-item--open]="openFaqIndex() === i">
+          <button type="button" class="profile__faq-question" (click)="toggleFaq(i)">
+            {{ item.question }}
+            <app-icon name="chevron-down" [size]="16" class="profile__faq-chevron" />
+          </button>
+          <div class="profile__faq-answer-wrap">
+            <p class="profile__faq-answer">{{ item.answer }}</p>
+          </div>
         </div>
       }
     </div>

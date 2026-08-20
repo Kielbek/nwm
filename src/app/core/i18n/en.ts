@@ -271,6 +271,25 @@ export const en: Dictionary = {
     purchased: 'Added {characters} characters to your limit.',
     accountTitle: 'Account details',
     signOut: 'Sign out',
+    statsRecordings: 'Recordings generated',
+    statsAudioTime: 'Total audio time',
+    statsFavoriteVoice: 'Favorite voice',
+    statsNoVoiceYet: 'None yet',
+    preferencesTitle: 'TTS editor preferences',
+    preferencesSubtitle: 'Defaults used every time you start a new recording.',
+    preferencesVoiceLabel: 'Default voice',
+    preferencesFormatLabel: 'Default file format',
+    preferencesSpeedLabel: 'Default playback speed',
+    preferencesSave: 'Save preferences',
+    preferencesSaved: 'Preferences saved',
+    apiKeysTitle: 'API keys',
+    apiKeysSubtitle: 'Generate speech programmatically from your own apps.',
+    apiKeysCopy: 'Copy',
+    apiKeysCopied: 'Copied',
+    apiKeysRegenerate: 'Generate new',
+    apiKeysLockedText: 'API keys are available on the Creator plan and above',
+    apiKeysUpgrade: 'Upgrade plan',
+    faqTitle: 'Frequently asked questions',
   },
   plans: [
     {
@@ -727,6 +746,31 @@ export const en: Dictionary = {
       question: 'What is the difference between the Free plan and paid plans?',
       answer:
         'The Free plan gives you basic voices and the Standard model to get started. Paid plans unlock every voice, the Expressive model, higher limits, and priority generation.',
+    },
+  ],
+  profileFaq: [
+    {
+      question: 'How does character-limit renewal work?',
+      answer:
+        'The character limit from your subscription renews automatically every month, on the day your billing cycle starts.',
+    },
+    {
+      question: "Do unused characters roll over to next month?",
+      answer:
+        "No — subscription characters reset every month. Purchased top-up packs don't have an expiry date.",
+    },
+    {
+      question: 'What is the difference between subscription characters and purchased top-up packs?',
+      answer:
+        'Subscription characters renew monthly and are used first. Purchased packs never expire and are only used once your monthly limit runs out.',
+    },
+    {
+      question: 'Can I cancel or change my plan at any time?',
+      answer: 'Yes — you can change or cancel your plan at any time from your billing settings.',
+    },
+    {
+      question: 'How do I get access to API keys?',
+      answer: 'API keys are available on the Creator plan and above — they will appear on your profile once you upgrade.',
     },
   ],
   authLayout: {

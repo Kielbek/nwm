@@ -6,11 +6,23 @@ import { CarouselComponent } from '../../shared/components/carousel/carousel.com
 import { AccountService, BillingCycle, PlanId } from '../../core/services/account.service';
 import { AuthService } from '../../core/services/auth.service';
 import { BillingService } from '../../core/services/billing.service';
+import { GenerationHistoryService } from '../../core/services/generation-history.service';
+import { VoiceLibraryService } from '../../core/services/voice-library.service';
 import { TranslateService } from '../../core/services/translate.service';
 import { SeoService } from '../../core/services/seo.service';
+import { OutputFormat } from '../../core/models/tts.models';
 
 const RING_RADIUS = 52;
 const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
+
+/** Plans at this rank or above unlock API key access — mirrors the profileFaq copy about API keys. */
+const API_KEYS_MIN_PLAN: PlanId = 'creator';
+
+const PREF_KEYS = {
+  voice: 'nwm-pref-default-voice',
+  format: 'nwm-pref-default-format',
+  speed: 'nwm-pref-default-speed',
+};
 
 @Component({
   selector: 'app-profile-page',
@@ -53,8 +65,57 @@ export class ProfilePageComponent {
       .profilePage.memberSince.replace('{date}', this.formatMemberSince(this.account.memberSince))
   );
 
+  // --- Bento stats — derived from the generation history actually loaded
+  // in this session (same source of truth the History page itself uses),
+  // not a fabricated total.
+  readonly recordingsCount = computed(() => this.history.entries().length);
+
+  readonly totalAudioMinutes = computed(() => {
+    const totalSeconds = this.history
+      .entries()
+      .reduce((sum, entry) => sum + (entry.durationSeconds ?? 0), 0);
+    return Math.round(totalSeconds / 60);
+  });
+
+  readonly favoriteVoiceName = computed(() => {
+    const counts = new Map<string, number>();
+    for (const entry of this.history.entries()) {
+      counts.set(entry.voiceName, (counts.get(entry.voiceName) ?? 0) + 1);
+    }
+    let best: string | null = null;
+    let bestCount = 0;
+    for (const [name, count] of counts) {
+      if (count > bestCount) {
+        best = name;
+        bestCount = count;
+      }
+    }
+    return best;
+  });
+
+  // --- Editor preferences — locally persisted, same pattern as the
+  // notification toggles on the Settings page (no backend field for these).
+  readonly defaultVoiceId = signal(this.readPref(PREF_KEYS.voice, ''));
+  readonly defaultFormat = signal(this.readPref(PREF_KEYS.format, 'mp3-128') as OutputFormat);
+  readonly defaultSpeed = signal(Number(this.readPref(PREF_KEYS.speed, '1')));
+  readonly preferencesSavedToast = signal(false);
+  private prefsToastTimeout?: ReturnType<typeof setTimeout>;
+
+  // --- API keys paywall
+  readonly hasApiAccess = computed(
+    () => this.account.planRank(this.account.planId()) >= this.account.planRank(API_KEYS_MIN_PLAN)
+  );
+  readonly apiKeyCopied = signal(false);
+  private apiKeyCopiedTimeout?: ReturnType<typeof setTimeout>;
+  readonly maskedApiKey = 'sk-live-••••••••••••••••';
+
+  // --- FAQ accordion
+  readonly openFaqIndex = signal<number | null>(null);
+
   constructor(
     readonly account: AccountService,
+    readonly history: GenerationHistoryService,
+    readonly voiceLibrary: VoiceLibraryService,
     private readonly auth: AuthService,
     private readonly billing: BillingService,
     readonly translate: TranslateService,
@@ -141,6 +202,36 @@ export class ProfilePageComponent {
     });
   }
 
+  setDefaultFormat(format: OutputFormat): void {
+    this.defaultFormat.set(format);
+  }
+
+  savePreferences(): void {
+    this.writePref(PREF_KEYS.voice, this.defaultVoiceId());
+    this.writePref(PREF_KEYS.format, this.defaultFormat());
+    this.writePref(PREF_KEYS.speed, String(this.defaultSpeed()));
+
+    this.preferencesSavedToast.set(true);
+    if (this.prefsToastTimeout) {
+      clearTimeout(this.prefsToastTimeout);
+    }
+    this.prefsToastTimeout = setTimeout(() => this.preferencesSavedToast.set(false), 2500);
+  }
+
+  copyApiKey(): void {
+    navigator.clipboard?.writeText(this.maskedApiKey).then(() => {
+      this.apiKeyCopied.set(true);
+      if (this.apiKeyCopiedTimeout) {
+        clearTimeout(this.apiKeyCopiedTimeout);
+      }
+      this.apiKeyCopiedTimeout = setTimeout(() => this.apiKeyCopied.set(false), 2000);
+    });
+  }
+
+  toggleFaq(index: number): void {
+    this.openFaqIndex.update((current) => (current === index ? null : index));
+  }
+
   formatNumber(value: number): string {
     return value.toLocaleString(this.translate.lang() === 'pl' ? 'pl-PL' : 'en-US');
   }
@@ -154,5 +245,16 @@ export class ProfilePageComponent {
       month: 'long',
       year: 'numeric',
     });
+  }
+
+  private readPref(key: string, fallback: string): string {
+    if (typeof window === 'undefined') {
+      return fallback;
+    }
+    return localStorage.getItem(key) ?? fallback;
+  }
+
+  private writePref(key: string, value: string): void {
+    localStorage.setItem(key, value);
   }
 }

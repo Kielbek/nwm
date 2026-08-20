@@ -100,18 +100,6 @@ export const routes: Routes = [
           ),
       },
       {
-        path: 'profile-redesign',
-        loadComponent: () =>
-          import('./features/profile/profile.component').then((m) => m.ProfileComponent),
-      },
-      {
-        path: 'subscriptions',
-        loadComponent: () =>
-          import('./features/subscriptions/subscriptions.component').then(
-            (m) => m.SubscriptionsComponent
-          ),
-      },
-      {
         path: 'settings',
         loadComponent: () =>
           import('./features/settings/settings-page.component').then(

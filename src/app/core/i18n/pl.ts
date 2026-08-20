@@ -273,6 +273,25 @@ export const pl: Dictionary = {
     purchased: 'Dodano {characters} znaków do limitu.',
     accountTitle: 'Dane konta',
     signOut: 'Wyloguj się',
+    statsRecordings: 'Wygenerowane nagrania',
+    statsAudioTime: 'Łączny czas audio',
+    statsFavoriteVoice: 'Ulubiony głos',
+    statsNoVoiceYet: 'Jeszcze brak',
+    preferencesTitle: 'Preferencje edytora TTS',
+    preferencesSubtitle: 'Domyślne ustawienia używane przy każdym nowym nagraniu.',
+    preferencesVoiceLabel: 'Domyślny głos',
+    preferencesFormatLabel: 'Domyślny format pliku',
+    preferencesSpeedLabel: 'Domyślna prędkość nagrań',
+    preferencesSave: 'Zapisz preferencje',
+    preferencesSaved: 'Preferencje zapisane',
+    apiKeysTitle: 'Klucze API',
+    apiKeysSubtitle: 'Generuj mowę programistycznie z poziomu własnych aplikacji.',
+    apiKeysCopy: 'Kopiuj',
+    apiKeysCopied: 'Skopiowano',
+    apiKeysRegenerate: 'Wygeneruj nowy',
+    apiKeysLockedText: 'Klucze API są dostępne od planu Creator wzwyż',
+    apiKeysUpgrade: 'Ulepsz plan',
+    faqTitle: 'Najczęściej zadawane pytania',
   },
   plans: [
     {
@@ -730,6 +749,31 @@ export const pl: Dictionary = {
       question: 'Czym różni się plan Darmowy od planów płatnych?',
       answer:
         'Plan Darmowy daje dostęp do podstawowych głosów i modelu Standard na start. Plany płatne odblokowują wszystkie głosy, model Ekspresyjny, wyższe limity i priorytetowe generowanie.',
+    },
+  ],
+  profileFaq: [
+    {
+      question: 'Jak działa odnawianie limitu znaków?',
+      answer:
+        'Limit znaków z Twojej subskrypcji odnawia się automatycznie co miesiąc, w dniu rozpoczęcia okresu rozliczeniowego.',
+    },
+    {
+      question: 'Czy niewykorzystane znaki przechodzą na kolejny miesiąc?',
+      answer:
+        'Nie — znaki z subskrypcji resetują się co miesiąc. Dokupione pakiety (Top-Up) nie mają terminu ważności.',
+    },
+    {
+      question: 'Czym różnią się znaki z subskrypcji od dokupionych pakietów jednorazowych?',
+      answer:
+        'Znaki z subskrypcji odnawiają się co miesiąc i zużywają się jako pierwsze. Dokupione pakiety są bezterminowe i wykorzystywane dopiero po wyczerpaniu limitu miesięcznego.',
+    },
+    {
+      question: 'Czy mogę w dowolnym momencie anulować lub zmienić plan?',
+      answer: 'Tak — plan możesz zmienić lub anulować w dowolnym momencie z poziomu ustawień płatności.',
+    },
+    {
+      question: 'Jak uzyskać dostęp do kluczy API?',
+      answer: 'Klucze API są dostępne od planu Creator wzwyż — po ulepszeniu planu pojawią się w profilu.',
     },
   ],
   authLayout: {

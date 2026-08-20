@@ -223,6 +223,25 @@ export interface Dictionary {
     purchased: string;
     accountTitle: string;
     signOut: string;
+    statsRecordings: string;
+    statsAudioTime: string;
+    statsFavoriteVoice: string;
+    statsNoVoiceYet: string;
+    preferencesTitle: string;
+    preferencesSubtitle: string;
+    preferencesVoiceLabel: string;
+    preferencesFormatLabel: string;
+    preferencesSpeedLabel: string;
+    preferencesSave: string;
+    preferencesSaved: string;
+    apiKeysTitle: string;
+    apiKeysSubtitle: string;
+    apiKeysCopy: string;
+    apiKeysCopied: string;
+    apiKeysRegenerate: string;
+    apiKeysLockedText: string;
+    apiKeysUpgrade: string;
+    faqTitle: string;
   };
   settingsPage: {
     title: string;
@@ -477,6 +496,7 @@ export interface Dictionary {
     faqSubtitle: string;
   };
   pricingFaq: FaqCopy[];
+  profileFaq: FaqCopy[];
   authLayout: {
     tagline: string;
     taglineLogin: string;
