@@ -1,0 +1,21 @@
+@if (isOpen) {
+  <div class="modal-shell">
+    <div class="modal-shell__backdrop" (click)="close()"></div>
+    <div
+      class="modal-shell__panel"
+      role="dialog"
+      aria-modal="true"
+      [class.modal-shell__panel--centered]="centered"
+      [style.max-width.px]="maxWidth"
+      [style.padding]="padding"
+      [style.overflow-y]="overflow === 'auto' ? 'auto' : 'hidden'"
+    >
+      @if (showClose) {
+        <button type="button" class="modal-shell__close" [attr.aria-label]="closeLabel" (click)="close()">
+          <app-icon name="close" [size]="16" />
+        </button>
+      }
+      <ng-content />
+    </div>
+  </div>
+}

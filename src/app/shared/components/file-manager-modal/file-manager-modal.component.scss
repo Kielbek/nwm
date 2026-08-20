@@ -2,36 +2,12 @@
   display: contents;
 }
 
+// Backdrop/panel/close-button/animation chrome lives in
+// <app-modal-shell> now — this file only styles the modal's own content.
+// The .fm wrapper below has no properties of its own; it's kept only so
+// the &__x nesting below still compiles to the same .fm__x class names
+// used in the template.
 .fm {
-  position: fixed;
-  inset: 0;
-  z-index: 94;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-
-  &__backdrop {
-    position: absolute;
-    inset: 0;
-    background: rgb(0 0 0 / 0.45);
-  }
-
-  &__panel {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 860px;
-    max-height: calc(100dvh - 40px);
-    border: 1px solid var(--border);
-    border-radius: 18px;
-    background: var(--bg-surface);
-    box-shadow: 0 24px 64px -16px rgb(0 0 0 / 0.4);
-    animation: fm-in 0.2s ease;
-    overflow: hidden;
-  }
-
   &__head {
     display: flex;
     align-items: flex-start;
@@ -496,17 +472,6 @@
     background: linear-gradient(160deg, var(--accent-soft), var(--bg-hover));
     color: var(--accent);
     box-shadow: var(--shadow-sm);
-  }
-}
-
-@keyframes fm-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
   }
 }
 

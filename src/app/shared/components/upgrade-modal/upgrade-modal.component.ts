@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, HostListener, computed } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed } from '@angular/core';
 import { Router } from '@angular/router';
 import { IconComponent } from '../icon/icon.component';
 import { CarouselComponent } from '../carousel/carousel.component';
+import { ModalShellComponent } from '../modal-shell/modal-shell.component';
 import { UpgradeModalService } from '../../../core/services/upgrade-modal.service';
 import { AccountService, BillingCycle, PlanId } from '../../../core/services/account.service';
 import { TranslateService } from '../../../core/services/translate.service';
@@ -17,7 +18,7 @@ const FEATURED_PLAN_ID: PlanId = 'pro';
   selector: 'app-upgrade-modal',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IconComponent, CarouselComponent],
+  imports: [IconComponent, CarouselComponent, ModalShellComponent],
   templateUrl: './upgrade-modal.component.html',
   styleUrl: './upgrade-modal.component.scss',
 })
@@ -34,13 +35,6 @@ export class UpgradeModalComponent {
     readonly translate: TranslateService,
     private readonly router: Router
   ) {}
-
-  @HostListener('document:keydown.escape')
-  onEscape(): void {
-    if (this.modal.isOpen()) {
-      this.modal.close();
-    }
-  }
 
   setBillingCycle(cycle: BillingCycle): void {
     this.account.setBillingCycle(cycle);

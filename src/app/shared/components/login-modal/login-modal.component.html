@@ -1,17 +1,9 @@
-@if (modal.isOpen()) {
-  <div class="login-modal">
-    <div class="login-modal__backdrop" (click)="modal.close()"></div>
-    <div class="login-modal__panel" role="dialog" aria-modal="true">
-      <button
-        type="button"
-        class="login-modal__close"
-        [attr.aria-label]="translate.dict().upgradeModal.close"
-        (click)="modal.close()"
-      >
-        <app-icon name="close" [size]="16" />
-      </button>
-
-      <app-login-form (success)="modal.close()" />
-    </div>
-  </div>
-}
+<app-modal-shell
+  [isOpen]="modal.isOpen()"
+  [maxWidth]="400"
+  padding="30px 28px"
+  [closeLabel]="translate.dict().upgradeModal.close"
+  (closed)="modal.close()"
+>
+  <app-login-form (success)="modal.close()" />
+</app-modal-shell>

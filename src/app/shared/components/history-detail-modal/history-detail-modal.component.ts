@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, HostListener, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { IconComponent } from '../icon/icon.component';
+import { ModalShellComponent } from '../modal-shell/modal-shell.component';
 import { HistoryDetailModalService } from '../../../core/services/history-detail-modal.service';
 import { GenerationHistoryService } from '../../../core/services/generation-history.service';
 import { TranslateService } from '../../../core/services/translate.service';
@@ -19,7 +20,7 @@ import { downloadEntry } from '../../../core/utils/download-entry';
   selector: 'app-history-detail-modal',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IconComponent],
+  imports: [IconComponent, ModalShellComponent],
   templateUrl: './history-detail-modal.component.html',
   styleUrl: './history-detail-modal.component.scss',
 })
@@ -37,13 +38,6 @@ export class HistoryDetailModalComponent {
     private readonly router: Router,
     private readonly auth: AuthService
   ) {}
-
-  @HostListener('document:keydown.escape')
-  onEscape(): void {
-    if (this.modal.entryId()) {
-      this.close();
-    }
-  }
 
   close(): void {
     this.deleteConfirmOpen.set(false);

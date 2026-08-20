@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, HostListener, computed, effect, signal } from '@angular/core';
 import { IconComponent } from '../icon/icon.component';
+import { ModalShellComponent } from '../modal-shell/modal-shell.component';
 import { FileManagerModalService } from '../../../core/services/file-manager-modal.service';
 import { FolderService } from '../../../core/services/folder.service';
 import { Folder } from '../../../core/models/folder.model';
@@ -29,7 +30,7 @@ const SNIPPET_LENGTH = 140;
   selector: 'app-file-manager-modal',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IconComponent],
+  imports: [IconComponent, ModalShellComponent],
   templateUrl: './file-manager-modal.component.html',
   styleUrl: './file-manager-modal.component.scss',
 })

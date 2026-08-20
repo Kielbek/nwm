@@ -1,101 +1,94 @@
-@if (modal.isOpen()) {
-  <div class="upgrade-modal">
-    <div class="upgrade-modal__backdrop" (click)="modal.close()"></div>
-    <div class="upgrade-modal__panel" role="dialog" aria-modal="true">
-      <button
-        type="button"
-        class="upgrade-modal__close"
-        [attr.aria-label]="translate.dict().upgradeModal.close"
-        (click)="modal.close()"
-      >
-        <app-icon name="close" [size]="16" />
-      </button>
-
-      <div class="upgrade-modal__head">
-        <h2>{{ translate.dict().upgradeModal.title }}</h2>
-        <p>{{ translate.dict().upgradeModal.subtitle }}</p>
-      </div>
-
-      <div class="upgrade-modal__cycle-toggle">
-        <button
-          type="button"
-          class="upgrade-modal__cycle-btn"
-          [class.upgrade-modal__cycle-btn--active]="account.billingCycle() === 'monthly'"
-          (click)="setBillingCycle('monthly')"
-        >
-          {{ translate.dict().profilePage.billingMonthly }}
-        </button>
-        <button
-          type="button"
-          class="upgrade-modal__cycle-btn"
-          [class.upgrade-modal__cycle-btn--active]="account.billingCycle() === 'yearly'"
-          (click)="setBillingCycle('yearly')"
-        >
-          {{ translate.dict().profilePage.billingYearly }}
-          <span class="upgrade-modal__savings-badge">{{ translate.dict().profilePage.yearlySavings }}</span>
-        </button>
-      </div>
-
-      @if (upgradePlans().length) {
-        <app-carousel
-          class="upgrade-modal__carousel"
-          [prevLabel]="translate.dict().profilePage.previousPlans"
-          [nextLabel]="translate.dict().profilePage.nextPlans"
-        >
-          @for (plan of upgradePlans(); track plan.id) {
-            <div
-              class="upgrade-modal__plan"
-              #carouselItem
-              [class.upgrade-modal__plan--featured]="plan.id === featuredPlanId"
-            >
-              @if (plan.id === featuredPlanId) {
-                <span class="upgrade-modal__plan-badge">
-                  <app-icon name="star" [size]="11" />
-                  {{ translate.dict().landing.pricingMostPopular }}
-                </span>
-              }
-              <strong class="upgrade-modal__plan-name">{{ plan.name }}</strong>
-
-              <div class="upgrade-modal__plan-price">
-                <strong>
-                  {{
-                    formatPrice(
-                      account.billingCycle() === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice
-                    )
-                  }}
-                  zł
-                </strong>
-                <span>
-                  {{
-                    account.billingCycle() === 'monthly'
-                      ? translate.dict().profilePage.perMonth
-                      : translate.dict().profilePage.perYear
-                  }}
-                </span>
-              </div>
-
-              <ul class="upgrade-modal__plan-features">
-                @for (feature of plan.features.slice(0, 3); track feature) {
-                  <li>
-                    <app-icon name="check" [size]="12" />
-                    <span>{{ feature }}</span>
-                  </li>
-                }
-              </ul>
-
-              <button type="button" class="upgrade-modal__plan-btn" (click)="choosePlan(plan.id)">
-                {{ translate.dict().profilePage.choosePlan }}
-              </button>
-            </div>
-          }
-        </app-carousel>
-      } @else {
-        <p class="upgrade-modal__empty">{{ translate.dict().upgradeModal.alreadyTopTier }}</p>
-      }
-
-      <button type="button" class="upgrade-modal__all-plans" (click)="goToPlans()">
-        {{ translate.dict().upgradeModal.seeAllPlans }}
-      </button>
-    </div>
+<app-modal-shell
+  [isOpen]="modal.isOpen()"
+  [maxWidth]="720"
+  padding="32px 28px 26px"
+  [centered]="true"
+  [closeLabel]="translate.dict().upgradeModal.close"
+  (closed)="modal.close()"
+>
+  <div class="upgrade-modal__head">
+    <h2>{{ translate.dict().upgradeModal.title }}</h2>
+    <p>{{ translate.dict().upgradeModal.subtitle }}</p>
   </div>
-}
+
+  <div class="upgrade-modal__cycle-toggle">
+    <button
+      type="button"
+      class="upgrade-modal__cycle-btn"
+      [class.upgrade-modal__cycle-btn--active]="account.billingCycle() === 'monthly'"
+      (click)="setBillingCycle('monthly')"
+    >
+      {{ translate.dict().profilePage.billingMonthly }}
+    </button>
+    <button
+      type="button"
+      class="upgrade-modal__cycle-btn"
+      [class.upgrade-modal__cycle-btn--active]="account.billingCycle() === 'yearly'"
+      (click)="setBillingCycle('yearly')"
+    >
+      {{ translate.dict().profilePage.billingYearly }}
+      <span class="upgrade-modal__savings-badge">{{ translate.dict().profilePage.yearlySavings }}</span>
+    </button>
+  </div>
+
+  @if (upgradePlans().length) {
+    <app-carousel
+      class="upgrade-modal__carousel"
+      [prevLabel]="translate.dict().profilePage.previousPlans"
+      [nextLabel]="translate.dict().profilePage.nextPlans"
+    >
+      @for (plan of upgradePlans(); track plan.id) {
+        <div
+          class="upgrade-modal__plan"
+          #carouselItem
+          [class.upgrade-modal__plan--featured]="plan.id === featuredPlanId"
+        >
+          @if (plan.id === featuredPlanId) {
+            <span class="upgrade-modal__plan-badge">
+              <app-icon name="star" [size]="11" />
+              {{ translate.dict().landing.pricingMostPopular }}
+            </span>
+          }
+          <strong class="upgrade-modal__plan-name">{{ plan.name }}</strong>
+
+          <div class="upgrade-modal__plan-price">
+            <strong>
+              {{
+                formatPrice(
+                  account.billingCycle() === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice
+                )
+              }}
+              zł
+            </strong>
+            <span>
+              {{
+                account.billingCycle() === 'monthly'
+                  ? translate.dict().profilePage.perMonth
+                  : translate.dict().profilePage.perYear
+              }}
+            </span>
+          </div>
+
+          <ul class="upgrade-modal__plan-features">
+            @for (feature of plan.features.slice(0, 3); track feature) {
+              <li>
+                <app-icon name="check" [size]="12" />
+                <span>{{ feature }}</span>
+              </li>
+            }
+          </ul>
+
+          <button type="button" class="upgrade-modal__plan-btn" (click)="choosePlan(plan.id)">
+            {{ translate.dict().profilePage.choosePlan }}
+          </button>
+        </div>
+      }
+    </app-carousel>
+  } @else {
+    <p class="upgrade-modal__empty">{{ translate.dict().upgradeModal.alreadyTopTier }}</p>
+  }
+
+  <button type="button" class="upgrade-modal__all-plans" (click)="goToPlans()">
+    {{ translate.dict().upgradeModal.seeAllPlans }}
+  </button>
+</app-modal-shell>

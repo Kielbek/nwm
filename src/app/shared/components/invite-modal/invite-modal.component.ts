@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, HostListener, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { IconComponent } from '../icon/icon.component';
+import { ModalShellComponent } from '../modal-shell/modal-shell.component';
 import { ReferralService } from '../../../core/services/referral.service';
 import { TranslateService } from '../../../core/services/translate.service';
 
@@ -7,7 +8,7 @@ import { TranslateService } from '../../../core/services/translate.service';
   selector: 'app-invite-modal',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IconComponent],
+  imports: [IconComponent, ModalShellComponent],
   templateUrl: './invite-modal.component.html',
   styleUrl: './invite-modal.component.scss',
 })
@@ -16,13 +17,6 @@ export class InviteModalComponent {
   private copiedTimeout?: ReturnType<typeof setTimeout>;
 
   constructor(readonly referral: ReferralService, readonly translate: TranslateService) {}
-
-  @HostListener('document:keydown.escape')
-  onEscape(): void {
-    if (this.referral.isOpen()) {
-      this.referral.close();
-    }
-  }
 
   copyLink(): void {
     navigator.clipboard?.writeText(this.referral.referralLink()).then(() => {
