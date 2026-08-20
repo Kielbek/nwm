@@ -46,9 +46,10 @@
     max-height: calc(100dvh - 40px);
     overflow-y: auto;
     // Matches .auth-form's own border-radius (global styles.scss) so this
-    // wrapper's shadow doesn't visibly mismatch the card it wraps.
+    // wrapper's clipping doesn't mismatch the card it wraps. The card's own
+    // box-shadow (from the global .login-modal .auth-form override) is the
+    // only shadow here — the wrapper itself has no background of its own.
     border-radius: 24px;
-    box-shadow: 0 24px 64px -16px rgb(0 0 0 / 0.4);
     animation: login-modal-in 0.2s ease;
 
     // .auth-form (global styles.scss) already supplies the card's own

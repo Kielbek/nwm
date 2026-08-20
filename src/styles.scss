@@ -107,24 +107,21 @@ button {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 30px 28px;
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  background: var(--bg-surface);
-  box-shadow: 0 20px 44px -28px hsl(var(--shadow-color) / 0.45);
 
   &__title {
     margin: 0 0 2px;
     font-family: 'Space Grotesk', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    font-size: 21px;
+    font-size: 26px;
     font-weight: 700;
     letter-spacing: -0.015em;
+    text-align: center;
     color: var(--text-primary);
   }
 
   &__subtitle {
-    margin: 0;
+    margin: 0 0 6px;
     font-size: 13px;
+    text-align: center;
     color: var(--text-muted);
     line-height: 1.5;
   }
@@ -375,6 +372,22 @@ button {
   to {
     transform: rotate(360deg);
   }
+}
+
+// .auth-form is deliberately card-less by default (see above) to match the
+// flat, centered look of the dedicated auth pages — but inside the login
+// popup it needs to read as a contained panel like every other modal in
+// the app. LoginFormComponent renders its own <form class="auth-form">,
+// so a selector-based rule in login-modal.component.scss can't reach it
+// (Angular's view encapsulation only lets a component's scoped styles
+// match elements from its OWN template); this plain global selector isn't
+// scoped, so it reaches across that boundary the normal DOM-descendant way.
+.login-modal .auth-form {
+  padding: 30px 28px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: var(--bg-surface);
+  box-shadow: 0 20px 44px -28px hsl(var(--shadow-color) / 0.45);
 }
 
 // ======================================================================
@@ -711,6 +724,29 @@ button {
         color: #fff;
       }
     }
+
+    .cookie-banner {
+      --border: #333230;
+      --border-strong: #45433f;
+      --bg-surface: #202022;
+      --bg-hover: #28282a;
+      --text-primary: #f2f1ec;
+      --text-secondary: #b5b3aa;
+      --text-muted: #9c9a91;
+      --accent: #8f85ee;
+      --accent-hover: #a49bf2;
+      --accent-soft: rgb(143 133 238 / 0.16);
+
+      .cookie-banner__btn--primary {
+        background: #f2f1ec;
+        color: #18181a;
+
+        &:hover {
+          background: var(--accent);
+          color: #fff;
+        }
+      }
+    }
   }
 }
 
@@ -1030,6 +1066,29 @@ button {
     &:hover:not(:disabled) {
       background: var(--accent);
       color: #fff;
+    }
+  }
+
+  .cookie-banner {
+    --border: #333230;
+    --border-strong: #45433f;
+    --bg-surface: #202022;
+    --bg-hover: #28282a;
+    --text-primary: #f2f1ec;
+    --text-secondary: #b5b3aa;
+    --text-muted: #9c9a91;
+    --accent: #8f85ee;
+    --accent-hover: #a49bf2;
+    --accent-soft: rgb(143 133 238 / 0.16);
+
+    .cookie-banner__btn--primary {
+      background: #f2f1ec;
+      color: #18181a;
+
+      &:hover {
+        background: var(--accent);
+        color: #fff;
+      }
     }
   }
 }
