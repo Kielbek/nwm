@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { PublicNavComponent } from '../../shared/components/public-nav/public-nav.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer/public-footer.component';
+import { EnterAppLinkDirective } from '../../shared/directives/enter-app-link.directive';
 import { TranslateService } from '../../core/services/translate.service';
 import { AccountService, BillingCycle } from '../../core/services/account.service';
 import { SeoService } from '../../core/services/seo.service';
@@ -13,7 +14,7 @@ const FEATURED_PLAN_INDEX = 2;
   selector: 'app-pricing-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IconComponent, PublicNavComponent, PublicFooterComponent],
+  imports: [RouterLink, IconComponent, PublicNavComponent, PublicFooterComponent, EnterAppLinkDirective],
   templateUrl: './pricing-page.component.html',
   styleUrl: './pricing-page.component.scss',
 })

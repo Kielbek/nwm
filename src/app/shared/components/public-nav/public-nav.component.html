@@ -41,10 +41,10 @@
     >
       <app-icon [name]="theme.mode() === 'dark' ? 'moon' : 'sun'" [size]="17" />
     </button>
-    <a class="public-nav__link" href="/app" (click)="onEnterApp($event)">
+    <a class="public-nav__link" appEnterApp>
       {{ translate.dict().landing.navOpenApp }}
     </a>
-    <a class="public-nav__cta" href="/app" (click)="onEnterApp($event)">
+    <a class="public-nav__cta" appEnterApp>
       {{ translate.dict().landing.navTryFree }}
     </a>
   </div>

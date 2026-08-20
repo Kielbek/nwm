@@ -11,13 +11,6 @@
         <app-icon name="close" [size]="16" />
       </button>
 
-      <a class="login-modal__logo" routerLink="/" (click)="modal.close()">
-        <span class="login-modal__logo-mark">
-          <app-icon name="text-to-speech" [size]="14" />
-        </span>
-        NWM
-      </a>
-
       <app-login-form (success)="modal.close()" />
     </div>
   </div>

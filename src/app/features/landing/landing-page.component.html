@@ -14,7 +14,7 @@
       </h1>
       <p class="landing__hero-subtitle">{{ translate.dict().landing.heroSubtitle }}</p>
       <div class="landing__hero-cta">
-        <a class="landing__btn landing__btn--primary" routerLink="/app">
+        <a class="landing__btn landing__btn--primary" appEnterApp>
           <app-icon name="play" [size]="14" />
           {{ translate.dict().landing.heroCtaPrimary }}
         </a>
@@ -91,7 +91,7 @@
                 <app-icon name="download" [size]="13" />
               </button>
             </div>
-            <a class="landing__mock-btn" routerLink="/app">
+            <a class="landing__mock-btn" appEnterApp>
               <app-icon name="sparkle" [size]="12" />
               {{ translate.dict().editor.generate }}
             </a>
@@ -247,7 +247,7 @@
 
         <div class="landing__demo-footer">
           <span>{{ demoCharCountLabel() }}</span>
-          <a class="landing__btn landing__btn--primary" routerLink="/app">
+          <a class="landing__btn landing__btn--primary" appEnterApp>
             <app-icon name="sparkle" [size]="14" />
             {{ translate.dict().editor.generate }}
           </a>
@@ -274,11 +274,11 @@
             }
           </div>
           <div class="landing__demo-preview-actions">
-            <a class="landing__btn landing__btn--light" routerLink="/app">
+            <a class="landing__btn landing__btn--light" appEnterApp>
               <app-icon name="play" [size]="14" />
               {{ translate.dict().player.play }}
             </a>
-            <a class="landing__btn landing__btn--ghost-dark" routerLink="/app" [attr.aria-label]="translate.dict().player.download">
+            <a class="landing__btn landing__btn--ghost-dark" appEnterApp [attr.aria-label]="translate.dict().player.download">
               <app-icon name="download" [size]="14" />
             </a>
           </div>
@@ -428,7 +428,7 @@
       <span class="landing__final-cta-circle" aria-hidden="true"></span>
       <h2>{{ translate.dict().landing.finalCtaTitle }}</h2>
       <p>{{ translate.dict().landing.finalCtaSubtitle }}</p>
-      <a class="landing__btn landing__btn--primary landing__btn--large" routerLink="/app">
+      <a class="landing__btn landing__btn--primary landing__btn--large" appEnterApp>
         {{ translate.dict().landing.finalCtaButton }}
         <app-icon name="chevron-right" [size]="15" />
       </a>

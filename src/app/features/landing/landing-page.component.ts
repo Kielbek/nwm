@@ -15,6 +15,7 @@ import { CarouselComponent } from '../../shared/components/carousel/carousel.com
 import { StarRatingComponent } from '../../shared/components/star-rating/star-rating.component';
 import { PublicNavComponent } from '../../shared/components/public-nav/public-nav.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer/public-footer.component';
+import { EnterAppLinkDirective } from '../../shared/directives/enter-app-link.directive';
 import { TranslateService } from '../../core/services/translate.service';
 import { AccountService } from '../../core/services/account.service';
 import { VoiceGender, VoiceLibraryService, VoiceTone } from '../../core/services/voice-library.service';
@@ -35,6 +36,7 @@ const FEATURED_PLAN_INDICES = [0, 2, 5];
     StarRatingComponent,
     PublicNavComponent,
     PublicFooterComponent,
+    EnterAppLinkDirective,
   ],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.scss',
