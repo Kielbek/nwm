@@ -709,28 +709,6 @@
     color: var(--text-muted);
   }
 
-  &__signout {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    margin: 0 auto;
-    padding: 9px 16px;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    background: transparent;
-    color: var(--text-muted);
-    font-size: 12.5px;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-
-    &:hover {
-      background: var(--bg-hover);
-      color: var(--danger);
-      border-color: var(--danger);
-    }
-  }
-
   // ---------------------------------------------------- bento stats grid
   &__stats-grid {
     display: grid;
@@ -745,19 +723,45 @@
   }
 
   &__stat-card {
+    position: relative;
     display: flex;
-    flex-direction: column;
-    gap: 3px;
-    padding: 18px 20px;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
     border: 1px solid var(--border);
     border-radius: 16px;
     background: var(--bg-hover);
+    text-align: left;
+    font-family: inherit;
+    color: inherit;
+  }
+
+  &__stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  &__stat-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
   }
 
   &__stat-value {
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 700;
     letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-family: 'Space Grotesk', 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
 
@@ -766,8 +770,53 @@
     color: var(--text-muted);
   }
 
+  &__stat-card--voice {
+    border: none;
+    background: linear-gradient(135deg, var(--accent-soft), var(--bg-hover));
+    cursor: pointer;
+    transition: box-shadow 0.15s ease;
+
+    &:hover {
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+  }
+
+  &__stat-voice-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  &__stat-voice-hint {
+    display: none;
+  }
+
+  @media (min-width: 861px) {
+    &__stat-card--voice {
+      flex-wrap: wrap;
+    }
+
+    &__stat-voice-hint {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-basis: 100%;
+      margin-left: 46px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+  }
+
   // ------------------------------------------------ section title/subtitle
-  // (shared by the preferences and API-keys cards below)
+  // (shared by the preferences card below)
   &__section-title {
     margin: 0 0 4px;
     font-size: 16px;
@@ -776,8 +825,7 @@
   }
 
   // ------------------------------------------------------ preferences form
-  &__preferences,
-  &__api-section {
+  &__preferences {
     max-width: 1080px;
     margin: 0 auto 20px;
   }
@@ -850,121 +898,61 @@
     }
   }
 
-  // -------------------------------------------------------------- API keys
-  &__api-key-row {
+  // ---------------------------------------------------------- API keys link
+  &__api-link {
     display: flex;
-    gap: 8px;
-    margin-top: 16px;
+    align-items: center;
+    gap: 12px;
+    max-width: 1080px;
+    margin: 0 auto 20px;
+    padding: 16px 20px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
 
-    @media (max-width: 640px) {
-      flex-direction: column;
+    &:hover {
+      background: var(--bg-hover);
     }
   }
 
-  &__api-key-input {
-    flex: 1;
-    min-width: 0;
-    padding: 9px 11px;
-    border: 1px solid var(--border);
-    border-radius: 9px;
-    background: var(--bg-hover);
-    color: var(--text-primary);
-    font-family: monospace;
-    font-size: 13px;
-  }
-
-  &__api-locked {
-    position: relative;
-    min-height: 150px;
-    margin-top: 16px;
-    border-radius: 12px;
-    overflow: hidden;
-  }
-
-  &__api-locked-bg {
-    filter: blur(4px);
-    pointer-events: none;
-    user-select: none;
-  }
-
-  &__api-locked-overlay {
-    position: absolute;
-    inset: 0;
+  &__api-link-icon {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 20px;
-    text-align: center;
-    background: color-mix(in srgb, var(--bg-surface) 78%, transparent);
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--accent-soft);
     color: var(--accent);
   }
 
-  &__api-locked-text {
-    margin: 0 0 4px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-secondary);
+  &__api-link-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+
+    strong {
+      font-size: 13.5px;
+      font-weight: 700;
+    }
+
+    span {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+  }
+
+  &__api-link-arrow {
+    flex-shrink: 0;
+    color: var(--text-muted);
   }
 
   // ---------------------------------------------------------------- FAQ
-  &__faq-list {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 16px;
-  }
-
-  &__faq-item {
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    background: var(--bg-surface);
-    overflow: hidden;
-  }
-
-  &__faq-question {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    width: 100%;
-    padding: 14px 18px;
-    border: none;
-    background: transparent;
-    color: var(--text-primary);
-    font-family: inherit;
-    font-size: 13.5px;
-    font-weight: 600;
-    text-align: left;
-    cursor: pointer;
-  }
-
-  &__faq-chevron {
-    flex-shrink: 0;
-    transition: transform 0.2s ease;
-
-    .profile__faq-item--open & {
-      transform: rotate(180deg);
-    }
-  }
-
-  &__faq-answer-wrap {
-    display: grid;
-    grid-template-rows: 0fr;
-    transition: grid-template-rows 0.25s ease;
-
-    .profile__faq-item--open & {
-      grid-template-rows: 1fr;
-    }
-  }
-
-  &__faq-answer {
-    margin: 0;
-    padding: 0 18px 14px;
-    overflow: hidden;
-    font-size: 12.5px;
-    color: var(--text-secondary);
-    line-height: 1.55;
+  &__faq {
+    max-width: 1080px;
+    margin: 0 auto 40px;
   }
 }

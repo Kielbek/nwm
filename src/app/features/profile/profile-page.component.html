@@ -6,17 +6,48 @@
 
   <section class="profile__stats-grid">
     <div class="profile__stat-card">
-      <span class="profile__stat-value">{{ recordingsCount() }}</span>
-      <span class="profile__stat-label">{{ translate.dict().profilePage.statsRecordings }}</span>
+      <span class="profile__stat-icon">
+        <app-icon name="sparkle" [size]="15" />
+      </span>
+      <div class="profile__stat-body">
+        <span class="profile__stat-value">{{ recordingsCount() }}</span>
+        <span class="profile__stat-label">{{ translate.dict().profilePage.statsRecordings }}</span>
+      </div>
     </div>
+
     <div class="profile__stat-card">
-      <span class="profile__stat-value">{{ totalAudioMinutes() }} min</span>
-      <span class="profile__stat-label">{{ translate.dict().profilePage.statsAudioTime }}</span>
+      <span class="profile__stat-icon">
+        <app-icon name="play" [size]="15" />
+      </span>
+      <div class="profile__stat-body">
+        <span class="profile__stat-value">{{ totalAudioMinutes() }} min</span>
+        <span class="profile__stat-label">{{ translate.dict().profilePage.statsAudioTime }}</span>
+      </div>
     </div>
-    <div class="profile__stat-card">
-      <span class="profile__stat-value">{{ favoriteVoiceName() || translate.dict().profilePage.statsNoVoiceYet }}</span>
-      <span class="profile__stat-label">{{ translate.dict().profilePage.statsFavoriteVoice }}</span>
-    </div>
+
+    @if (favoriteVoice(); as voice) {
+      <button type="button" class="profile__stat-card profile__stat-card--voice" (click)="useFavoriteVoice()">
+        <span class="profile__stat-voice-avatar" [style.background]="voice.avatarColor">{{ voice.name[0] }}</span>
+        <div class="profile__stat-body">
+          <span class="profile__stat-value">{{ voice.name }}</span>
+          <span class="profile__stat-label">{{ translate.dict().profilePage.statsFavoriteVoice }}</span>
+        </div>
+        <span class="profile__stat-voice-hint">
+          {{ translate.dict().profilePage.statsUseFavoriteVoice }}
+          <app-icon name="chevron-right" [size]="12" />
+        </span>
+      </button>
+    } @else {
+      <div class="profile__stat-card">
+        <span class="profile__stat-icon">
+          <app-icon name="mic" [size]="15" />
+        </span>
+        <div class="profile__stat-body">
+          <span class="profile__stat-value">{{ translate.dict().profilePage.statsNoVoiceYet }}</span>
+          <span class="profile__stat-label">{{ translate.dict().profilePage.statsFavoriteVoice }}</span>
+        </div>
+      </div>
+    }
   </section>
 
   <div class="profile__top-grid">
@@ -209,42 +240,16 @@
     </form>
   </section>
 
-  <section class="profile__card profile__api-section">
-    <h2 class="profile__section-title">{{ translate.dict().profilePage.apiKeysTitle }}</h2>
-    <p class="profile__section-subtitle">{{ translate.dict().profilePage.apiKeysSubtitle }}</p>
-
-    @if (hasApiAccess()) {
-      <div class="profile__api-key-row">
-        <input type="text" class="profile__api-key-input" readonly [value]="maskedApiKey" />
-        <button type="button" class="profile__btn" (click)="copyApiKey()">
-          <app-icon [name]="apiKeyCopied() ? 'check' : 'link'" [size]="13" />
-          {{ apiKeyCopied() ? translate.dict().profilePage.apiKeysCopied : translate.dict().profilePage.apiKeysCopy }}
-        </button>
-        <button type="button" class="profile__btn profile__btn--primary">
-          {{ translate.dict().profilePage.apiKeysRegenerate }}
-        </button>
-      </div>
-    } @else {
-      <div class="profile__api-locked">
-        <div class="profile__api-locked-bg" aria-hidden="true">
-          <div class="profile__api-key-row">
-            <input type="text" class="profile__api-key-input" readonly [value]="maskedApiKey" />
-            <button type="button" class="profile__btn">{{ translate.dict().profilePage.apiKeysCopy }}</button>
-            <button type="button" class="profile__btn profile__btn--primary">
-              {{ translate.dict().profilePage.apiKeysRegenerate }}
-            </button>
-          </div>
-        </div>
-        <div class="profile__api-locked-overlay">
-          <app-icon name="lock" [size]="20" />
-          <p class="profile__api-locked-text">{{ translate.dict().profilePage.apiKeysLockedText }}</p>
-          <button type="button" class="profile__btn profile__btn--primary" (click)="selectPlan('creator')">
-            {{ translate.dict().profilePage.apiKeysUpgrade }}
-          </button>
-        </div>
-      </div>
-    }
-  </section>
+  <a class="profile__card profile__api-link" routerLink="/app/api-keys">
+    <span class="profile__api-link-icon">
+      <app-icon name="lock" [size]="16" />
+    </span>
+    <span class="profile__api-link-body">
+      <strong>{{ translate.dict().profilePage.apiKeysTitle }}</strong>
+      <span>{{ translate.dict().profilePage.apiKeysSubtitle }}</span>
+    </span>
+    <app-icon name="chevron-right" [size]="16" class="profile__api-link-arrow" />
+  </a>
 
   <section class="profile__section">
     <div class="profile__section-head">
@@ -383,23 +388,6 @@
       <h2>{{ translate.dict().profilePage.faqTitle }}</h2>
     </div>
 
-    <div class="profile__faq-list">
-      @for (item of translate.dict().profileFaq; track item.question; let i = $index) {
-        <div class="profile__faq-item" [class.profile__faq-item--open]="openFaqIndex() === i">
-          <button type="button" class="profile__faq-question" (click)="toggleFaq(i)">
-            {{ item.question }}
-            <app-icon name="chevron-down" [size]="16" class="profile__faq-chevron" />
-          </button>
-          <div class="profile__faq-answer-wrap">
-            <p class="profile__faq-answer">{{ item.answer }}</p>
-          </div>
-        </div>
-      }
-    </div>
+    <app-faq-accordion [items]="translate.dict().profileFaq" />
   </section>
-
-  <a class="profile__signout" routerLink="/">
-    <app-icon name="logout" [size]="14" />
-    {{ translate.dict().profilePage.signOut }}
-  </a>
 </div>

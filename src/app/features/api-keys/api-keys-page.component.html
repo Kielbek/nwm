@@ -1,0 +1,45 @@
+<div class="api-keys">
+  <a class="api-keys__back" routerLink="/app/profile">
+    <app-icon name="chevron-right" [size]="14" class="api-keys__back-icon" />
+    {{ translate.dict().profilePage.apiKeysBackToProfile }}
+  </a>
+
+  <header class="api-keys__hero">
+    <h1 class="api-keys__title">{{ translate.dict().profilePage.apiKeysTitle }}</h1>
+    <p class="api-keys__subtitle">{{ translate.dict().profilePage.apiKeysSubtitle }}</p>
+  </header>
+
+  <section class="api-keys__card">
+    @if (hasApiAccess()) {
+      <div class="api-keys__key-row">
+        <input type="text" class="api-keys__key-input" readonly [value]="maskedApiKey" />
+        <button type="button" class="api-keys__btn" (click)="copyKey()">
+          <app-icon [name]="copied() ? 'check' : 'link'" [size]="13" />
+          {{ copied() ? translate.dict().profilePage.apiKeysCopied : translate.dict().profilePage.apiKeysCopy }}
+        </button>
+        <button type="button" class="api-keys__btn api-keys__btn--primary">
+          {{ translate.dict().profilePage.apiKeysRegenerate }}
+        </button>
+      </div>
+    } @else {
+      <div class="api-keys__locked">
+        <div class="api-keys__locked-bg" aria-hidden="true">
+          <div class="api-keys__key-row">
+            <input type="text" class="api-keys__key-input" readonly [value]="maskedApiKey" />
+            <button type="button" class="api-keys__btn">{{ translate.dict().profilePage.apiKeysCopy }}</button>
+            <button type="button" class="api-keys__btn api-keys__btn--primary">
+              {{ translate.dict().profilePage.apiKeysRegenerate }}
+            </button>
+          </div>
+        </div>
+        <div class="api-keys__locked-overlay">
+          <app-icon name="lock" [size]="20" />
+          <p class="api-keys__locked-text">{{ translate.dict().profilePage.apiKeysLockedText }}</p>
+          <button type="button" class="api-keys__btn api-keys__btn--primary" (click)="upgrade()">
+            {{ translate.dict().profilePage.apiKeysUpgrade }}
+          </button>
+        </div>
+      </div>
+    }
+  </section>
+</div>

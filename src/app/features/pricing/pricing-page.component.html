@@ -108,19 +108,7 @@
       <p>{{ translate.dict().pricingPage.faqSubtitle }}</p>
     </header>
 
-    <div class="pricing__faq-list">
-      @for (item of translate.dict().pricingFaq; track item.question; let i = $index) {
-        <div class="pricing__faq-item" [class.pricing__faq-item--open]="openFaqIndex() === i">
-          <button type="button" class="pricing__faq-question" (click)="toggleFaq(i)">
-            {{ item.question }}
-            <app-icon name="chevron-down" [size]="16" class="pricing__faq-chevron" />
-          </button>
-          @if (openFaqIndex() === i) {
-            <p class="pricing__faq-answer">{{ item.answer }}</p>
-          }
-        </div>
-      }
-    </div>
+    <app-faq-accordion [items]="translate.dict().pricingFaq" />
   </section>
 
   <section class="pricing__final-cta">

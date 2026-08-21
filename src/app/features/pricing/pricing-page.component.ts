@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { PublicNavComponent } from '../../shared/components/public-nav/public-nav.component';
 import { PublicFooterComponent } from '../../shared/components/public-footer/public-footer.component';
+import { FaqAccordionComponent } from '../../shared/components/faq-accordion/faq-accordion.component';
 import { EnterAppLinkDirective } from '../../shared/directives/enter-app-link.directive';
 import { TranslateService } from '../../core/services/translate.service';
 import { AccountService, BillingCycle } from '../../core/services/account.service';
@@ -14,13 +15,19 @@ const FEATURED_PLAN_INDEX = 2;
   selector: 'app-pricing-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, IconComponent, PublicNavComponent, PublicFooterComponent, EnterAppLinkDirective],
+  imports: [
+    RouterLink,
+    IconComponent,
+    PublicNavComponent,
+    PublicFooterComponent,
+    FaqAccordionComponent,
+    EnterAppLinkDirective,
+  ],
   templateUrl: './pricing-page.component.html',
   styleUrl: './pricing-page.component.scss',
 })
 export class PricingPageComponent {
   readonly billingCycle = signal<BillingCycle>('monthly');
-  readonly openFaqIndex = signal<number | null>(null);
   readonly featuredPlanIndex = FEATURED_PLAN_INDEX;
 
   constructor(
@@ -54,10 +61,6 @@ export class PricingPageComponent {
 
   setBillingCycle(cycle: BillingCycle): void {
     this.billingCycle.set(cycle);
-  }
-
-  toggleFaq(index: number): void {
-    this.openFaqIndex.set(this.openFaqIndex() === index ? null : index);
   }
 
   formatNumber(value: number): string {

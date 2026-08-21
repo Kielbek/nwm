@@ -100,6 +100,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'api-keys',
+        loadComponent: () =>
+          import('./features/api-keys/api-keys-page.component').then(
+            (m) => m.ApiKeysPageComponent
+          ),
+      },
+      {
         path: 'settings',
         loadComponent: () =>
           import('./features/settings/settings-page.component').then(

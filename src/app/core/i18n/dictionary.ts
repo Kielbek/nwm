@@ -227,6 +227,7 @@ export interface Dictionary {
     statsAudioTime: string;
     statsFavoriteVoice: string;
     statsNoVoiceYet: string;
+    statsUseFavoriteVoice: string;
     preferencesTitle: string;
     preferencesSubtitle: string;
     preferencesVoiceLabel: string;
@@ -236,6 +237,7 @@ export interface Dictionary {
     preferencesSaved: string;
     apiKeysTitle: string;
     apiKeysSubtitle: string;
+    apiKeysBackToProfile: string;
     apiKeysCopy: string;
     apiKeysCopied: string;
     apiKeysRegenerate: string;

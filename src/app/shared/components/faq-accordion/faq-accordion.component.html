@@ -1,0 +1,13 @@
+<div class="faq-accordion">
+  @for (item of items; track item.question; let i = $index) {
+    <div class="faq-accordion__item" [class.faq-accordion__item--open]="openIndex() === i">
+      <button type="button" class="faq-accordion__question" (click)="toggle(i)">
+        {{ item.question }}
+        <app-icon name="chevron-down" [size]="16" class="faq-accordion__chevron" />
+      </button>
+      @if (openIndex() === i) {
+        <p class="faq-accordion__answer">{{ item.answer }}</p>
+      }
+    </div>
+  }
+</div>

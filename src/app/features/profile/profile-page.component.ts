@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { CarouselComponent } from '../../shared/components/carousel/carousel.component';
+import { FaqAccordionComponent } from '../../shared/components/faq-accordion/faq-accordion.component';
 import { AccountService, BillingCycle, PlanId } from '../../core/services/account.service';
 import { AuthService } from '../../core/services/auth.service';
 import { BillingService } from '../../core/services/billing.service';
@@ -15,9 +16,6 @@ import { OutputFormat } from '../../core/models/tts.models';
 const RING_RADIUS = 52;
 const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
 
-/** Plans at this rank or above unlock API key access — mirrors the profileFaq copy about API keys. */
-const API_KEYS_MIN_PLAN: PlanId = 'creator';
-
 const PREF_KEYS = {
   voice: 'nwm-pref-default-voice',
   format: 'nwm-pref-default-format',
@@ -28,7 +26,7 @@ const PREF_KEYS = {
   selector: 'app-profile-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, RouterLink, IconComponent, CarouselComponent],
+  imports: [FormsModule, RouterLink, IconComponent, CarouselComponent, FaqAccordionComponent],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.scss',
 })
@@ -77,20 +75,20 @@ export class ProfilePageComponent {
     return Math.round(totalSeconds / 60);
   });
 
-  readonly favoriteVoiceName = computed(() => {
+  readonly favoriteVoice = computed(() => {
     const counts = new Map<string, number>();
     for (const entry of this.history.entries()) {
-      counts.set(entry.voiceName, (counts.get(entry.voiceName) ?? 0) + 1);
+      counts.set(entry.voiceId, (counts.get(entry.voiceId) ?? 0) + 1);
     }
-    let best: string | null = null;
+    let bestId: string | null = null;
     let bestCount = 0;
-    for (const [name, count] of counts) {
+    for (const [id, count] of counts) {
       if (count > bestCount) {
-        best = name;
+        bestId = id;
         bestCount = count;
       }
     }
-    return best;
+    return bestId ? this.voiceLibrary.voices().find((v) => v.id === bestId) ?? null : null;
   });
 
   // --- Editor preferences — locally persisted, same pattern as the
@@ -100,17 +98,6 @@ export class ProfilePageComponent {
   readonly defaultSpeed = signal(Number(this.readPref(PREF_KEYS.speed, '1')));
   readonly preferencesSavedToast = signal(false);
   private prefsToastTimeout?: ReturnType<typeof setTimeout>;
-
-  // --- API keys paywall
-  readonly hasApiAccess = computed(
-    () => this.account.planRank(this.account.planId()) >= this.account.planRank(API_KEYS_MIN_PLAN)
-  );
-  readonly apiKeyCopied = signal(false);
-  private apiKeyCopiedTimeout?: ReturnType<typeof setTimeout>;
-  readonly maskedApiKey = 'sk-live-••••••••••••••••';
-
-  // --- FAQ accordion
-  readonly openFaqIndex = signal<number | null>(null);
 
   constructor(
     readonly account: AccountService,
@@ -206,6 +193,15 @@ export class ProfilePageComponent {
     this.defaultFormat.set(format);
   }
 
+  useFavoriteVoice(): void {
+    const voice = this.favoriteVoice();
+    if (!voice) {
+      return;
+    }
+    this.voiceLibrary.selectVoice(voice.id);
+    this.router.navigateByUrl('/app');
+  }
+
   savePreferences(): void {
     this.writePref(PREF_KEYS.voice, this.defaultVoiceId());
     this.writePref(PREF_KEYS.format, this.defaultFormat());
@@ -216,20 +212,6 @@ export class ProfilePageComponent {
       clearTimeout(this.prefsToastTimeout);
     }
     this.prefsToastTimeout = setTimeout(() => this.preferencesSavedToast.set(false), 2500);
-  }
-
-  copyApiKey(): void {
-    navigator.clipboard?.writeText(this.maskedApiKey).then(() => {
-      this.apiKeyCopied.set(true);
-      if (this.apiKeyCopiedTimeout) {
-        clearTimeout(this.apiKeyCopiedTimeout);
-      }
-      this.apiKeyCopiedTimeout = setTimeout(() => this.apiKeyCopied.set(false), 2000);
-    });
-  }
-
-  toggleFaq(index: number): void {
-    this.openFaqIndex.update((current) => (current === index ? null : index));
   }
 
   formatNumber(value: number): string {

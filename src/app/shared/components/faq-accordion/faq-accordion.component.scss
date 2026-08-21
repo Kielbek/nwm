@@ -1,0 +1,52 @@
+:host {
+  display: block;
+}
+
+// Uses the app-wide generic token names (--border/--text-primary/
+// --text-secondary/--accent) rather than any page's own local palette, so
+// this renders identically wherever it's dropped in — every page that
+// wants this look already redefines these same names locally (see the
+// header/sidebar/profile/tts pattern, and .pricing's alias block).
+.faq-accordion {
+  border-top: 1px solid var(--border);
+
+  &__item {
+    border-bottom: 1px solid var(--border);
+    transition: background-color 0.2s ease;
+  }
+
+  &__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 18px 4px;
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+  }
+
+  &__chevron {
+    flex-shrink: 0;
+    color: var(--accent);
+    transition: transform 0.2s ease;
+  }
+
+  &__item--open &__chevron {
+    transform: rotate(180deg);
+  }
+
+  &__answer {
+    margin: -4px 0 18px;
+    padding: 0 4px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+}
