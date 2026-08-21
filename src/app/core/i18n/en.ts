@@ -517,6 +517,9 @@ export const en: Dictionary = {
     emptyFolderHint: 'Drag a recording here from "All files" to add it.',
     dropToMove: 'Drop to move',
     dropToUnfile: 'Drop to remove from folder',
+    entryMenuLabel: 'More actions',
+    moveToFolderLabel: 'Move to folder',
+    removeFromFolder: 'Remove from folder',
   },
   referral: {
     title: 'Invite friends',

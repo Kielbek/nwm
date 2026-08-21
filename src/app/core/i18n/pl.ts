@@ -519,6 +519,9 @@ export const pl: Dictionary = {
     emptyFolderHint: 'Przeciągnij tu nagranie z widoku „Wszystkie”, aby je dodać.',
     dropToMove: 'Upuść, aby przenieść',
     dropToUnfile: 'Upuść, aby wynieść z folderu',
+    entryMenuLabel: 'Więcej akcji',
+    moveToFolderLabel: 'Przenieś do folderu',
+    removeFromFolder: 'Usuń z folderu',
   },
   referral: {
     title: 'Zaproś znajomych',

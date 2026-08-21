@@ -397,6 +397,9 @@ export interface Dictionary {
     emptyFolderHint: string;
     dropToMove: string;
     dropToUnfile: string;
+    entryMenuLabel: string;
+    moveToFolderLabel: string;
+    removeFromFolder: string;
   };
   referral: {
     title: string;

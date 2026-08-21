@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, HostListener, computed, effect, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { IconComponent } from '../icon/icon.component';
 import { ModalShellComponent } from '../modal-shell/modal-shell.component';
+import { DropdownComponent } from '../dropdown/dropdown.component';
 import { FileManagerModalService } from '../../../core/services/file-manager-modal.service';
 import { FolderService } from '../../../core/services/folder.service';
 import { Folder } from '../../../core/models/folder.model';
@@ -10,8 +12,10 @@ import {
 } from '../../../core/services/generation-history.service';
 import { HistoryDetailModalService } from '../../../core/services/history-detail-modal.service';
 import { TranslateService } from '../../../core/services/translate.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { formatRelativeTime } from '../../../core/utils/relative-time';
 import { isGenerating } from '../../../core/utils/generation-progress';
+import { downloadEntry } from '../../../core/utils/download-entry';
 
 const SNIPPET_LENGTH = 140;
 
@@ -30,7 +34,7 @@ const SNIPPET_LENGTH = 140;
   selector: 'app-file-manager-modal',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IconComponent, ModalShellComponent],
+  imports: [IconComponent, ModalShellComponent, DropdownComponent],
   templateUrl: './file-manager-modal.component.html',
   styleUrl: './file-manager-modal.component.scss',
 })
@@ -69,13 +73,18 @@ export class FileManagerModalComponent {
     readonly folders: FolderService,
     readonly history: GenerationHistoryService,
     readonly translate: TranslateService,
-    private readonly historyModal: HistoryDetailModalService
+    private readonly historyModal: HistoryDetailModalService,
+    private readonly router: Router,
+    private readonly auth: AuthService
   ) {
-    effect(() => {
-      if (this.modal.isOpen()) {
-        this.folders.ensureLoaded();
-      }
-    });
+    effect(
+      () => {
+        if (this.modal.isOpen()) {
+          this.folders.ensureLoaded();
+        }
+      },
+      { allowSignalWrites: true }
+    );
   }
 
   @HostListener('document:keydown.escape')
@@ -240,6 +249,37 @@ export class FileManagerModalComponent {
 
   itemCountLabel(count: number): string {
     return this.translate.dict().fileManager.itemCount.replace('{n}', String(count));
+  }
+
+  // --- Per-entry menu actions --------------------------------------------
+
+  /** Folders a given entry can be moved into — every folder except the one it's already in. */
+  otherFolders(entry: GenerationEntry): Folder[] {
+    return this.folders.folders().filter((f) => f.id !== entry.folderId);
+  }
+
+  reuseEntry(entry: GenerationEntry): void {
+    this.history.reuse(entry);
+    this.router.navigateByUrl('/app');
+    this.close();
+  }
+
+  downloadEntryAction(entry: GenerationEntry): void {
+    downloadEntry(entry, this.auth.getAccessToken());
+  }
+
+  moveEntryToFolder(entry: GenerationEntry, folderId: string | null): void {
+    this.moveEntry(entry.id, folderId);
+  }
+
+  deleteEntry(entry: GenerationEntry): void {
+    this.history.remove(entry.id);
+    if (this.currentFolderId()) {
+      this.folderEntries.update((list) => list.filter((e) => e.id !== entry.id));
+    }
+    if (entry.folderId) {
+      this.folders.adjustCount(entry.folderId, -1);
+    }
   }
 
   // --- Drag and drop ----------------------------------------------------

@@ -187,6 +187,73 @@
                 </div>
                 <p class="fm__entry-text">{{ snippet(entry.text) }}</p>
               </div>
+
+              <div class="fm__entry-menu" (click)="$event.stopPropagation()">
+                <app-dropdown align="end" #entryMenu>
+                  <button
+                    type="button"
+                    class="fm__entry-menu-trigger"
+                    dropdownTrigger
+                    [attr.aria-label]="translate.dict().fileManager.entryMenuLabel"
+                  >
+                    <app-icon name="more" [size]="15" />
+                  </button>
+                  <div dropdownPanel class="fm__menu">
+                    <button
+                      type="button"
+                      class="fm__menu-item"
+                      (click)="reuseEntry(entry); entryMenu.close()"
+                    >
+                      <app-icon name="edit" [size]="14" />
+                      <span>{{ translate.dict().historyPage.reuse }}</span>
+                    </button>
+                    <button
+                      type="button"
+                      class="fm__menu-item"
+                      [disabled]="entry.status !== 'COMPLETED'"
+                      (click)="downloadEntryAction(entry); entryMenu.close()"
+                    >
+                      <app-icon name="download" [size]="14" />
+                      <span>{{ translate.dict().player.download }}</span>
+                    </button>
+
+                    @if (otherFolders(entry).length) {
+                      <div class="fm__menu-divider"></div>
+                      <div class="fm__menu-label">{{ translate.dict().fileManager.moveToFolderLabel }}</div>
+                      @for (folder of otherFolders(entry); track folder.id) {
+                        <button
+                          type="button"
+                          class="fm__menu-item"
+                          (click)="moveEntryToFolder(entry, folder.id); entryMenu.close()"
+                        >
+                          <app-icon name="folder" [size]="14" />
+                          <span>{{ folder.name }}</span>
+                        </button>
+                      }
+                    }
+                    @if (entry.folderId) {
+                      <button
+                        type="button"
+                        class="fm__menu-item"
+                        (click)="moveEntryToFolder(entry, null); entryMenu.close()"
+                      >
+                        <app-icon name="close" [size]="14" />
+                        <span>{{ translate.dict().fileManager.removeFromFolder }}</span>
+                      </button>
+                    }
+
+                    <div class="fm__menu-divider"></div>
+                    <button
+                      type="button"
+                      class="fm__menu-item fm__menu-item--danger"
+                      (click)="deleteEntry(entry); entryMenu.close()"
+                    >
+                      <app-icon name="trash" [size]="14" />
+                      <span>{{ translate.dict().historyPage.delete }}</span>
+                    </button>
+                  </div>
+                </app-dropdown>
+              </div>
             </div>
           }
         </div>
