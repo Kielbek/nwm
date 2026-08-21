@@ -26,6 +26,10 @@ import { IconComponent } from '../icon/icon.component';
   imports: [IconComponent],
   template: `
     <div class="carousel">
+      <div class="carousel__track" #track (scroll)="onScroll()">
+        <ng-content></ng-content>
+      </div>
+
       <button
         type="button"
         class="carousel__nav carousel__nav--prev"
@@ -35,10 +39,6 @@ import { IconComponent } from '../icon/icon.component';
       >
         <app-icon name="chevron-right" [size]="16" class="carousel__prev-icon" />
       </button>
-
-      <div class="carousel__track" #track (scroll)="onScroll()">
-        <ng-content></ng-content>
-      </div>
 
       <button
         type="button"
