@@ -288,6 +288,7 @@ export const pl: Dictionary = {
     apiKeysTitle: 'Klucze API',
     apiKeysSubtitle: 'Generuj mowę programistycznie z poziomu własnych aplikacji.',
     apiKeysBackToProfile: 'Wróć do profilu',
+    apiKeysCardTitle: 'Twój klucz API',
     apiKeysCopy: 'Kopiuj',
     apiKeysCopied: 'Skopiowano',
     apiKeysRegenerate: 'Wygeneruj nowy',

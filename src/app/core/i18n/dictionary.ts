@@ -238,6 +238,7 @@ export interface Dictionary {
     apiKeysTitle: string;
     apiKeysSubtitle: string;
     apiKeysBackToProfile: string;
+    apiKeysCardTitle: string;
     apiKeysCopy: string;
     apiKeysCopied: string;
     apiKeysRegenerate: string;

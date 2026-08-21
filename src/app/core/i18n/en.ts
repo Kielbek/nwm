@@ -286,6 +286,7 @@ export const en: Dictionary = {
     apiKeysTitle: 'API keys',
     apiKeysSubtitle: 'Generate speech programmatically from your own apps.',
     apiKeysBackToProfile: 'Back to profile',
+    apiKeysCardTitle: 'Your API key',
     apiKeysCopy: 'Copy',
     apiKeysCopied: 'Copied',
     apiKeysRegenerate: 'Generate new',

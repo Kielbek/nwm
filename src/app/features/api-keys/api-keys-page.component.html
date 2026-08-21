@@ -1,15 +1,35 @@
-<div class="api-keys">
+<div class="api-keys" #scrollRoot>
   <a class="api-keys__back" routerLink="/app/profile">
     <app-icon name="chevron-right" [size]="14" class="api-keys__back-icon" />
     {{ translate.dict().profilePage.apiKeysBackToProfile }}
   </a>
 
   <header class="api-keys__hero">
-    <h1 class="api-keys__title">{{ translate.dict().profilePage.apiKeysTitle }}</h1>
-    <p class="api-keys__subtitle">{{ translate.dict().profilePage.apiKeysSubtitle }}</p>
+    <h1 class="api-keys__title">{{ docs.content().title }}</h1>
+    <p class="api-keys__subtitle">{{ docs.content().subtitle }}</p>
+
+    <div class="api-keys__meta-strip">
+      <div class="api-keys__meta-chip">
+        <app-icon name="globe" [size]="13" />
+        <span>{{ docs.content().baseUrlLabel }}</span>
+        <code>{{ docs.content().baseUrl }}</code>
+      </div>
+      <div class="api-keys__meta-chip">
+        <app-icon name="lock" [size]="13" />
+        <span>{{ docs.content().authLabel }}</span>
+        <code>{{ docs.content().authValue }}</code>
+      </div>
+      <div class="api-keys__meta-chip">
+        <app-icon name="send" [size]="13" />
+        <span>{{ docs.content().rateLimitLabel }}</span>
+        <code>{{ docs.content().rateLimitValue }}</code>
+      </div>
+    </div>
   </header>
 
-  <section class="api-keys__card">
+  <section class="api-keys__card api-keys__key-card">
+    <h2 class="api-keys__card-title">{{ translate.dict().profilePage.apiKeysCardTitle }}</h2>
+
     @if (hasApiAccess()) {
       <div class="api-keys__key-row">
         <input type="text" class="api-keys__key-input" readonly [value]="maskedApiKey" />
@@ -42,4 +62,153 @@
       </div>
     }
   </section>
+
+  <div class="api-keys__layout">
+    <nav class="api-keys__nav">
+      @for (section of docs.content().sections; track section.id) {
+        <button
+          type="button"
+          class="api-keys__nav-link"
+          [class.api-keys__nav-link--active]="activeSectionId() === section.id"
+          (click)="scrollTo(section.id)"
+        >
+          <app-icon [name]="section.icon" [size]="14" />
+          <span>{{ section.title }}</span>
+        </button>
+      }
+    </nav>
+
+    <div class="api-keys__reference">
+      @for (section of docs.content().sections; track section.id) {
+        <section class="api-keys__ref-section" [id]="section.id" #sectionEl>
+          <h2 class="api-keys__ref-title">
+            <app-icon [name]="section.icon" [size]="18" />
+            {{ section.title }}
+          </h2>
+          <p class="api-keys__ref-intro">{{ section.intro }}</p>
+
+          @if (section.bullets?.length) {
+            <ul class="api-keys__ref-list">
+              @for (bullet of section.bullets; track bullet) {
+                <li>{{ bullet }}</li>
+              }
+            </ul>
+          }
+
+          @if (section.code) {
+            <div class="api-keys__code">
+              <div class="api-keys__code-head">
+                <span>{{ section.code.label }}</span>
+                <button type="button" class="api-keys__code-copy" (click)="copyCode(section.id, section.code.code)">
+                  <app-icon [name]="copiedCodeId() === section.id ? 'check' : 'copy'" [size]="12" />
+                  {{ copiedCodeId() === section.id ? docs.content().codeCopied : docs.content().copyCode }}
+                </button>
+              </div>
+              <pre class="api-keys__code-block"><code>{{ section.code.code }}</code></pre>
+            </div>
+          }
+
+          @if (section.endpoints?.length) {
+            <div class="api-keys__endpoints">
+              @for (endpoint of section.endpoints; track endpoint.id) {
+                <article class="api-keys__endpoint">
+                  <div class="api-keys__endpoint-head">
+                    <span
+                      class="api-keys__method"
+                      [class.api-keys__method--post]="endpoint.method === 'POST'"
+                      [class.api-keys__method--patch]="endpoint.method === 'PATCH'"
+                    >
+                      {{ endpoint.method }}
+                    </span>
+                    <code class="api-keys__endpoint-path">{{ endpoint.path }}</code>
+                  </div>
+                  <h3 class="api-keys__endpoint-title">{{ endpoint.title }}</h3>
+                  <p class="api-keys__endpoint-desc">{{ endpoint.description }}</p>
+
+                  @if (endpoint.params?.length) {
+                    <div class="api-keys__params-table">
+                      <div class="api-keys__params-row api-keys__params-row--head">
+                        <span>{{ docs.content().paramNameHeader }}</span>
+                        <span>{{ docs.content().paramTypeHeader }}</span>
+                        <span>{{ docs.content().paramRequiredHeader }}</span>
+                        <span>{{ docs.content().paramDescriptionHeader }}</span>
+                      </div>
+                      @for (param of endpoint.params; track param.name) {
+                        <div class="api-keys__params-row">
+                          <code>{{ param.name }}</code>
+                          <span class="api-keys__param-type">{{ param.type }}</span>
+                          <span
+                            class="api-keys__param-required"
+                            [class.api-keys__param-required--yes]="param.required"
+                          >
+                            {{ param.required ? docs.content().requiredBadge : docs.content().optionalBadge }}
+                          </span>
+                          <span class="api-keys__param-desc">{{ param.description }}</span>
+                        </div>
+                      }
+                    </div>
+                  }
+
+                  @if (endpoint.request) {
+                    <div class="api-keys__code">
+                      <div class="api-keys__code-head">
+                        <span>{{ endpoint.request.label }}</span>
+                        <button
+                          type="button"
+                          class="api-keys__code-copy"
+                          (click)="copyCode(endpoint.id + '-req', endpoint.request.code)"
+                        >
+                          <app-icon [name]="copiedCodeId() === endpoint.id + '-req' ? 'check' : 'copy'" [size]="12" />
+                          {{
+                            copiedCodeId() === endpoint.id + '-req'
+                              ? docs.content().codeCopied
+                              : docs.content().copyCode
+                          }}
+                        </button>
+                      </div>
+                      <pre class="api-keys__code-block"><code>{{ endpoint.request.code }}</code></pre>
+                    </div>
+                  }
+
+                  @if (endpoint.response) {
+                    <div class="api-keys__code">
+                      <div class="api-keys__code-head">
+                        <span>{{ endpoint.response.label }}</span>
+                        <button
+                          type="button"
+                          class="api-keys__code-copy"
+                          (click)="copyCode(endpoint.id + '-res', endpoint.response.code)"
+                        >
+                          <app-icon [name]="copiedCodeId() === endpoint.id + '-res' ? 'check' : 'copy'" [size]="12" />
+                          {{
+                            copiedCodeId() === endpoint.id + '-res'
+                              ? docs.content().codeCopied
+                              : docs.content().copyCode
+                          }}
+                        </button>
+                      </div>
+                      <pre class="api-keys__code-block"><code>{{ endpoint.response.code }}</code></pre>
+                    </div>
+                  } @else if (!endpoint.request) {
+                    <p class="api-keys__endpoint-note">{{ docs.content().binaryResponseNote }}</p>
+                  }
+                </article>
+              }
+            </div>
+          }
+
+          @if (section.errorRows?.length) {
+            <div class="api-keys__errors-table">
+              @for (row of section.errorRows; track row.code) {
+                <div class="api-keys__errors-row">
+                  <code>{{ row.code }}</code>
+                  <span>{{ row.meaning }}</span>
+                </div>
+              }
+            </div>
+          }
+        </section>
+      }
+    </div>
+  </div>
 </div>
