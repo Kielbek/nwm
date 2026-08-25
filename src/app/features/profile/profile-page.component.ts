@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { CarouselComponent } from '../../shared/components/carousel/carousel.component';
 import { FaqAccordionComponent } from '../../shared/components/faq-accordion/faq-accordion.component';
+import { UserAvatarComponent } from '../../shared/components/user-avatar/user-avatar.component';
 import { AccountService, BillingCycle, PlanId } from '../../core/services/account.service';
 import { AuthService } from '../../core/services/auth.service';
 import { BillingService } from '../../core/services/billing.service';
@@ -26,7 +27,7 @@ const PREF_KEYS = {
   selector: 'app-profile-page',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule, RouterLink, IconComponent, CarouselComponent, FaqAccordionComponent],
+  imports: [FormsModule, RouterLink, IconComponent, CarouselComponent, FaqAccordionComponent, UserAvatarComponent],
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.scss',
 })

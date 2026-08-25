@@ -16,6 +16,9 @@ export const en: Dictionary = {
     profile: 'My profile',
     signOut: 'Sign out',
   },
+  userAvatar: {
+    usageTooltip: '{percent}% of limit used — {used} / {limit} characters',
+  },
   sidebar: {
     nav: 'Text to Speech',
     voices: 'Voices',

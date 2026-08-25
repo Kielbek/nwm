@@ -361,22 +361,13 @@
     flex-shrink: 0;
   }
 
-  &__avatar {
+  &__avatar-btn {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
     border: none;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #171715, var(--accent));
-    color: #fff;
-    font-size: 12px;
-    font-weight: 700;
-    flex-shrink: 0;
+    background: transparent;
     cursor: pointer;
     padding: 0;
-    font-family: inherit;
+    flex-shrink: 0;
 
     &:hover {
       opacity: 0.85;

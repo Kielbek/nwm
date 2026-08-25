@@ -105,20 +105,6 @@
     gap: 14px;
   }
 
-  &__avatar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #171715, var(--accent));
-    color: #fff;
-    font-size: 18px;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
-
   &__identity-info {
     display: flex;
     flex-direction: column;

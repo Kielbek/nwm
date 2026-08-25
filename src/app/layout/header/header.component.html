@@ -174,8 +174,8 @@
     </app-dropdown>
 
     <app-dropdown #accountDropdown align="end">
-      <button type="button" class="header__avatar" dropdownTrigger [attr.aria-label]="translate.dict().header.profile">
-        {{ account.initials() }}
+      <button type="button" class="header__avatar-btn" dropdownTrigger [attr.aria-label]="translate.dict().header.profile">
+        <app-user-avatar [size]="32" />
       </button>
       <div dropdownPanel class="header__menu">
         <a

@@ -434,7 +434,7 @@ button {
         }
       }
 
-      .header__avatar {
+      .user-avatar__initials {
         background: linear-gradient(135deg, #f2f1ec, var(--accent));
         color: #18181a;
       }
@@ -542,7 +542,7 @@ button {
       --current-muted: rgb(0 0 0 / 0.55);
       --current-body: rgb(0 0 0 / 0.75);
 
-      .profile__avatar {
+      .user-avatar__initials {
         background: linear-gradient(135deg, #f2f1ec, var(--accent));
         color: #18181a;
       }
@@ -794,7 +794,7 @@ button {
       }
     }
 
-    .header__avatar {
+    .user-avatar__initials {
       background: linear-gradient(135deg, #f2f1ec, var(--accent));
       color: #18181a;
     }
@@ -902,7 +902,7 @@ button {
     --current-muted: rgb(0 0 0 / 0.55);
     --current-body: rgb(0 0 0 / 0.75);
 
-    .profile__avatar {
+    .user-avatar__initials {
       background: linear-gradient(135deg, #f2f1ec, var(--accent));
       color: #18181a;
     }

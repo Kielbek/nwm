@@ -53,7 +53,7 @@
   <div class="profile__top-grid">
     <section class="profile__card profile__identity">
       <div class="profile__identity-top">
-        <span class="profile__avatar">{{ account.initials() }}</span>
+        <app-user-avatar [size]="56" />
 
         <div class="profile__identity-info">
           @if (!editingProfile()) {

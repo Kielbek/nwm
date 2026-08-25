@@ -1,0 +1,29 @@
+<div class="user-avatar" [style.width.px]="size" [style.height.px]="size" [attr.title]="tooltip()">
+  <svg class="user-avatar__ring" [attr.viewBox]="'0 0 ' + size + ' ' + size">
+    <circle
+      class="user-avatar__ring-track"
+      [attr.cx]="size / 2"
+      [attr.cy]="size / 2"
+      [attr.r]="radius"
+      [attr.stroke-width]="strokeWidth"
+    />
+    <circle
+      class="user-avatar__ring-fill"
+      [class.user-avatar__ring-fill--warning]="isWarning()"
+      [attr.cx]="size / 2"
+      [attr.cy]="size / 2"
+      [attr.r]="radius"
+      [attr.stroke-width]="strokeWidth"
+      [style.stroke-dasharray]="circumference"
+      [style.stroke-dashoffset]="ringOffset()"
+    />
+  </svg>
+  <span
+    class="user-avatar__initials"
+    [style.width.px]="innerSize"
+    [style.height.px]="innerSize"
+    [style.font-size.px]="fontSize"
+  >
+    {{ account.initials() }}
+  </span>
+</div>

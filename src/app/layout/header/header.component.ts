@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { IconComponent, IconName } from '../../shared/components/icon/icon.component';
 import { FlagComponent } from '../../shared/components/flag/flag.component';
 import { DropdownComponent } from '../../shared/components/dropdown/dropdown.component';
+import { UserAvatarComponent } from '../../shared/components/user-avatar/user-avatar.component';
 import { ThemeMode, ThemeService } from '../../core/services/theme.service';
 import { Lang, TranslateService } from '../../core/services/translate.service';
 import { AccountService } from '../../core/services/account.service';
@@ -16,7 +17,7 @@ import { FileManagerModalService } from '../../core/services/file-manager-modal.
   selector: 'app-header',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IconComponent, FlagComponent, DropdownComponent, RouterLink, RouterLinkActive],
+  imports: [IconComponent, FlagComponent, DropdownComponent, UserAvatarComponent, RouterLink, RouterLinkActive],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',
 })

@@ -64,6 +64,9 @@ export interface Dictionary {
     profile: string;
     signOut: string;
   };
+  userAvatar: {
+    usageTooltip: string;
+  };
   sidebar: {
     nav: string;
     voices: string;
